@@ -1,0 +1,61 @@
+{% comment %}
+  MARÉ — preço
+  ---------------------------------------------------------------------------
+  Renderiza preço, comparativo, parcelamento e preço por dose.
+
+  Regra dura: TODO número aqui é derivado de `variant.price` (centavos, inteiro).
+  Nunca escrever preço, parcela ou preço por dose à mão em Liquid, em imagem
+  ou em texto de produto — divergência entre vitrine e checkout é infração ao
+  CDC, não bug de front-end.
+
+  Uso:
+    {% render 'mare-preco', variant: variante, product: product %}
+    {% render 'mare-preco', variant: variante, product: product, compacto: true %}
+
+  Parâmetros:
+    variant  (obrigatório) — objeto variant
+    product  (opcional)    — usado para ler o metafield de doses
+    compacto (opcional)    — esconde parcelamento e dose (grade de coleção)
+
+  Depende do metafield opcional:
+    product.metafields.mare.doses  (number_integer)
+    Se ausente, o preço por dose simplesmente não é exibido. Nunca inventar.
+{% endcomment %}
+
+{% liquid
+  assign v = variant
+  assign parcelas = 3
+
+  assign doses = 0
+  if product and product.metafields.mare.doses.value
+    assign doses = product.metafields.mare.doses.value
+  endif
+
+  assign tem_desconto = false
+  if v.compare_at_price and v.compare_at_price > v.price
+    assign tem_desconto = true
+    assign economia = v.compare_at_price | minus: v.price | times: 100 | divided_by: v.compare_at_price
+  endif
+
+  assign parcela = v.price | divided_by: parcelas
+%}
+
+<div class="mare-preco">
+  <span class="mare-preco__atual">{{ v.price | money }}</span>
+
+  {%- if tem_desconto -%}
+    <s class="mare-preco__antes">{{ v.compare_at_price | money }}</s>
+    <span class="mare-preco__selo">−{{ economia }}%</span>
+  {%- endif -%}
+
+  {%- unless compacto -%}
+    <p class="mare-preco__parcela">
+      {{ parcelas }}× de {{ parcela | money }} sem juros · ou à vista no Pix
+    </p>
+
+    {%- if doses > 0 -%}
+      {% assign por_dose = v.price | divided_by: doses %}
+      <p class="mare-preco__dose">{{ por_dose | money }} por dose</p>
+    {%- endif -%}
+  {%- endunless -%}
+</div>

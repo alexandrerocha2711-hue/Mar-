@@ -1,0 +1,162 @@
+{% comment %}
+  MARÉ — hero explorador de sabores
+  ---------------------------------------------------------------------------
+  A primeira decisão que a home pede não é "compre". É "qual maré é a sua?".
+  Padrão derivado do teardown de referências (Aura Bora).
+
+  Zero JavaScript: a troca de sabor é `:target`/`:checked` em CSS puro, então
+  funciona antes de qualquer script carregar e não entra no orçamento de 16 KB.
+
+  Cor de fundo por SKU: metafield `mare.cor` (color). Sem ele, cai no padrão
+  da section — nunca quebra.
+{% endcomment %}
+
+{% liquid
+  assign colecao = collections[section.settings.colecao]
+  assign itens = colecao.products | default: collection.products
+%}
+
+<section class="mare-hero mare-section" aria-label="{{ section.settings.titulo | escape }}">
+  <div class="mare-wrap mare-hero__inner">
+
+    <header class="mare-hero__head">
+      {%- if section.settings.olho != blank -%}
+        <p class="mare-hero__olho">{{ section.settings.olho | escape }}</p>
+      {%- endif -%}
+      <h1 class="mare-h mare-hero__titulo">{{ section.settings.titulo | escape }}</h1>
+    </header>
+
+    {%- if itens.size > 0 -%}
+      <div class="mare-hero__palco">
+        {%- for produto in itens limit: 4 -%}
+          {%- liquid
+            assign cor = produto.metafields.mare.cor.value | default: section.settings.cor_padrao
+            assign descritor = produto.metafields.mare.descritor.value
+          -%}
+          <input
+            type="radio"
+            name="mare-hero-{{ section.id }}"
+            id="mare-hero-{{ section.id }}-{{ forloop.index }}"
+            class="mare-hero__radio"
+            {% if forloop.first %}checked{% endif %}>
+
+          <article class="mare-hero__sabor" style="--mare-cor-sku: {{ cor }}">
+            <a href="{{ produto.url }}" class="mare-hero__link">
+              {%- if produto.featured_image -%}
+                {{ produto.featured_image
+                   | image_url: width: 900
+                   | image_tag:
+                       loading: 'eager',
+                       fetchpriority: 'high',
+                       sizes: '(min-width: 750px) 40vw, 80vw',
+                       class: 'mare-hero__img',
+                       alt: produto.featured_image.alt | default: produto.title }}
+              {%- endif -%}
+              <h2 class="mare-h mare-hero__nome">{{ produto.title | escape }}</h2>
+            </a>
+
+            {%- if descritor -%}
+              <p class="mare-hero__descritor">{{ descritor | join: ' · ' }}</p>
+            {%- endif -%}
+
+            {% render 'mare-preco', variant: produto.selected_or_first_available_variant, product: produto, compacto: true %}
+
+            <a href="{{ produto.url }}" class="mare-btn mare-btn--sku">
+              {{ section.settings.rotulo_cta | escape }}
+            </a>
+          </article>
+        {%- endfor -%}
+
+        <nav class="mare-hero__abas" aria-label="Escolher sabor">
+          {%- for produto in itens limit: 4 -%}
+            {%- assign cor = produto.metafields.mare.cor.value | default: section.settings.cor_padrao -%}
+            <label
+              for="mare-hero-{{ section.id }}-{{ forloop.index }}"
+              class="mare-hero__aba"
+              style="--mare-cor-sku: {{ cor }}">
+              {{ produto.title | escape }}
+            </label>
+          {%- endfor -%}
+        </nav>
+      </div>
+    {%- else -%}
+      <p class="mare-hero__vazio">
+        Selecione uma coleção com produtos nas configurações desta seção.
+      </p>
+    {%- endif -%}
+
+    <span class="mare-marola" aria-hidden="true"></span>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mare-hero { padding-block: var(--mare-grid); overflow: hidden; }
+  .mare-hero__inner { display: grid; gap: var(--mare-gap); }
+
+  .mare-hero__olho {
+    font-size: var(--mare-t-micro); letter-spacing: .18em; text-transform: uppercase;
+    margin: 0 0 .75rem; opacity: .6;
+  }
+  .mare-hero__titulo { font-size: var(--mare-t-hero); max-width: 14ch; }
+
+  .mare-hero__palco { position: relative; display: grid; }
+  .mare-hero__radio { position: absolute; opacity: 0; pointer-events: none; }
+
+  .mare-hero__sabor {
+    grid-area: 1 / 1;
+    display: grid; justify-items: center; gap: .75rem;
+    padding: 2rem 1rem 2.5rem;
+    background: color-mix(in srgb, var(--mare-cor-sku) 12%, var(--mare-areia));
+    border-radius: var(--mare-raio);
+    visibility: hidden; opacity: 0;
+    transition: opacity .25s ease;
+  }
+  .mare-hero__radio:checked + .mare-hero__sabor { visibility: visible; opacity: 1; }
+
+  .mare-hero__link { text-decoration: none; color: inherit; display: grid; justify-items: center; gap: .5rem; }
+  .mare-hero__img { max-width: min(320px, 70vw); height: auto; }
+  .mare-hero__nome { font-size: var(--mare-t-titulo); text-align: center; }
+  .mare-hero__descritor {
+    margin: 0; font-size: var(--mare-t-micro); letter-spacing: .1em;
+    text-transform: lowercase; opacity: .7;
+  }
+
+  .mare-hero__abas {
+    grid-area: 2 / 1; display: flex; flex-wrap: wrap; justify-content: center;
+    gap: .5rem; margin-top: 1rem;
+  }
+  .mare-hero__aba {
+    min-height: 44px; display: inline-flex; align-items: center;
+    padding: 0 1rem; border-radius: 999px; cursor: pointer;
+    border: 2px solid var(--mare-cor-sku); color: var(--mare-ameixa);
+    font-size: var(--mare-t-micro); font-weight: 600;
+  }
+  .mare-hero__aba:hover { background: var(--mare-cor-sku); color: var(--mare-branco); }
+
+  .mare-hero__vazio { opacity: .6; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mare-hero__sabor { transition: none; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Hero sabores",
+  "tag": "section",
+  "class": "mare-shopify-section",
+  "settings": [
+    { "type": "text", "id": "olho", "label": "Sobretítulo", "default": "Refresco funcional em pó" },
+    { "type": "text", "id": "titulo", "label": "Título", "default": "Verão o ano inteiro." },
+    {
+      "type": "collection",
+      "id": "colecao",
+      "label": "Coleção de sabores",
+      "info": "Use a coleção Sabores. Mostra até 4 produtos."
+    },
+    { "type": "text", "id": "rotulo_cta", "label": "Texto do botão", "default": "Quero essa maré" },
+    { "type": "color", "id": "cor_padrao", "label": "Cor de fallback do SKU", "default": "#FF5436" }
+  ],
+  "presets": [{ "name": "Hero sabores" }]
+}
+{% endschema %}
