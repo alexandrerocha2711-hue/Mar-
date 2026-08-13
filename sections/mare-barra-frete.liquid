@@ -1,21 +1,13 @@
 {% comment %}
   MARÉ — barra de progresso escalonada
-  ---------------------------------------------------------------------------
-  Comunica os degraus de recompensa do carrinho. NÃO adiciona brinde nem aplica
-  desconto: isso é trabalho de Discount Function, que roda no servidor e vale
-  também no checkout. O tema mostra; o servidor decide.
-
-  Todo o cálculo acontece em Liquid, no servidor. O JavaScript nunca recalcula
-  nada — ele só troca este HTML pelo que o servidor devolveu via o parâmetro
-  `sections=` da Cart AJAX API. É por isso que a barra não dessincroniza com
-  desconto, moeda ou mudança de quantidade.
-
-  O ID `shopify-section-mare-barra-frete` é o alvo que mare-carrinho.js troca.
+  Comunica os degraus. NÃO adiciona brinde nem aplica desconto: isso é trabalho
+  de Discount Function, que roda no servidor e vale também no checkout.
+  Todo cálculo em Liquid, no servidor. O JS só troca este HTML pelo que o
+  servidor devolveu via o parâmetro `sections=` da Cart AJAX API.
 {% endcomment %}
 
 {% liquid
   assign total = cart.total_price
-
   assign d1 = section.settings.degrau_1
   assign d2 = section.settings.degrau_2
   assign d3 = section.settings.degrau_3
@@ -70,70 +62,46 @@
   .mare-barra { padding: 1rem 1.25rem; background: transparent; }
 
   .mare-barra__trilho {
-    position: relative;
-    height: 8px;
-    border-radius: 999px;
+    position: relative; height: 8px; border-radius: 999px;
     background: color-mix(in srgb, var(--mare-ameixa) 12%, transparent);
     overflow: visible;
   }
 
   .mare-barra__fill {
-    height: 100%;
-    width: var(--mare-pct, 0%);
-    border-radius: 999px;
+    height: 100%; width: var(--mare-pct, 0%); border-radius: 999px;
     background: linear-gradient(90deg, var(--mare-sol), var(--mare-tangerina) 55%, var(--mare-coral));
     transition: width .3s ease;
   }
 
   .mare-barra__marca {
-    position: absolute;
-    top: 50%;
-    left: var(--mare-x, 0%);
-    width: 10px; height: 10px;
-    margin: -5px 0 0 -5px;
-    border-radius: 50%;
-    background: var(--mare-areia);
+    position: absolute; top: 50%; left: var(--mare-x, 0%);
+    width: 10px; height: 10px; margin: -5px 0 0 -5px;
+    border-radius: 50%; background: var(--mare-areia);
     border: 2px solid color-mix(in srgb, var(--mare-ameixa) 30%, transparent);
   }
   .mare-barra__marca.is-ok { background: var(--mare-pitaya); border-color: var(--mare-pitaya); }
 
   .mare-barra__texto {
-    margin: .625rem 0 0;
-    font-family: var(--mare-corpo);
-    font-size: var(--mare-t-micro);
-    color: var(--mare-ameixa);
+    margin: .625rem 0 0; font-family: var(--mare-corpo);
+    font-size: var(--mare-t-micro); color: var(--mare-ameixa);
   }
   .mare-barra__texto b { color: var(--mare-pitaya); }
 
-  @media (prefers-reduced-motion: reduce) {
-    .mare-barra__fill { transition: none; }
-  }
+  @media (prefers-reduced-motion: reduce) { .mare-barra__fill { transition: none; } }
 {% endstylesheet %}
 
 {% schema %}
 {
   "name": "Barra de frete",
-  "tag": "section",
   "settings": [
-    {
-      "type": "paragraph",
-      "content": "Valores em centavos. R$ 199,00 = 19900. Deixe 0 para desativar um degrau."
-    },
+    { "type": "paragraph", "content": "Valores em centavos. R$ 199,00 = 19900. Deixe 0 para desativar um degrau." },
     { "type": "number", "id": "degrau_1", "label": "Degrau 1 — valor", "default": 19900 },
     { "type": "text", "id": "premio_1", "label": "Degrau 1 — prêmio", "default": "frete grátis" },
-
     { "type": "number", "id": "degrau_2", "label": "Degrau 2 — valor", "default": 29900 },
     { "type": "text", "id": "premio_2", "label": "Degrau 2 — prêmio", "default": "o mixer MARÉ" },
-
     { "type": "number", "id": "degrau_3", "label": "Degrau 3 — valor", "default": 0 },
-    { "type": "text", "id": "premio_3", "label": "Degrau 3 — prêmio", "default": "" },
-
-    {
-      "type": "text",
-      "id": "texto_completo",
-      "label": "Texto quando tudo liberado",
-      "default": "Tudo liberado. Sua maré está cheia."
-    }
+    { "type": "text", "id": "premio_3", "label": "Degrau 3 — prêmio" },
+    { "type": "text", "id": "texto_completo", "label": "Texto quando tudo liberado", "default": "Tudo liberado. Sua maré está cheia." }
   ]
 }
 {% endschema %}
