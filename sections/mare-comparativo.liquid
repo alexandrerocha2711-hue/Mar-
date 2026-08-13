@@ -1,0 +1,108 @@
+{% comment %}
+  MARÉ — comparativo de rótulo
+  Duas listas lado a lado, sem adjetivo e sem promessa. O leitor conclui sozinho.
+
+  Por que importa nesta categoria: é argumentação que NÃO depende de dizer o que
+  o produto faz no corpo. Afirmar ausência de ingrediente é fato verificável;
+  alegar efeito fisiológico não é permitido sob a RDC 243/2018.
+  Preencha só com o que o rótulo real sustenta.
+{% endcomment %}
+
+<section class="mare-comp mare-section">
+  <div class="mare-wrap">
+    {%- if section.settings.olho != blank -%}
+      <p class="mare-comp__olho">{{ section.settings.olho | escape }}</p>
+    {%- endif -%}
+    <h2 class="mare-h mare-comp__titulo">{{ section.settings.titulo | escape }}</h2>
+
+    <div class="mare-comp__tabela" role="table" aria-label="{{ section.settings.titulo | escape }}">
+      <div class="mare-comp__cab" role="row">
+        <span role="columnheader"></span>
+        <span role="columnheader" class="mare-comp__nos">{{ section.settings.coluna_nos | escape }}</span>
+        <span role="columnheader" class="mare-comp__eles">{{ section.settings.coluna_eles | escape }}</span>
+      </div>
+
+      {%- for block in section.blocks -%}
+        <div class="mare-comp__linha" role="row" {{ block.shopify_attributes }}>
+          <span role="cell" class="mare-comp__item">{{ block.settings.item | escape }}</span>
+          <span role="cell" class="mare-comp__nos">{{ block.settings.nos | escape }}</span>
+          <span role="cell" class="mare-comp__eles">{{ block.settings.eles | escape }}</span>
+        </div>
+      {%- endfor -%}
+    </div>
+
+    {%- if section.settings.nota != blank -%}
+      <p class="mare-comp__nota">{{ section.settings.nota | escape }}</p>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .mare-comp { padding-block: var(--mare-grid); }
+  .mare-comp__olho { font-size: var(--mare-t-micro); letter-spacing: .18em; text-transform: uppercase; opacity: .6; margin: 0 0 .5rem; }
+  .mare-comp__titulo { font-size: var(--mare-t-titulo); margin-bottom: 2rem; max-width: 20ch; }
+
+  .mare-comp__tabela { display: grid; gap: 0; background: var(--mare-branco); border-radius: var(--mare-raio); overflow: hidden; }
+
+  .mare-comp__cab,
+  .mare-comp__linha { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: .5rem; padding: .875rem 1rem; align-items: center; }
+
+  .mare-comp__cab {
+    background: var(--mare-ameixa);
+    font-family: var(--mare-corpo); font-weight: 600;
+    font-size: var(--mare-t-micro); letter-spacing: .1em; text-transform: uppercase;
+  }
+  .mare-comp__cab .mare-comp__nos  { color: var(--mare-sol); }
+  .mare-comp__cab .mare-comp__eles { color: var(--mare-areia); opacity: .6; }
+
+  .mare-comp__linha + .mare-comp__linha,
+  .mare-comp__cab + .mare-comp__linha { border-top: 1px solid color-mix(in srgb, var(--mare-ameixa) 10%, transparent); }
+
+  .mare-comp__item { font-weight: 600; font-size: .9375rem; }
+  .mare-comp__linha .mare-comp__nos  { color: var(--mare-pitaya); font-weight: 600; font-size: .9375rem; }
+  .mare-comp__linha .mare-comp__eles { opacity: .55; font-size: .9375rem; }
+
+  .mare-comp__nota { margin: 1rem 0 0; font-size: var(--mare-t-micro); opacity: .6; }
+
+  @media (max-width: 600px) {
+    .mare-comp__cab, .mare-comp__linha { grid-template-columns: 1fr .8fr .8fr; gap: .375rem; }
+    .mare-comp__item, .mare-comp__linha span { font-size: .8125rem; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Comparativo",
+  "tag": "section",
+  "max_blocks": 10,
+  "settings": [
+    { "type": "text", "id": "olho", "label": "Sobretítulo", "default": "O que tem dentro" },
+    { "type": "text", "id": "titulo", "label": "Título", "default": "Compare o rótulo." },
+    { "type": "text", "id": "coluna_nos", "label": "Nome da nossa coluna", "default": "MARÉ" },
+    { "type": "text", "id": "coluna_eles", "label": "Nome da outra coluna", "default": "Refresco comum" },
+    { "type": "text", "id": "nota", "label": "Nota de rodapé", "default": "Comparação por porção preparada. Confira sempre o rótulo do produto." }
+  ],
+  "blocks": [
+    {
+      "type": "linha",
+      "name": "Linha",
+      "settings": [
+        { "type": "text", "id": "item", "label": "Item", "default": "Açúcar adicionado" },
+        { "type": "text", "id": "nos", "label": "MARÉ", "default": "não contém" },
+        { "type": "text", "id": "eles", "label": "Outro", "default": "contém" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Comparativo",
+      "blocks": [
+        { "type": "linha", "settings": { "item": "Açúcar adicionado", "nos": "não contém", "eles": "contém" } },
+        { "type": "linha", "settings": { "item": "Corante artificial", "nos": "não contém", "eles": "contém" } },
+        { "type": "linha", "settings": { "item": "Fibra alimentar", "nos": "contém", "eles": "não contém" } },
+        { "type": "linha", "settings": { "item": "Sabor de fruta", "nos": "de fruta", "eles": "aroma artificial" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

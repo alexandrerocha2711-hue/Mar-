@@ -1,0 +1,127 @@
+{% comment %}
+  MARÉ — clube
+  As quatro vantagens na ordem que converte:
+  economia → conveniência → novidade → flexibilidade.
+
+  A flexibilidade vem POR ÚLTIMO de propósito. Abrir com "cancele quando
+  quiser" planta a objeção antes de vender o benefício. E aqui ela é também
+  obrigação: o CDC exige que cancelar seja tão fácil quanto contratar.
+
+  A foto fica vazia — suba a do kit no editor.
+{% endcomment %}
+
+<section class="mare-clube mare-section">
+  <div class="mare-wrap mare-clube__grid">
+
+    <div class="mare-clube__midia">
+      {%- if section.settings.foto -%}
+        {{ section.settings.foto
+           | image_url: width: 1000
+           | image_tag:
+               loading: 'lazy',
+               sizes: '(min-width: 750px) 45vw, 90vw',
+               class: 'mare-clube__img',
+               alt: section.settings.titulo }}
+      {%- else -%}
+        <span class="mare-clube__vazio" aria-hidden="true"><span class="mare-acento"></span></span>
+      {%- endif -%}
+    </div>
+
+    <div class="mare-clube__texto">
+      {%- if section.settings.olho != blank -%}
+        <p class="mare-clube__olho">{{ section.settings.olho | escape }}</p>
+      {%- endif -%}
+      <h2 class="mare-h mare-clube__titulo">{{ section.settings.titulo | escape }}</h2>
+
+      {%- if section.settings.linha_fina != blank -%}
+        <p class="mare-clube__fina">{{ section.settings.linha_fina | escape }}</p>
+      {%- endif -%}
+
+      <ul class="mare-clube__lista" role="list">
+        {%- for block in section.blocks -%}
+          <li class="mare-vantagem" {{ block.shopify_attributes }}>
+            <span class="mare-acento" aria-hidden="true"></span>
+            <div>
+              <h3 class="mare-h mare-vantagem__nome">{{ block.settings.nome | escape }}</h3>
+              <p class="mare-vantagem__texto">{{ block.settings.texto | escape }}</p>
+            </div>
+          </li>
+        {%- endfor -%}
+      </ul>
+
+      {%- if section.settings.link != blank and section.settings.rotulo != blank -%}
+        <a href="{{ section.settings.link }}" class="mare-btn mare-clube__cta">{{ section.settings.rotulo | escape }}</a>
+      {%- endif -%}
+
+      {%- if shop.subscription_policy.body != blank -%}
+        <a href="{{ shop.subscription_policy.url }}" class="mare-clube__politica">{{ section.settings.rotulo_politica | escape }}</a>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mare-clube { padding-block: var(--mare-grid); }
+
+  .mare-clube__grid { display: grid; gap: var(--mare-gap); align-items: center; grid-template-columns: 1fr; }
+  @media (min-width: 750px) { .mare-clube__grid { grid-template-columns: 1fr 1fr; gap: 3rem; } }
+
+  .mare-clube__midia {
+    border-radius: var(--mare-raio); overflow: hidden;
+    background: color-mix(in srgb, var(--mare-pitaya) 14%, var(--mare-areia));
+    aspect-ratio: 4 / 3;
+  }
+  .mare-clube__img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .mare-clube__vazio { width: 100%; height: 100%; display: grid; place-items: center; color: var(--mare-pitaya); font-size: 4rem; }
+
+  .mare-clube__olho { font-size: var(--mare-t-micro); letter-spacing: .18em; text-transform: uppercase; opacity: .6; margin: 0 0 .5rem; }
+  .mare-clube__titulo { font-size: var(--mare-t-titulo); }
+  .mare-clube__fina { margin: .75rem 0 0; opacity: .8; max-width: 42ch; }
+
+  .mare-clube__lista { list-style: none; margin: 1.75rem 0 0; padding: 0; display: grid; gap: 1rem; }
+  .mare-vantagem { display: grid; grid-template-columns: auto 1fr; gap: .75rem; align-items: start; }
+  .mare-vantagem .mare-acento { color: var(--mare-coral); margin-top: .55em; }
+  .mare-vantagem__nome { font-size: 1.0625rem; }
+  .mare-vantagem__texto { margin: .125rem 0 0; font-size: var(--mare-t-micro); opacity: .75; }
+
+  .mare-clube__cta { margin-top: 1.75rem; }
+  .mare-clube__politica { display: block; margin-top: .875rem; font-size: var(--mare-t-micro); color: var(--mare-ameixa); opacity: .7; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Clube MARÉ",
+  "tag": "section",
+  "max_blocks": 4,
+  "settings": [
+    { "type": "image_picker", "id": "foto", "label": "Foto do clube" },
+    { "type": "text", "id": "olho", "label": "Sobretítulo", "default": "O clube" },
+    { "type": "text", "id": "titulo", "label": "Título", "default": "Sua maré chega sozinha." },
+    { "type": "text", "id": "linha_fina", "label": "Linha de apoio", "default": "Verão o ano inteiro, sem precisar lembrar de comprar." },
+    { "type": "url", "id": "link", "label": "Link do botão" },
+    { "type": "text", "id": "rotulo", "label": "Texto do botão", "default": "Entrar no clube" },
+    { "type": "text", "id": "rotulo_politica", "label": "Link da política", "default": "Veja a política de assinatura" }
+  ],
+  "blocks": [
+    {
+      "type": "vantagem",
+      "name": "Vantagem",
+      "settings": [
+        { "type": "text", "id": "nome", "label": "Título", "default": "Economize" },
+        { "type": "text", "id": "texto", "label": "Texto", "default": "Melhor preço por dose, sempre." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Clube MARÉ",
+      "blocks": [
+        { "type": "vantagem", "settings": { "nome": "Economize", "texto": "Melhor preço por dose, e frete grátis em todo ciclo." } },
+        { "type": "vantagem", "settings": { "nome": "Sem esforço", "texto": "Chega sempre na mesma data. Você não pensa nisso." } },
+        { "type": "vantagem", "settings": { "nome": "Sabores antes", "texto": "Lançamentos primeiro, e você pede o próximo da linha." } },
+        { "type": "vantagem", "settings": { "nome": "Sem amarras", "texto": "Troque o sabor, adie ou cancele em uma tela, quando quiser." } }
+      ]
+    }
+  ]
+}
+{% endschema %}
