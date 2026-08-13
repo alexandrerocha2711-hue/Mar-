@@ -1,0 +1,174 @@
+{% comment %}
+  MARÉ — momentos do dia
+  ---------------------------------------------------------------------------
+  A melhor arquitetura de navegação do conjunto de referências é a do Rainbo:
+  o catálogo organizado por eixos paralelos em vez de uma lista única. O eixo
+  original deles é "por benefício" — e é justamente o que a MARÉ não pode usar
+  no Brasil, porque descrever benefício fisiológico é alegação.
+
+  A troca cirúrgica: "por MOMENTO". De manhã, no meio do dia, no fim da tarde.
+  Descreve QUANDO se toma, não o que faz. Zero alegação, mesma função de
+  navegação — e muito mais brasileiro que o original.
+
+  Comercialmente é também a jogada de posicionamento: "fim de tarde" e "depois
+  da praia" são territórios que a concorrência não consegue reivindicar sem
+  soar forçada, porque a identidade delas não tem lugar nenhum.
+
+  Cada card puxa a foto da própria coleção; sem imagem, usa a do primeiro
+  produto; sem nem isso, cai num bloco na cor do momento. Nunca quebra.
+{% endcomment %}
+
+<section class="mare-momentos mare-section" aria-labelledby="mare-momentos-{{ section.id }}">
+  <div class="mare-wrap">
+    <header class="mare-momentos__head mare-revela">
+      {%- if section.settings.olho != blank -%}
+        <p class="mare-olho">{{ section.settings.olho | escape }}</p>
+      {%- endif -%}
+      <h2 class="mare-h mare-momentos__titulo" id="mare-momentos-{{ section.id }}">
+        {{ section.settings.titulo | escape }}
+      </h2>
+      {%- if section.settings.linha_fina != blank -%}
+        <p class="mare-momentos__fina">{{ section.settings.linha_fina | escape }}</p>
+      {%- endif -%}
+    </header>
+
+    <ul class="mare-momentos__lista" role="list">
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign col = block.settings.colecao
+          assign foto = block.settings.foto | default: col.featured_image
+          if foto == blank and col.products.first
+            assign foto = col.products.first.featured_image
+          endif
+          assign destino = col.url | default: block.settings.link
+        -%}
+        <li class="mare-momento mare-revela" style="--mare-cor-sku: {{ block.settings.cor }};" {{ block.shopify_attributes }}>
+          <a class="mare-momento__link" href="{{ destino | default: '#' }}">
+            <span class="mare-momento__midia">
+              {%- if foto -%}
+                {{ foto | image_url: width: 900 | image_tag: loading: 'lazy', sizes: '(min-width: 990px) 30vw, (min-width: 750px) 45vw, 84vw', class: 'mare-momento__img', alt: block.settings.nome }}
+              {%- else -%}
+                <span class="mare-momento__vazio" aria-hidden="true"><span class="mare-acento"></span></span>
+              {%- endif -%}
+              {%- if block.settings.hora != blank -%}
+                <span class="mare-momento__hora">{{ block.settings.hora | escape }}</span>
+              {%- endif -%}
+            </span>
+
+            <span class="mare-momento__corpo">
+              <span class="mare-h mare-momento__nome">{{ block.settings.nome | escape }}</span>
+              {%- if block.settings.legenda != blank -%}
+                <span class="mare-momento__legenda">{{ block.settings.legenda | escape }}</span>
+              {%- endif -%}
+              <span class="mare-momento__seta" aria-hidden="true">
+                {{ section.settings.rotulo_card | escape }}
+                <span class="mare-acento"></span>
+              </span>
+            </span>
+          </a>
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mare-momentos { padding-block: var(--mare-grid); }
+
+  .mare-momentos__head { max-width: 48ch; margin-bottom: clamp(1.75rem, 4vw, 3rem); }
+  .mare-momentos__titulo { font-size: var(--mare-t-titulo); }
+  .mare-momentos__fina { margin: .875rem 0 0; opacity: .78; }
+
+  .mare-momentos__lista {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; gap: var(--mare-gap);
+    grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+  }
+
+  .mare-momento__link { display: grid; gap: 1rem; color: inherit; text-decoration: none; }
+
+  .mare-momento__midia {
+    position: relative; display: block;
+    border-radius: var(--mare-raio); overflow: hidden;
+    aspect-ratio: 4 / 5;
+    background: color-mix(in srgb, var(--mare-cor-sku) 18%, var(--mare-areia));
+    box-shadow: var(--mare-sombra-1);
+    transition: transform .3s cubic-bezier(.2,.7,.3,1), box-shadow .3s ease;
+  }
+  .mare-momento__link:hover .mare-momento__midia {
+    transform: translateY(-6px);
+    box-shadow: var(--mare-sombra-3);
+  }
+
+  .mare-momento__img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  .mare-momento__vazio {
+    width: 100%; height: 100%;
+    display: grid; place-items: center;
+    color: var(--mare-cor-sku); font-size: 3rem;
+  }
+
+  .mare-momento__hora {
+    position: absolute; inset: .75rem .75rem auto auto;
+    background: var(--mare-cor-sku); color: var(--mare-branco);
+    font-size: var(--mare-t-micro); font-weight: 700;
+    letter-spacing: .08em;
+    padding: .25rem .625rem; border-radius: 999px;
+  }
+
+  .mare-momento__corpo { display: grid; gap: .375rem; }
+  .mare-momento__nome { font-size: 1.5rem; }
+  .mare-momento__legenda { font-size: var(--mare-t-micro); opacity: .72; }
+
+  .mare-momento__seta {
+    display: inline-flex; align-items: baseline; gap: .4rem;
+    margin-top: .25rem;
+    font-size: var(--mare-t-micro); font-weight: 600;
+    letter-spacing: .1em; text-transform: uppercase;
+    color: var(--mare-cor-sku);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mare-momento__midia { transition: none; }
+    .mare-momento__link:hover .mare-momento__midia { transform: none; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Momentos do dia",
+  "tag": "section",
+  "max_blocks": 6,
+  "settings": [
+    { "type": "text", "id": "olho", "label": "Sobretítulo", "default": "Escolha pelo momento" },
+    { "type": "text", "id": "titulo", "label": "Título", "default": "Que horas são na sua maré?" },
+    { "type": "text", "id": "linha_fina", "label": "Linha de apoio", "default": "A gente organiza pelo horário em que a vontade bate — não por promessa." },
+    { "type": "text", "id": "rotulo_card", "label": "Chamada do card", "default": "Ver" }
+  ],
+  "blocks": [
+    {
+      "type": "momento",
+      "name": "Momento",
+      "settings": [
+        { "type": "collection", "id": "colecao", "label": "Coleção" },
+        { "type": "image_picker", "id": "foto", "label": "Foto", "info": "Sem foto, usa a imagem da coleção ou do primeiro produto." },
+        { "type": "text", "id": "nome", "label": "Nome", "default": "De manhã" },
+        { "type": "text", "id": "hora", "label": "Etiqueta de hora", "default": "07h" },
+        { "type": "text", "id": "legenda", "label": "Legenda", "default": "para começar leve" },
+        { "type": "url", "id": "link", "label": "Link alternativo", "info": "Usado só se nenhuma coleção for escolhida." },
+        { "type": "color", "id": "cor", "label": "Cor do momento", "default": "#FFC943" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Momentos do dia",
+      "blocks": [
+        { "type": "momento", "settings": { "nome": "De manhã", "hora": "07h", "legenda": "para começar leve", "cor": "#FFC943" } },
+        { "type": "momento", "settings": { "nome": "No meio do dia", "hora": "13h", "legenda": "quando bate o calor", "cor": "#FF9500" } },
+        { "type": "momento", "settings": { "nome": "No fim da tarde", "hora": "18h", "legenda": "o dia desacelerando", "cor": "#E8156B" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

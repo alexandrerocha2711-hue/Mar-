@@ -1,0 +1,116 @@
+{% comment %}
+  MARÉ — esteira de selos
+  ---------------------------------------------------------------------------
+  O padrão da Aura Bora: uma faixa que corre sem parar com atributos do
+  produto. Funciona porque cada item é FATO VERIFICÁVEL, não promessa.
+
+  ATENÇÃO DE CONTEÚDO — isto vale mais que o CSS abaixo.
+  Afirmar ausência de ingrediente ("sem açúcar adicionado") é fato conferivel
+  no rótulo. Afirmar efeito no corpo ("desincha", "acelera o metabolismo",
+  "segura a fome") é alegação de saúde e não se sustenta sob a RDC 243/2018.
+  Preencha esta esteira SÓ com o que o rótulo real comprova.
+
+  Rola por CSS puro. O conteúdo é duplicado para o laço ficar contínuo, e a
+  cópia leva `aria-hidden` para o leitor de tela não ler duas vezes.
+  Em `prefers-reduced-motion` a animação para e vira uma lista estática.
+{% endcomment %}
+
+<section
+  class="mare-esteira mare-section"
+  aria-label="{{ section.settings.rotulo_acessivel | escape }}"
+  style="--mare-esteira-fundo: {{ section.settings.cor_fundo }}; --mare-esteira-texto: {{ section.settings.cor_texto }}; --mare-esteira-vel: {{ section.settings.velocidade }}s;"
+>
+  <div class="mare-esteira__janela">
+    {%- for repeticao in (1..2) -%}
+      <ul class="mare-esteira__fila" role="list" {% if repeticao == 2 %}aria-hidden="true"{% endif %}>
+        {%- for block in section.blocks -%}
+          <li class="mare-esteira__item" {{ block.shopify_attributes }}>
+            <span class="mare-acento" aria-hidden="true"></span>
+            {{ block.settings.texto | escape }}
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endfor -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .mare-esteira {
+    background: var(--mare-esteira-fundo, #3A0A24);
+    color: var(--mare-esteira-texto, #FFEBD6);
+    padding-block: .875rem;
+    overflow: hidden;
+  }
+
+  .mare-esteira__janela { display: flex; width: max-content; }
+
+  .mare-esteira__fila {
+    display: flex;
+    align-items: center;
+    gap: clamp(1.5rem, 4vw, 3rem);
+    list-style: none;
+    margin: 0;
+    padding-inline: clamp(.75rem, 2vw, 1.5rem);
+    animation: mare-esteira-corre var(--mare-esteira-vel, 30s) linear infinite;
+  }
+
+  .mare-esteira__item {
+    display: inline-flex;
+    align-items: baseline;
+    gap: .5rem;
+    white-space: nowrap;
+    font-family: var(--mare-display);
+    font-weight: 600;
+    font-size: clamp(1rem, 2.2vw, 1.5rem);
+    letter-spacing: -.01em;
+  }
+  .mare-esteira__item .mare-acento { color: var(--mare-sol); }
+
+  @keyframes mare-esteira-corre {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-100%); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mare-esteira__janela { width: 100%; }
+    .mare-esteira__fila { animation: none; flex-wrap: wrap; justify-content: center; row-gap: .5rem; }
+    .mare-esteira__fila[aria-hidden="true"] { display: none; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Esteira de selos",
+  "tag": "section",
+  "max_blocks": 12,
+  "settings": [
+    { "type": "paragraph", "content": "Use apenas atributos que o rótulo comprova — ausência de ingrediente, formato, origem. Não escreva efeito no corpo aqui." },
+    { "type": "range", "id": "velocidade", "label": "Segundos por volta", "min": 15, "max": 60, "step": 5, "unit": "s", "default": 30 },
+    { "type": "color", "id": "cor_fundo", "label": "Fundo", "default": "#3A0A24" },
+    { "type": "color", "id": "cor_texto", "label": "Texto", "default": "#FFEBD6" },
+    { "type": "text", "id": "rotulo_acessivel", "label": "Rótulo para leitor de tela", "default": "Atributos do produto" }
+  ],
+  "blocks": [
+    {
+      "type": "selo",
+      "name": "Selo",
+      "settings": [
+        { "type": "text", "id": "texto", "label": "Texto", "default": "Sem açúcar adicionado" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Esteira de selos",
+      "blocks": [
+        { "type": "selo", "settings": { "texto": "Sem açúcar adicionado" } },
+        { "type": "selo", "settings": { "texto": "Sem corante artificial" } },
+        { "type": "selo", "settings": { "texto": "Com fibra alimentar" } },
+        { "type": "selo", "settings": { "texto": "Feito no Brasil" } },
+        { "type": "selo", "settings": { "texto": "Pronto em 10 segundos" } },
+        { "type": "selo", "settings": { "texto": "Entrega para todo o país" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
