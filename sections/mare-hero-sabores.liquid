@@ -1,27 +1,53 @@
 {% comment %}
   MARÉ — hero explorador de sabores
   A primeira decisão que a home pede não é "compre". É "qual maré é a sua?".
-  Zero JavaScript: a troca de sabor é :checked em CSS puro.
-  Cor de fundo por SKU vem do metafield mare.cor. Sem ele, cai no padrão.
+
+  PROFUNDIDADE: o pouch flutua em perspectiva CSS (.mare-palco3d / .mare-flutua)
+  e respira com .mare-boia. Zero KB de rede. Uma biblioteca 3D custaria ~150 KB
+  comprimidos e derrubaria o LCP — para 3D real, use o model-viewer nativo da
+  Shopify na PDP subindo um .glb como mídia do produto.
+
+  A troca de sabor é :checked em CSS puro. Nenhum JavaScript.
+
+  FOTOS: fundo, ambiente e selo ficam VAZIOS — suba no editor. Sem eles o hero
+  cai no fundo de sol da marca e continua bonito.
 {% endcomment %}
 
 {% liquid
-  assign colecao = section.settings.colecao
-  assign itens = colecao.products
+  assign itens = section.settings.colecao.products
 %}
 
-<section class="mare-hero mare-section" aria-label="{{ section.settings.titulo | escape }}">
+<section class="mare-hero mare-section mare-fundo--sol" aria-label="{{ section.settings.titulo | escape }}">
+
+  {%- if section.settings.foto_fundo -%}
+    <div class="mare-hero__fundo" aria-hidden="true">
+      {{ section.settings.foto_fundo
+         | image_url: width: 2000
+         | image_tag:
+             loading: 'eager',
+             fetchpriority: 'high',
+             sizes: '100vw',
+             class: 'mare-hero__fundo-img',
+             alt: '' }}
+    </div>
+  {%- endif -%}
+
+  <span class="mare-rastro" aria-hidden="true"></span>
+
   <div class="mare-wrap mare-hero__inner">
 
-    <header class="mare-hero__head">
+    <header class="mare-hero__head mare-revela">
       {%- if section.settings.olho != blank -%}
-        <p class="mare-hero__olho">{{ section.settings.olho | escape }}</p>
+        <p class="mare-olho">{{ section.settings.olho | escape }}</p>
       {%- endif -%}
       <h1 class="mare-h mare-hero__titulo">{{ section.settings.titulo | escape }}</h1>
+      {%- if section.settings.linha_fina != blank -%}
+        <p class="mare-hero__fina">{{ section.settings.linha_fina | escape }}</p>
+      {%- endif -%}
     </header>
 
     {%- if itens.size > 0 -%}
-      <div class="mare-hero__palco">
+      <div class="mare-hero__palco mare-palco3d">
         {%- for produto in itens limit: 4 -%}
           {%- liquid
             assign cor = produto.metafields.mare.cor.value | default: section.settings.cor_padrao
@@ -35,16 +61,23 @@
 
           <article class="mare-hero__sabor" style="--mare-cor-sku: {{ cor }}">
             <a href="{{ produto.url }}" class="mare-hero__link">
-              {%- if produto.featured_image -%}
-                {{ produto.featured_image
-                   | image_url: width: 900
-                   | image_tag:
-                       loading: 'eager',
-                       fetchpriority: 'high',
-                       sizes: '(min-width: 750px) 40vw, 80vw',
-                       class: 'mare-hero__img',
-                       alt: produto.featured_image.alt | default: produto.title }}
-              {%- endif -%}
+              <span class="mare-hero__moldura">
+                {%- if produto.featured_image -%}
+                  {{ produto.featured_image
+                     | image_url: width: 900
+                     | image_tag:
+                         loading: 'eager',
+                         fetchpriority: 'high',
+                         sizes: '(min-width: 750px) 38vw, 74vw',
+                         class: 'mare-hero__img mare-flutua mare-boia',
+                         alt: produto.featured_image.alt | default: produto.title }}
+                {%- else -%}
+                  <span class="mare-hero__vazio mare-flutua mare-boia" aria-hidden="true">
+                    <span class="mare-acento"></span>
+                  </span>
+                {%- endif -%}
+              </span>
+
               <h2 class="mare-h mare-hero__nome">{{ produto.title | escape }}</h2>
             </a>
 
@@ -72,122 +105,136 @@
         </nav>
       </div>
     {%- else -%}
-      <div class="mare-hero__fallback" aria-label="Sabores MARÉ">
-        {%- assign sabores_demo = 'Pitaya com Morango|#E8156B|doce · floral · vibrante||Morango com Limão|#FF9500|cítrico · doce · redondo||Melancia|#FF5436|fresco · leve · suave' | split: '||' -%}
-        {%- for sabor_demo in sabores_demo -%}
-          {%- assign campos = sabor_demo | split: '|' -%}
-          <article class="mare-hero__demo" style="--mare-cor-sku: {{ campos[1] }}">
-            <div class="mare-hero__pouch" aria-hidden="true">
-              <span>MARÉ</span>
-            </div>
-            <h2 class="mare-h mare-hero__nome">{{ campos[0] }}</h2>
-            <p class="mare-hero__descritor">{{ campos[2] }}</p>
-          </article>
-        {%- endfor -%}
-      </div>
+      <p class="mare-hero__aviso">Escolha a coleção Sabores nas configurações desta seção.</p>
     {%- endif -%}
 
-    <span class="mare-marola" aria-hidden="true"></span>
+    {%- if section.blocks.size > 0 -%}
+      <ul class="mare-hero__tiras mare-revela" role="list">
+        {%- for block in section.blocks -%}
+          <li class="mare-tira" {{ block.shopify_attributes }}>
+            <span class="mare-acento" aria-hidden="true"></span>
+            {{ block.settings.texto | escape }}
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
   </div>
+
+  <span class="mare-marola" aria-hidden="true"></span>
 </section>
 
 {% stylesheet %}
-  .mare-hero { padding-block: var(--mare-grid); overflow: hidden; }
-  .mare-hero__inner { display: grid; gap: var(--mare-gap); }
+  .mare-hero { padding-block: calc(var(--mare-grid) * .9) 0; overflow: hidden; }
+  .mare-hero__inner { display: grid; gap: 2rem; }
 
-  .mare-hero__olho {
-    font-size: var(--mare-t-micro); letter-spacing: .18em; text-transform: uppercase;
-    margin: 0 0 .75rem; opacity: .6;
-  }
-  .mare-hero__titulo { font-size: var(--mare-t-hero); max-width: 14ch; }
+  .mare-hero__fundo { position: absolute; inset: 0; z-index: -1; }
+  .mare-hero__fundo-img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: .34; }
+
+  .mare-hero__titulo { font-size: var(--mare-t-hero); max-width: 13ch; }
+  .mare-hero__fina { margin: 1rem 0 0; max-width: 40ch; font-size: 1.0625rem; opacity: .8; }
+  .mare-hero__aviso { opacity: .6; }
 
   .mare-hero__palco { position: relative; display: grid; }
   .mare-hero__radio { position: absolute; opacity: 0; pointer-events: none; }
 
   .mare-hero__sabor {
     grid-area: 1 / 1;
-    display: grid; justify-items: center; gap: .75rem;
-    padding: 2rem 1rem 2.5rem;
-    background: color-mix(in srgb, var(--mare-cor-sku) 12%, var(--mare-areia));
-    border-radius: var(--mare-raio);
+    display: grid; justify-items: center; gap: .875rem;
+    padding: 1rem 1rem 2.5rem;
     visibility: hidden; opacity: 0;
-    transition: opacity .25s ease;
+    transition: opacity .3s ease;
   }
   .mare-hero__radio:checked + .mare-hero__sabor { visibility: visible; opacity: 1; }
 
-  .mare-hero__link { text-decoration: none; color: inherit; display: grid; justify-items: center; gap: .5rem; }
-  .mare-hero__img { max-width: min(320px, 70vw); height: auto; }
+  .mare-hero__link { text-decoration: none; color: inherit; display: grid; justify-items: center; gap: .75rem; }
+
+  .mare-hero__moldura {
+    display: grid; place-items: center;
+    width: min(340px, 72vw); aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 42%,
+      color-mix(in srgb, var(--mare-cor-sku) 34%, transparent) 0%,
+      transparent 68%);
+  }
+  .mare-hero__img { max-width: 78%; height: auto; }
+
+  .mare-hero__vazio {
+    width: 58%; aspect-ratio: 3 / 4;
+    display: grid; place-items: center;
+    border-radius: var(--mare-raio);
+    background: color-mix(in srgb, var(--mare-cor-sku) 26%, var(--mare-areia));
+    color: var(--mare-cor-sku); font-size: 3.5rem;
+  }
+
   .mare-hero__nome { font-size: var(--mare-t-titulo); text-align: center; }
   .mare-hero__descritor {
-    margin: 0; font-size: var(--mare-t-micro); letter-spacing: .1em;
-    text-transform: lowercase; opacity: .7;
+    margin: 0; font-size: var(--mare-t-micro);
+    letter-spacing: .14em; text-transform: lowercase; opacity: .72;
   }
 
   .mare-hero__abas {
-    grid-area: 2 / 1; display: flex; flex-wrap: wrap; justify-content: center;
-    gap: .5rem; margin-top: 1rem;
+    grid-area: 2 / 1; display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem;
   }
   .mare-hero__aba {
-    min-height: 44px; display: inline-flex; align-items: center;
-    padding: 0 1rem; border-radius: 999px; cursor: pointer;
+    min-height: 46px; display: inline-flex; align-items: center;
+    padding: 0 1.125rem; border-radius: 999px; cursor: pointer;
     border: 2px solid var(--mare-cor-sku); color: var(--mare-ameixa);
     font-size: var(--mare-t-micro); font-weight: 600;
+    background: color-mix(in srgb, var(--mare-branco) 60%, transparent);
+    transition: background .16s ease, color .16s ease;
   }
   .mare-hero__aba:hover { background: var(--mare-cor-sku); color: var(--mare-branco); }
 
-  .mare-hero__vazio { opacity: .6; }
-
-  .mare-hero__fallback {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: var(--mare-gap);
+  .mare-hero__tiras {
+    list-style: none; margin: 0; padding: 0;
+    display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem 1.75rem;
+    padding-bottom: 2rem;
   }
-
-  .mare-hero__demo {
-    display: grid;
-    justify-items: center;
-    gap: .75rem;
-    min-height: 320px;
-    padding: 2rem 1rem;
-    border-radius: var(--mare-raio);
-    background: color-mix(in srgb, var(--mare-cor-sku) 18%, var(--mare-areia));
+  .mare-tira {
+    display: inline-flex; align-items: baseline; gap: .5rem;
+    font-size: var(--mare-t-micro); font-weight: 600;
+    letter-spacing: .1em; text-transform: uppercase; opacity: .78;
   }
+  .mare-tira .mare-acento { color: var(--mare-coral); }
 
-  .mare-hero__pouch {
-    display: grid;
-    place-items: center;
-    width: min(190px, 48vw);
-    aspect-ratio: 4 / 5;
-    border-radius: 22px 22px 46px 46px;
-    background: linear-gradient(145deg, var(--mare-cor-sku), var(--mare-coral));
-    color: var(--mare-sol);
-    box-shadow: 0 18px 40px color-mix(in srgb, var(--mare-ameixa) 18%, transparent);
-    font-family: var(--mare-display);
-    font-size: 2rem;
-    font-weight: 600;
-  }
-
-  @media (max-width: 749px) {
-    .mare-hero__fallback { grid-template-columns: 1fr; }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .mare-hero__sabor { transition: none; }
-  }
+  @media (prefers-reduced-motion: reduce) { .mare-hero__sabor { transition: none; } }
 {% endstylesheet %}
 
 {% schema %}
 {
   "name": "Hero sabores",
   "tag": "section",
-  "class": "mare-shopify-section",
+  "max_blocks": 4,
   "settings": [
-    { "type": "text", "id": "olho", "label": "Sobretítulo", "default": "Refresco funcional em pó" },
-    { "type": "text", "id": "titulo", "label": "Título", "default": "Verão o ano inteiro." },
-    { "type": "collection", "id": "colecao", "label": "Coleção de sabores", "info": "Use a coleção Sabores. Mostra até 4 produtos." },
+    { "type": "header", "content": "Conteúdo" },
+    { "type": "text", "id": "olho", "label": "Sobretítulo", "default": "Refresco funcional com alma de verão" },
+    { "type": "text", "id": "titulo", "label": "Título", "default": "Bateu o calor? Tá dando maré." },
+    { "type": "text", "id": "linha_fina", "label": "Linha de apoio", "default": "Frescor de fruta em pó. Mistura, gela, vai — e o dia segue mais leve." },
     { "type": "text", "id": "rotulo_cta", "label": "Texto do botão", "default": "Quero essa maré" },
+    { "type": "header", "content": "Fotos" },
+    { "type": "image_picker", "id": "foto_fundo", "label": "Foto de fundo", "info": "Opcional. Ambiente de verão real, luz quente. Sem ela o hero usa o fundo de sol da marca." },
+    { "type": "header", "content": "Produtos" },
+    { "type": "collection", "id": "colecao", "label": "Coleção de sabores", "info": "Use a coleção Sabores. Mostra até 4." },
     { "type": "color", "id": "cor_padrao", "label": "Cor de fallback do SKU", "default": "#FF5436" }
   ],
-  "presets": [{ "name": "Hero sabores" }]
+  "blocks": [
+    {
+      "type": "tira",
+      "name": "Selo de tira",
+      "settings": [
+        { "type": "text", "id": "texto", "label": "Texto", "default": "Frescor de fruta" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero sabores",
+      "blocks": [
+        { "type": "tira", "settings": { "texto": "Frescor de fruta" } },
+        { "type": "tira", "settings": { "texto": "Verão o ano inteiro" } },
+        { "type": "tira", "settings": { "texto": "Mistura. Gela. Vai." } }
+      ]
+    }
+  ]
 }
 {% endschema %}
