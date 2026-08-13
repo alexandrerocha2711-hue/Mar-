@@ -1,0 +1,195 @@
+{% comment %}
+  MARÉ — prova social
+  ---------------------------------------------------------------------------
+  Mistura os dois padrões que funcionam nas referências: a parede de fotos
+  reais do Cafellow ("todo mundo ama") e o bloco de citações da Aura Bora
+  ("they like us"), num mosaico só.
+
+  A NOTA EMPRESTADA, COM FONTE DECLARADA.
+  Marca no dia 1 não tem volume de avaliação própria. O Cali Sober resolve
+  isso exibindo a média de um varejista e DIZENDO de onde ela vem. É honesto
+  e é eficaz. Enquanto a MARÉ não tiver base própria, use o campo de origem
+  para nomear a fonte — nota sem procedência é publicidade enganosa, nota com
+  procedência é prova. Os dois campos nascem VAZIOS de propósito.
+
+  Quando houver avaliações próprias suficientes, troque este bloco pelo
+  aplicativo de reviews e ganhe a estrela abaixo do preço na PDP, que é o
+  elemento de maior impacto em adicionar ao carrinho.
+
+  O depoimento é texto do cliente. Não edite a fala dele para incluir
+  benefício fisiológico — depoimento também responde pela RDC 243/2018.
+{% endcomment %}
+
+<section class="mare-prova mare-section" aria-labelledby="mare-prova-{{ section.id }}">
+  <div class="mare-wrap">
+
+    <header class="mare-prova__head mare-revela">
+      {%- if section.settings.olho != blank -%}
+        <p class="mare-olho">{{ section.settings.olho | escape }}</p>
+      {%- endif -%}
+      <h2 class="mare-h mare-prova__titulo" id="mare-prova-{{ section.id }}">
+        {{ section.settings.titulo | escape }}
+      </h2>
+
+      {%- if section.settings.nota != blank -%}
+        <p class="mare-prova__nota">
+          <span class="mare-prova__estrelas" aria-hidden="true">★★★★★</span>
+          <strong>{{ section.settings.nota | escape }}</strong>
+          {%- if section.settings.origem != blank -%}
+            <span class="mare-prova__origem">{{ section.settings.origem | escape }}</span>
+          {%- endif -%}
+        </p>
+      {%- endif -%}
+    </header>
+
+    <ul class="mare-prova__mosaico" role="list">
+      {%- for block in section.blocks -%}
+        <li class="mare-peca mare-peca--{{ block.type }} mare-revela" style="--mare-cor-sku: {{ block.settings.cor | default: '#FF5436' }};" {{ block.shopify_attributes }}>
+          {%- case block.type -%}
+
+            {%- when 'foto' -%}
+              {%- if block.settings.foto -%}
+                {{ block.settings.foto | image_url: width: 900 | image_tag: loading: 'lazy', sizes: '(min-width: 990px) 26vw, (min-width: 750px) 40vw, 80vw', class: 'mare-peca__img', alt: block.settings.alt }}
+              {%- else -%}
+                <span class="mare-peca__vazio" aria-hidden="true"><span class="mare-acento"></span></span>
+              {%- endif -%}
+              {%- if block.settings.legenda != blank -%}
+                <span class="mare-peca__legenda">{{ block.settings.legenda | escape }}</span>
+              {%- endif -%}
+
+            {%- when 'citacao' -%}
+              <blockquote class="mare-peca__fala">
+                <p>{{ block.settings.texto | escape }}</p>
+                <footer>
+                  <cite>{{ block.settings.autor | escape }}</cite>
+                  {%- if block.settings.contexto != blank -%}
+                    <span class="mare-peca__contexto">{{ block.settings.contexto | escape }}</span>
+                  {%- endif -%}
+                </footer>
+              </blockquote>
+
+          {%- endcase -%}
+        </li>
+      {%- endfor -%}
+    </ul>
+
+    {%- if section.settings.link != blank and section.settings.rotulo != blank -%}
+      <a href="{{ section.settings.link }}" class="mare-btn mare-prova__cta">
+        {{ section.settings.rotulo | escape }}
+      </a>
+    {%- endif -%}
+
+  </div>
+</section>
+
+{% stylesheet %}
+  .mare-prova { padding-block: var(--mare-grid); }
+
+  .mare-prova__head { margin-bottom: clamp(1.75rem, 4vw, 3rem); max-width: 52ch; }
+  .mare-prova__titulo { font-size: var(--mare-t-titulo); }
+
+  .mare-prova__nota {
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem .75rem;
+    margin: 1rem 0 0; font-size: .9375rem;
+  }
+  .mare-prova__estrelas { color: var(--mare-tangerina); letter-spacing: .1em; }
+  .mare-prova__origem { font-size: var(--mare-t-micro); opacity: .6; }
+
+  .mare-prova__mosaico {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; gap: var(--mare-gap);
+    grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+  }
+
+  .mare-peca { position: relative; border-radius: var(--mare-raio); overflow: hidden; }
+
+  .mare-peca--foto {
+    aspect-ratio: 4 / 5;
+    background: color-mix(in srgb, var(--mare-cor-sku) 16%, var(--mare-areia));
+    box-shadow: var(--mare-sombra-1);
+  }
+  .mare-peca__img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .mare-peca__vazio {
+    width: 100%; height: 100%; display: grid; place-items: center;
+    color: var(--mare-cor-sku); font-size: 2.75rem;
+  }
+  .mare-peca__legenda {
+    position: absolute; inset: auto 0 0 0;
+    padding: 2.5rem .875rem .875rem;
+    color: var(--mare-branco);
+    font-size: var(--mare-t-micro); font-weight: 600;
+    background: linear-gradient(to top, rgba(58,10,36,.72), transparent);
+  }
+
+  .mare-peca--citacao {
+    display: grid; align-content: center; gap: 1rem;
+    padding: clamp(1.25rem, 3vw, 2rem);
+    background: var(--mare-branco);
+    box-shadow: var(--mare-sombra-1);
+    border-top: 5px solid var(--mare-cor-sku);
+  }
+  .mare-peca__fala { margin: 0; display: grid; gap: 1rem; }
+  .mare-peca__fala p {
+    margin: 0;
+    font-family: var(--mare-display); font-weight: 500;
+    font-size: clamp(1.0625rem, 1.9vw, 1.375rem);
+    line-height: 1.25; letter-spacing: -.015em;
+  }
+  .mare-peca__fala footer { display: grid; gap: .125rem; }
+  .mare-peca__fala cite { font-style: normal; font-weight: 600; font-size: .9375rem; }
+  .mare-peca__contexto { font-size: var(--mare-t-micro); opacity: .6; }
+
+  .mare-prova__cta { margin-top: 2rem; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Prova social",
+  "tag": "section",
+  "max_blocks": 8,
+  "settings": [
+    { "type": "text", "id": "olho", "label": "Sobretítulo", "default": "Quem já tomou" },
+    { "type": "text", "id": "titulo", "label": "Título", "default": "Todo mundo ama." },
+    { "type": "header", "content": "Nota" },
+    { "type": "paragraph", "content": "Só preencha quando existir avaliação real. Se a nota vier de outro canal (marketplace, varejista, rede social), diga isso no campo de origem. Nota sem procedência declarada é risco jurídico." },
+    { "type": "text", "id": "nota", "label": "Nota" },
+    { "type": "text", "id": "origem", "label": "Origem da nota" },
+    { "type": "header", "content": "Chamada" },
+    { "type": "url", "id": "link", "label": "Link do botão" },
+    { "type": "text", "id": "rotulo", "label": "Texto do botão", "default": "Escolher meu sabor" }
+  ],
+  "blocks": [
+    {
+      "type": "foto",
+      "name": "Foto de cliente",
+      "settings": [
+        { "type": "image_picker", "id": "foto", "label": "Foto" },
+        { "type": "text", "id": "alt", "label": "Descrição da foto", "default": "Cliente com o copo MARÉ" },
+        { "type": "text", "id": "legenda", "label": "Legenda", "default": "@mare" },
+        { "type": "color", "id": "cor", "label": "Cor de apoio", "default": "#FF5436" }
+      ]
+    },
+    {
+      "type": "citacao",
+      "name": "Depoimento",
+      "settings": [
+        { "type": "text", "id": "texto", "label": "Fala do cliente", "default": "Achei que ia ser mais um pó de gosto artificial. Não é." },
+        { "type": "text", "id": "autor", "label": "Nome", "default": "Larissa R." },
+        { "type": "text", "id": "contexto", "label": "Contexto", "default": "Recife · compra verificada" },
+        { "type": "color", "id": "cor", "label": "Cor de apoio", "default": "#E8156B" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Prova social",
+      "blocks": [
+        { "type": "foto", "settings": { "legenda": "@mare", "cor": "#E8156B" } },
+        { "type": "citacao", "settings": { "cor": "#FF9500" } },
+        { "type": "foto", "settings": { "legenda": "fim de tarde", "cor": "#FF9500" } },
+        { "type": "citacao", "settings": { "texto": "Virou o copo da tarde aqui em casa. Meu filho pede.", "autor": "Bel M.", "contexto": "São Paulo · compra verificada", "cor": "#FF5436" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
