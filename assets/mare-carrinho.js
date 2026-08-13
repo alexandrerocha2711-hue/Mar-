@@ -1,39 +1,28 @@
 /* ==========================================================================
    MARÉ — carrinho
-   --------------------------------------------------------------------------
-   Adiciona ao carrinho e repinta as sections dependentes com o HTML que o
-   SERVIDOR devolveu. Nada é recalculado no navegador.
+   Adiciona ao carrinho e repinta as sections com o HTML que o SERVIDOR
+   devolveu. Nada é recalculado no navegador. O parâmetro `sections` da Cart
+   AJAX API é o que torna isso possível.
 
-   O parâmetro `sections` da Cart AJAX API é o que torna isso possível: você
-   manda os nomes das sections e a Shopify devolve o HTML já renderizado com o
-   carrinho novo. É por isso que a barra de progresso nunca dessincroniza.
-
-   Regras da plataforma respeitadas aqui:
-   - IIFE (minificadores renomeiam variáveis e criam colisão no escopo global)
-   - Sem framework, sem polyfill, APIs nativas
-   - Carregado com `defer`, nunca bloqueia o parser
-   - Melhoria progressiva: se este arquivo falhar, o <form> HTML ainda envia
+   Regras da plataforma respeitadas: IIFE, sem framework, defer, e melhoria
+   progressiva (se falhar, o <form> HTML ainda envia).
    ========================================================================== */
 
 (function () {
   'use strict';
 
-  /* Nomes dos ARQUIVOS de section (sem .liquid) que devem ser repintados. */
   var SECOES = ['mare-barra-frete'];
 
   function alvo(nome) {
     return document.getElementById('shopify-section-' + nome);
   }
 
-  /* Troca o conteúdo de cada section pelo HTML vindo do servidor. */
   function repintar(sections) {
     if (!sections) return;
-
     SECOES.forEach(function (nome) {
       var el = alvo(nome);
       var html = sections[nome];
       if (!el || !html) return;
-
       var doc = new DOMParser().parseFromString(html, 'text/html');
       var novo = doc.getElementById('shopify-section-' + nome);
       if (novo) el.innerHTML = novo.innerHTML;
@@ -44,12 +33,12 @@
     document.dispatchEvent(new CustomEvent('mare:' + nome, { detail: detalhe }));
   }
 
-  /**
-   * Adiciona itens ao carrinho.
-   * @param {Array} itens  [{ id, quantity, selling_plan, properties }]
-   */
+  function raiz() {
+    return (window.Shopify && window.Shopify.routes && window.Shopify.routes.root) || '/';
+  }
+
   async function adicionar(itens) {
-    var resposta = await fetch(window.Shopify.routes.root + 'cart/add.js', {
+    var resposta = await fetch(raiz() + 'cart/add.js', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify({
@@ -62,7 +51,6 @@
     var dados = await resposta.json();
 
     if (!resposta.ok) {
-      /* A Shopify devolve `description` legível em erro de carrinho. */
       avisar('carrinho:erro', dados);
       throw new Error(dados.description || 'Não foi possível adicionar ao carrinho.');
     }
@@ -72,11 +60,8 @@
     return dados;
   }
 
-  /**
-   * Altera a quantidade de uma linha. `linha` é 1-indexado.
-   */
   async function alterar(linha, quantidade) {
-    var resposta = await fetch(window.Shopify.routes.root + 'cart/change.js', {
+    var resposta = await fetch(raiz() + 'cart/change.js', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify({
@@ -98,10 +83,8 @@
     return dados;
   }
 
-  /* ------------------------------------------------------------------------
-     Compra rápida: intercepta qualquer <form action="/cart/add">
-     marcado com data-mare-quick-add. Sem o script, o form envia normalmente.
-     ------------------------------------------------------------------------ */
+  /* Compra rápida: intercepta form[data-mare-quick-add].
+     Sem o script, o form envia normalmente. */
   document.addEventListener('submit', function (evento) {
     var form = evento.target;
     if (!form.matches || !form.matches('form[data-mare-quick-add]')) return;
@@ -120,9 +103,7 @@
     if (botao) { botao.disabled = true; botao.textContent = 'Adicionando…'; }
 
     adicionar([item])
-      .then(function () {
-        if (botao) botao.textContent = 'Na sacola';
-      })
+      .then(function () { if (botao) botao.textContent = 'Na sacola'; })
       .catch(function (erro) {
         if (botao) botao.textContent = rotuloOriginal;
         console.error('[MARÉ]', erro);
