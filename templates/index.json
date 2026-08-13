@@ -9,9 +9,9 @@
  */
 {
   "sections": {
-    "mare_hero_sabores": {
+    "hero": {
       "type": "mare-hero-sabores",
-      "name": "Hero sabores MARÉ",
+      "name": "1. Hero sabores",
       "settings": {
         "olho": "Refresco funcional com alma de verão",
         "titulo": "Verão o ano inteiro.",
@@ -19,9 +19,89 @@
         "rotulo_cta": "Quero essa maré",
         "cor_padrao": "#FF5436"
       }
+    },
+    "grade": {
+      "type": "mare-grade-sabores",
+      "name": "2. Grade de sabores",
+      "settings": {
+        "olho": "Uma família",
+        "titulo": "Três marés.",
+        "colecao": "sabores",
+        "limite": 4,
+        "compra_rapida": true,
+        "rotulo_cta": "Adicionar",
+        "rotulo_esgotado": "Acabou por enquanto"
+      }
+    },
+    "ritual": {
+      "type": "mare-ritual",
+      "name": "3. Ritual",
+      "blocks": {
+        "p1": { "type": "passo", "settings": { "verbo": "Mistura.", "legenda": "o pó encontra a água", "cor": "#E8156B" } },
+        "p2": { "type": "passo", "settings": { "verbo": "Gela.", "legenda": "o frescor muda o clima", "cor": "#FF9500" } },
+        "p3": { "type": "passo", "settings": { "verbo": "Vai.", "legenda": "o dia segue mais leve", "cor": "#FF5436" } }
+      },
+      "block_order": ["p1", "p2", "p3"],
+      "settings": {
+        "olho": "O ritual",
+        "titulo": "Três verbos. Um gesto que fica.",
+        "linha_fina": "Ritual bom é aquele que a pessoa lembra sem precisar decorar.",
+        "rotulo": "Conheça os sabores"
+      }
+    },
+    "comparativo": {
+      "type": "mare-comparativo",
+      "name": "4. Comparativo",
+      "blocks": {
+        "l1": { "type": "linha", "settings": { "item": "Açúcar adicionado", "nos": "não contém", "eles": "contém" } },
+        "l2": { "type": "linha", "settings": { "item": "Corante artificial", "nos": "não contém", "eles": "contém" } },
+        "l3": { "type": "linha", "settings": { "item": "Fibra alimentar", "nos": "contém", "eles": "não contém" } },
+        "l4": { "type": "linha", "settings": { "item": "Sabor", "nos": "de fruta", "eles": "aroma artificial" } }
+      },
+      "block_order": ["l1", "l2", "l3", "l4"],
+      "settings": {
+        "olho": "O que tem dentro",
+        "titulo": "Compare o rótulo.",
+        "coluna_nos": "MARÉ",
+        "coluna_eles": "Refresco comum",
+        "nota": "Comparação por porção preparada. Confira sempre o rótulo do produto."
+      }
+    },
+    "clube": {
+      "type": "mare-clube",
+      "name": "5. Clube",
+      "blocks": {
+        "v1": { "type": "vantagem", "settings": { "nome": "Economize", "texto": "Melhor preço por dose, e frete grátis em todo ciclo." } },
+        "v2": { "type": "vantagem", "settings": { "nome": "Sem esforço", "texto": "Chega sempre na mesma data. Você não pensa nisso." } },
+        "v3": { "type": "vantagem", "settings": { "nome": "Sabores antes", "texto": "Lançamentos primeiro, e você pede o próximo da linha." } },
+        "v4": { "type": "vantagem", "settings": { "nome": "Sem amarras", "texto": "Troque o sabor, adie ou cancele em uma tela, quando quiser." } }
+      },
+      "block_order": ["v1", "v2", "v3", "v4"],
+      "settings": {
+        "olho": "O clube",
+        "titulo": "Sua maré chega sozinha.",
+        "linha_fina": "Verão o ano inteiro, sem precisar lembrar de comprar.",
+        "rotulo": "Entrar no clube",
+        "rotulo_politica": "Veja a política de assinatura"
+      }
+    },
+    "faq": {
+      "type": "mare-faq",
+      "name": "6. Dúvidas",
+      "blocks": {
+        "q1": { "type": "pergunta", "settings": { "pergunta": "Qual o gosto?", "resposta": "<p>Frescor de fruta de verdade. Cada maré tem um perfil próprio — o descritor de sabor está na página de cada uma.</p>" } },
+        "q2": { "type": "pergunta", "settings": { "pergunta": "Como preparo?", "resposta": "<p>Mistura o pó na água, gela e bebe. A medida exata está na embalagem.</p>" } },
+        "q3": { "type": "pergunta", "settings": { "pergunta": "Tem açúcar?", "resposta": "<p>Confira a tabela nutricional e a lista de ingredientes na página do produto — elas trazem a informação completa do rótulo.</p>" } },
+        "q4": { "type": "pergunta", "settings": { "pergunta": "Quem não deve consumir?", "resposta": "<p>As advertências e o público a que o produto não se destina estão no rótulo e na página do produto. Em caso de dúvida, converse com um profissional de saúde.</p>" } },
+        "q5": { "type": "pergunta", "settings": { "pergunta": "Em quanto tempo chega?", "resposta": "<p>O prazo aparece no carrinho depois que você informa o CEP.</p>" } },
+        "q6": { "type": "pergunta", "settings": { "pergunta": "Posso trocar ou devolver?", "resposta": "<p>Sim. Você tem 7 dias a partir do recebimento para desistir da compra, sem custo. Veja a política de trocas e devoluções no rodapé.</p>" } }
+      },
+      "block_order": ["q1", "q2", "q3", "q4", "q5", "q6"],
+      "settings": {
+        "olho": "Dúvidas",
+        "titulo": "Perguntas que a gente recebe."
+      }
     }
   },
-  "order": [
-    "mare_hero_sabores"
-  ]
+  "order": ["hero", "grade", "ritual", "comparativo", "clube", "faq"]
 }
