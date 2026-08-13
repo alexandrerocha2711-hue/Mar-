@@ -3,8 +3,7 @@
    Brandbook 2026. Prefixo `mare-` obrigatório: nunca editar arquivo do tema base.
 
    ATENÇÃO — prancha 23 do brandbook lista "trocar a paleta" como proibição
-   de marca. Os hexes abaixo são normativos. Não substituir, não aproximar,
-   não gerar variação sem aprovação.
+   de marca. Os hexes abaixo são normativos. Não substituir, não aproximar.
    ========================================================================== */
 
 :root {
@@ -16,18 +15,16 @@
   --mare-areia:      #FFEBD6;  /* 23% — fundo */
   --mare-ameixa:     #3A0A24;  /* 10% — tinta */
 
-  /* Neutro de apoio. Não é cor de marca: só superfície de card. */
   --mare-branco:     #FFFDFB;
 
-  /* Maré sem azul. Nenhum token azul existe neste arquivo por decisão de marca. */
+  /* Maré sem azul. Nenhum token azul existe aqui por decisão de marca. */
 
   /* --- Tipografia (prancha 26) --- */
-  --mare-display: "Fredoka", ui-rounded, system-ui, sans-serif;   /* 600 */
-  --mare-corpo:   "Instrument Sans", system-ui, -apple-system, sans-serif; /* 400 / 600 */
+  --mare-display: "Fredoka", ui-rounded, system-ui, sans-serif;
+  --mare-corpo:   "Instrument Sans", system-ui, -apple-system, sans-serif;
 
   --mare-t-hero:   clamp(2.4rem, 7vw, 5rem);
   --mare-t-titulo: clamp(1.6rem, 4vw, 2.6rem);
-  --mare-t-sub:    clamp(1.05rem, 2vw, 1.3rem);
   --mare-t-corpo:  1rem;
   --mare-t-micro:  0.8125rem;
 
@@ -36,19 +33,14 @@
   --mare-gap:  1.5rem;
   --mare-raio: 14px;
 
-  /* Cor ativa do SKU. Sobrescrita inline por produto. */
   --mare-cor-sku: var(--mare-coral);
 }
 
-/* --------------------------------------------------------------------------
-   Assinatura: o acento agudo isolado.
-   Permitido pela prancha 24 (avatar, lacre, fita, pattern, microassinatura).
-   PROIBIDO destacar o acento de dentro do logotipo — o wordmark é indivisível.
-   -------------------------------------------------------------------------- */
+/* Assinatura: o acento agudo isolado. Permitido pela prancha 24.
+   PROIBIDO destacar o acento de dentro do logotipo. */
 .mare-acento {
   display: inline-block;
-  width: .62em;
-  height: .16em;
+  width: .62em; height: .16em;
   background: currentColor;
   transform: skewX(-32deg);
   border-radius: 1px;
@@ -56,81 +48,50 @@
   margin: 0 .1em;
 }
 
-/* Marola: grafismo de fluxo e repetição (prancha 27). CSS puro, zero imagem. */
+/* Marola: grafismo de fluxo (prancha 27). CSS puro, zero imagem. */
 .mare-marola {
-  display: block;
-  width: 100%;
-  height: 26px;
+  display: block; width: 100%; height: 26px;
   background:
     radial-gradient(circle at 50% 100%, transparent 12px, var(--mare-cor-sku) 12px 14px, transparent 14px)
     0 0 / 40px 26px repeat-x;
 }
 
-/* --------------------------------------------------------------------------
-   Base
-   -------------------------------------------------------------------------- */
 .mare-section {
   background: var(--mare-areia);
   color: var(--mare-ameixa);
   font-family: var(--mare-corpo);
 }
 
-.mare-wrap {
-  max-width: 1280px;
-  margin-inline: auto;
-  padding-inline: var(--mare-gap);
-}
+.mare-wrap { max-width: 1280px; margin-inline: auto; padding-inline: var(--mare-gap); }
 
 .mare-h {
   font-family: var(--mare-display);
-  font-weight: 600;
-  line-height: 1.02;
-  letter-spacing: -.02em;
-  margin: 0;
+  font-weight: 600; line-height: 1.02;
+  letter-spacing: -.02em; margin: 0;
 }
 
-/* --------------------------------------------------------------------------
-   Botão
-   -------------------------------------------------------------------------- */
 .mare-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: .5rem;
-  min-height: 48px;              /* alvo de toque ≥ 44px */
-  padding: 0 1.5rem;
-  border: 0;
-  border-radius: 999px;
-  background: var(--mare-ameixa);
-  color: var(--mare-sol);
-  font-family: var(--mare-corpo);
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  text-decoration: none;
+  display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+  min-height: 48px; padding: 0 1.5rem;
+  border: 0; border-radius: 999px;
+  background: var(--mare-ameixa); color: var(--mare-sol);
+  font-family: var(--mare-corpo); font-weight: 600; font-size: 1rem;
+  cursor: pointer; text-decoration: none;
   transition: transform .12s ease, background .12s ease;
 }
 .mare-btn:hover { transform: translateY(-1px); }
-.mare-btn:active { transform: translateY(0); }
 .mare-btn[disabled] { opacity: .5; cursor: not-allowed; transform: none; }
-
 .mare-btn--sku { background: var(--mare-cor-sku); color: var(--mare-branco); }
 
-/* --------------------------------------------------------------------------
-   Preço
-   -------------------------------------------------------------------------- */
-.mare-preco            { display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem .75rem; }
-.mare-preco__atual     { font-family: var(--mare-display); font-weight: 600; font-size: 1.75rem; line-height: 1; }
-.mare-preco__antes     { font-size: 1rem; opacity: .55; text-decoration: line-through; }
-.mare-preco__selo      { font-size: var(--mare-t-micro); font-weight: 600; background: var(--mare-sol);
-                         color: var(--mare-ameixa); padding: .2rem .5rem; border-radius: 999px; }
+.mare-preco        { display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem .75rem; }
+.mare-preco__atual { font-family: var(--mare-display); font-weight: 600; font-size: 1.75rem; line-height: 1; }
+.mare-preco__antes { font-size: 1rem; opacity: .55; text-decoration: line-through; }
+.mare-preco__selo  { font-size: var(--mare-t-micro); font-weight: 600; background: var(--mare-sol);
+                     color: var(--mare-ameixa); padding: .2rem .5rem; border-radius: 999px; }
 .mare-preco__parcela,
-.mare-preco__dose      { flex-basis: 100%; font-size: var(--mare-t-micro); opacity: .75; margin: 0; }
-.mare-preco__dose      { color: var(--mare-pitaya); opacity: 1; font-weight: 600; }
+.mare-preco__dose  { flex-basis: 100%; font-size: var(--mare-t-micro); opacity: .75; margin: 0; }
+.mare-preco__dose  { color: var(--mare-pitaya); opacity: 1; font-weight: 600; }
 
-/* --------------------------------------------------------------------------
-   Acessibilidade e motion
-   -------------------------------------------------------------------------- */
 :where(.mare-section) :focus-visible {
   outline: 3px solid var(--mare-pitaya);
   outline-offset: 3px;
