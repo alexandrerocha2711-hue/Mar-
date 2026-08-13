@@ -99,58 +99,28 @@
                 "preco"
               ]
             },
-            "sabores": {
-              "type": "mare-sabores",
-              "name": "Seletor de sabor",
+            "kit": {
+              "type": "mare-kit",
+              "name": "Montar kit",
               "settings": {
                 "colecao": "sabores",
-                "rotulo": "Sabor",
+                "degraus": "1;1 pouch;experimente;|2;2 pouches;frete grátis;mais escolhido|3;3 pouches;frete grátis + 10% off;melhor valor",
+                "titulo_degraus": "1. Quantos pouches",
+                "titulo_sabores": "2. Escolha os sabores",
+                "selos": "mais vendido|novidade|",
+                "cores": "#E8156B,#FF9500,#FF5436,#FFC943",
                 "rotulo_esgotado": "esgotado",
-                "cores": "#E8156B,#FF9500,#FF5436,#FFC943"
+                "frete_centavos": 20000,
+                "texto_frete_falta": "Faltam [valor] para o frete grátis",
+                "texto_frete_ok": "Frete grátis liberado.",
+                "rotulo_subtotal": "Subtotal",
+                "rotulo_cta": "Adicionar ao carrinho",
+                "rotulo_vazio": "Escolha ao menos um sabor",
+                "nota": "Descontos e frete grátis são calculados e aplicados no carrinho.",
+                "garantia_titulo": "7 dias para desistir",
+                "garantia_texto": "Direito de arrependimento previsto no CDC: recebeu, não quis, devolve sem custo."
               },
               "blocks": {}
-            },
-            "variantes": {
-              "type": "variant-picker",
-              "settings": {
-                "variant_style": "buttons",
-                "show_swatches": false,
-                "alignment": "left"
-              },
-              "blocks": {}
-            },
-            "comprar": {
-              "type": "buy-buttons",
-              "settings": {
-                "stacking": true,
-                "show_pickup_availability": true,
-                "border_radius": 50
-              },
-              "blocks": {
-                "quantity": {
-                  "type": "quantity",
-                  "static": true,
-                  "settings": {
-                    "border_radius": 50
-                  },
-                  "blocks": {}
-                },
-                "add-to-cart": {
-                  "type": "add-to-cart",
-                  "static": true,
-                  "settings": {
-                    "style_class": "button"
-                  },
-                  "blocks": {}
-                },
-                "accelerated-checkout": {
-                  "type": "accelerated-checkout",
-                  "static": true,
-                  "settings": {},
-                  "blocks": {}
-                }
-              },
-              "block_order": []
             },
             "descricao": {
               "type": "text",
@@ -211,9 +181,7 @@
           },
           "block_order": [
             "topo",
-            "sabores",
-            "variantes",
-            "comprar",
+            "kit",
             "descricao",
             "detalhes"
           ]
@@ -223,7 +191,7 @@
         "content_width": "page-width",
         "desktop_media_position": "left",
         "gap": 48,
-        "enable_sticky_add_to_cart": true,
+        "enable_sticky_add_to_cart": false,
         "padding-block-start": 24,
         "padding-block-end": 24
       }
@@ -320,19 +288,6 @@
         "nota": "Comparação por porção preparada. Confira sempre o rótulo do produto."
       }
     },
-    "outras": {
-      "type": "mare-grade-sabores",
-      "name": "As outras marés",
-      "settings": {
-        "olho": "Leve a linha",
-        "titulo": "As outras marés.",
-        "colecao": "sabores",
-        "limite": 4,
-        "compra_rapida": true,
-        "rotulo_cta": "Adicionar",
-        "rotulo_esgotado": "Acabou por enquanto"
-      }
-    },
     "duvidas": {
       "type": "mare-faq",
       "blocks": {
@@ -360,18 +315,25 @@
         "q4": {
           "type": "pergunta",
           "settings": {
+            "pergunta": "Posso misturar sabores no mesmo pedido?",
+            "resposta": "<p>Pode e é a graça. O seletor acima soma quantos pouches você quiser de cada sabor num pedido só.</p>"
+          }
+        },
+        "q5": {
+          "type": "pergunta",
+          "settings": {
             "pergunta": "Quantas doses vem?",
             "resposta": "<p>A quantidade de doses por embalagem está no rótulo e na descrição deste produto.</p>"
           }
         },
-        "q5": {
+        "q6": {
           "type": "pergunta",
           "settings": {
             "pergunta": "Como guardo depois de aberto?",
             "resposta": "<p>Em local seco e ao abrigo da luz, bem fechado. Não precisa de geladeira.</p>"
           }
         },
-        "q6": {
+        "q7": {
           "type": "pergunta",
           "settings": {
             "pergunta": "Quem não deve consumir?",
@@ -385,7 +347,8 @@
         "q3",
         "q4",
         "q5",
-        "q6"
+        "q6",
+        "q7"
       ],
       "name": "Dúvidas do produto",
       "settings": {
@@ -398,7 +361,6 @@
     "main",
     "preparo",
     "comparativo",
-    "outras",
     "duvidas"
   ]
 }
