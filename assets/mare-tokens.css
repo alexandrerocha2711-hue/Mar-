@@ -1,42 +1,105 @@
 /* ==========================================================================
-   MARÉ — tokens de design
-   Brandbook 2026. Prefixo `mare-` obrigatório: nunca editar arquivo do tema base.
+   MARÉ — tokens, fundos, profundidade e movimento
+   Brandbook 2026. Prefixo `mare-`: nunca editar arquivo do tema base.
 
-   ATENÇÃO — prancha 23 do brandbook lista "trocar a paleta" como proibição
-   de marca. Os hexes abaixo são normativos. Não substituir, não aproximar.
+   PALETA É NORMATIVA. A prancha 23 lista "trocar a paleta" como proibição de
+   marca. Não substituir, não aproximar, não gerar variante.
+
+   ORÇAMENTO: este arquivo não carrega nenhuma imagem, fonte ou biblioteca.
+   Textura, brilho, onda e profundidade são gradiente e SVG inline — custo de
+   rede zero. É por isso que dá para ter atmosfera sem estourar o LCP.
    ========================================================================== */
 
 :root {
   /* --- Paleta oficial (prancha 25) --- */
-  --mare-coral:      #FF5436;  /* 25% — dominante */
-  --mare-pitaya:     #E8156B;  /* 18% */
-  --mare-tangerina:  #FF9500;  /* 14% */
-  --mare-sol:        #FFC943;  /* 10% */
-  --mare-areia:      #FFEBD6;  /* 23% — fundo */
-  --mare-ameixa:     #3A0A24;  /* 10% — tinta */
-
+  --mare-coral:      #FF5436;
+  --mare-pitaya:     #E8156B;
+  --mare-tangerina:  #FF9500;
+  --mare-sol:        #FFC943;
+  --mare-areia:      #FFEBD6;
+  --mare-ameixa:     #3A0A24;
   --mare-branco:     #FFFDFB;
 
-  /* Maré sem azul. Nenhum token azul existe aqui por decisão de marca. */
+  /* Maré sem azul. Nenhum token azul existe aqui, por decisão de marca. */
 
   /* --- Tipografia (prancha 26) --- */
   --mare-display: "Fredoka", ui-rounded, system-ui, sans-serif;
   --mare-corpo:   "Instrument Sans", system-ui, -apple-system, sans-serif;
 
-  --mare-t-hero:   clamp(2.4rem, 7vw, 5rem);
-  --mare-t-titulo: clamp(1.6rem, 4vw, 2.6rem);
+  --mare-t-hero:   clamp(2.75rem, 8vw, 6rem);
+  --mare-t-titulo: clamp(1.75rem, 4.5vw, 3rem);
   --mare-t-corpo:  1rem;
   --mare-t-micro:  0.8125rem;
 
-  /* --- Grid (prancha 29): 72px --- */
-  --mare-grid: 72px;
+  --mare-grid: 72px;   /* prancha 29 */
   --mare-gap:  1.5rem;
-  --mare-raio: 14px;
+  --mare-raio: 16px;
 
   --mare-cor-sku: var(--mare-coral);
+
+  /* Sombra quente. Sombra cinza mata cor tropical — a sombra aqui é ameixa. */
+  --mare-sombra-1: 0 2px 8px rgba(58,10,36,.06);
+  --mare-sombra-2: 0 12px 32px -8px rgba(58,10,36,.16);
+  --mare-sombra-3: 0 32px 64px -16px rgba(58,10,36,.24);
 }
 
-/* Assinatura: o acento agudo isolado. Permitido pela prancha 24.
+/* ==========================================================================
+   1. GRÃO — a textura que tira o plano do digital
+   feTurbulence inline. ~300 bytes. Aplicado como ::before para não interferir
+   no fundo real do elemento.
+   ========================================================================== */
+.mare-section { position: relative; isolation: isolate; }
+
+.mare-section::before {
+  content: "";
+  position: absolute; inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: .30;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23g)' opacity='.42'/%3E%3C/svg%3E");
+}
+
+/* ==========================================================================
+   2. FUNDOS — variantes de superfície
+   ========================================================================== */
+.mare-section {
+  background: var(--mare-areia);
+  color: var(--mare-ameixa);
+  font-family: var(--mare-corpo);
+}
+
+/* Areia com sol batendo no canto. O gesto "cor do sol na fruta". */
+.mare-fundo--sol {
+  background:
+    radial-gradient(120% 90% at 85% -10%, color-mix(in srgb, var(--mare-sol) 55%, transparent) 0%, transparent 62%),
+    radial-gradient(90% 70% at 5% 105%, color-mix(in srgb, var(--mare-coral) 22%, transparent) 0%, transparent 58%),
+    var(--mare-areia);
+}
+
+/* Banho na cor do SKU. Usa --mare-cor-sku, então muda sozinho por sabor. */
+.mare-fundo--sku {
+  background:
+    radial-gradient(130% 100% at 50% -20%, color-mix(in srgb, var(--mare-cor-sku) 42%, transparent) 0%, transparent 66%),
+    color-mix(in srgb, var(--mare-cor-sku) 8%, var(--mare-areia));
+}
+
+/* Noite ameixa. Para o bloco de manifesto e fechamento. */
+.mare-fundo--noite {
+  background:
+    radial-gradient(100% 80% at 20% 0%, color-mix(in srgb, var(--mare-pitaya) 34%, transparent) 0%, transparent 60%),
+    radial-gradient(90% 70% at 90% 100%, color-mix(in srgb, var(--mare-coral) 26%, transparent) 0%, transparent 55%),
+    var(--mare-ameixa);
+  color: var(--mare-areia);
+}
+.mare-fundo--noite .mare-h { color: var(--mare-branco); }
+
+/* ==========================================================================
+   3. GRAFISMOS (prancha 27)
+   RASTRO · impulso e assinatura   MAROLA · fluxo e repetição
+   ========================================================================== */
+
+/* O acento agudo isolado. Permitido pela prancha 24 como assinatura.
    PROIBIDO destacar o acento de dentro do logotipo. */
 .mare-acento {
   display: inline-block;
@@ -48,55 +111,130 @@
   margin: 0 .1em;
 }
 
-/* Marola: grafismo de fluxo (prancha 27). CSS puro, zero imagem. */
+/* Marola: onda repetida. Divide seções sem virar régua reta. */
 .mare-marola {
-  display: block; width: 100%; height: 26px;
+  display: block; width: 100%; height: 28px;
   background:
-    radial-gradient(circle at 50% 100%, transparent 12px, var(--mare-cor-sku) 12px 14px, transparent 14px)
-    0 0 / 40px 26px repeat-x;
+    radial-gradient(circle at 50% 100%, transparent 13px, var(--mare-cor-sku) 13px 15.5px, transparent 16px)
+    0 0 / 44px 28px repeat-x;
+  opacity: .85;
 }
 
-.mare-section {
-  background: var(--mare-areia);
-  color: var(--mare-ameixa);
-  font-family: var(--mare-corpo);
+/* Rastro: risco diagonal de impulso, atrás do conteúdo. */
+.mare-rastro {
+  position: absolute; inset: auto 0 0 0; height: 60%;
+  z-index: -1; pointer-events: none; overflow: hidden;
+}
+.mare-rastro::after {
+  content: "";
+  position: absolute; left: -20%; right: -20%; top: 30%;
+  height: 42%;
+  background: linear-gradient(100deg,
+    transparent 0%,
+    color-mix(in srgb, var(--mare-cor-sku) 30%, transparent) 35%,
+    color-mix(in srgb, var(--mare-sol) 34%, transparent) 62%,
+    transparent 100%);
+  transform: skewY(-4deg);
+  filter: blur(38px);
 }
 
+/* ==========================================================================
+   4. PROFUNDIDADE — 3D sem biblioteca
+   Perspectiva + rotação em CSS. Custo de rede: 0 KB.
+   Uma biblioteca 3D custaria ~150 KB comprimidos e derrubaria o LCP.
+   Para 3D de verdade, use o model-viewer NATIVO da Shopify na PDP:
+   suba um .glb como mídia do produto e a plataforma cuida do resto.
+   ========================================================================== */
+.mare-palco3d { perspective: 1200px; perspective-origin: 50% 40%; }
+
+.mare-flutua {
+  transform-style: preserve-3d;
+  transform: rotateX(6deg) rotateY(-11deg) translateZ(0);
+  filter: drop-shadow(0 34px 44px rgba(58,10,36,.30));
+  transition: transform .5s cubic-bezier(.2,.7,.3,1), filter .5s ease;
+  will-change: transform;
+}
+.mare-palco3d:hover .mare-flutua {
+  transform: rotateX(2deg) rotateY(6deg) translateZ(28px) scale(1.03);
+  filter: drop-shadow(0 46px 56px rgba(58,10,36,.34));
+}
+
+/* Respiro lento e contínuo — dá vida sem pedir interação. */
+@keyframes mare-boia {
+  0%, 100% { translate: 0 0; }
+  50%      { translate: 0 -14px; }
+}
+.mare-boia { animation: mare-boia 7s ease-in-out infinite; }
+
+/* ==========================================================================
+   5. REVELAÇÃO NO SCROLL
+   Animação nativa dirigida por scroll. Sem JavaScript, sem observer.
+   Só aplica onde o navegador suporta; nos demais o conteúdo já nasce visível.
+   ========================================================================== */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .mare-revela {
+      animation: mare-entra linear both;
+      animation-timeline: view();
+      animation-range: entry 5% cover 32%;
+    }
+    @keyframes mare-entra {
+      from { opacity: 0; translate: 0 34px; scale: .985; }
+      to   { opacity: 1; translate: 0 0;    scale: 1; }
+    }
+  }
+}
+
+/* ==========================================================================
+   6. BASE
+   ========================================================================== */
 .mare-wrap { max-width: 1280px; margin-inline: auto; padding-inline: var(--mare-gap); }
 
 .mare-h {
   font-family: var(--mare-display);
-  font-weight: 600; line-height: 1.02;
-  letter-spacing: -.02em; margin: 0;
+  font-weight: 600; line-height: .98;
+  letter-spacing: -.028em; margin: 0;
+  text-wrap: balance;
+}
+
+.mare-olho {
+  font-size: var(--mare-t-micro); letter-spacing: .2em;
+  text-transform: uppercase; opacity: .62; margin: 0 0 .625rem;
 }
 
 .mare-btn {
   display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
-  min-height: 48px; padding: 0 1.5rem;
+  min-height: 52px; padding: 0 1.75rem;
   border: 0; border-radius: 999px;
   background: var(--mare-ameixa); color: var(--mare-sol);
   font-family: var(--mare-corpo); font-weight: 600; font-size: 1rem;
   cursor: pointer; text-decoration: none;
-  transition: transform .12s ease, background .12s ease;
+  box-shadow: var(--mare-sombra-2);
+  transition: transform .16s cubic-bezier(.2,.7,.3,1), box-shadow .16s ease;
 }
-.mare-btn:hover { transform: translateY(-1px); }
+.mare-btn:hover { transform: translateY(-2px); box-shadow: var(--mare-sombra-3); }
+.mare-btn:active { transform: translateY(0); }
 .mare-btn[disabled] { opacity: .5; cursor: not-allowed; transform: none; }
 .mare-btn--sku { background: var(--mare-cor-sku); color: var(--mare-branco); }
+.mare-btn--claro { background: var(--mare-sol); color: var(--mare-ameixa); }
 
 .mare-preco        { display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem .75rem; }
-.mare-preco__atual { font-family: var(--mare-display); font-weight: 600; font-size: 1.75rem; line-height: 1; }
-.mare-preco__antes { font-size: 1rem; opacity: .55; text-decoration: line-through; }
-.mare-preco__selo  { font-size: var(--mare-t-micro); font-weight: 600; background: var(--mare-sol);
-                     color: var(--mare-ameixa); padding: .2rem .5rem; border-radius: 999px; }
+.mare-preco__atual { font-family: var(--mare-display); font-weight: 600; font-size: 1.875rem; line-height: 1; }
+.mare-preco__antes { font-size: 1rem; opacity: .5; text-decoration: line-through; }
+.mare-preco__selo  { font-size: var(--mare-t-micro); font-weight: 700; background: var(--mare-sol);
+                     color: var(--mare-ameixa); padding: .25rem .625rem; border-radius: 999px; }
 .mare-preco__parcela,
-.mare-preco__dose  { flex-basis: 100%; font-size: var(--mare-t-micro); opacity: .75; margin: 0; }
+.mare-preco__dose  { flex-basis: 100%; font-size: var(--mare-t-micro); opacity: .72; margin: 0; }
 .mare-preco__dose  { color: var(--mare-pitaya); opacity: 1; font-weight: 600; }
 
 :where(.mare-section) :focus-visible {
   outline: 3px solid var(--mare-pitaya);
-  outline-offset: 3px;
+  outline-offset: 3px; border-radius: 4px;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .mare-btn, .mare-section * { transition: none !important; animation: none !important; }
+  .mare-boia, .mare-flutua, .mare-btn, .mare-revela {
+    animation: none !important; transition: none !important;
+  }
+  .mare-flutua { transform: none; }
 }
