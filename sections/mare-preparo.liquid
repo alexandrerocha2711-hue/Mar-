@@ -1,0 +1,148 @@
+{% comment %}
+  MARÉ — modo de preparo
+  ---------------------------------------------------------------------------
+  A informação existia na embalagem e em lugar nenhum do site. Isso é caro por
+  dois motivos:
+
+  1. COMERCIAL — "como se usa" é a última dúvida antes do carrinho num produto
+     em pó. Quem não sabe a medida imagina trabalho, e desiste.
+  2. REGULATÓRIO — modo de preparo e porção são informação obrigatória de
+     rótulo. Publicá-los é o oposto de risco: é fato, não promessa. É a única
+     categoria de texto desta página que pode ser específica sem virar
+     alegação.
+
+  A medida vem do metafield `mare.preparo` do produto quando existir, e cai no
+  texto da seção quando não existir. Assim cada sabor pode ter sua própria
+  medida sem duplicar a seção.
+
+  Sem foto, cada passo mostra o número grande na cor do passo. Nunca quebra.
+{% endcomment %}
+
+{%- liquid
+  assign medida = product.metafields.mare.preparo.value | default: section.settings.medida
+-%}
+
+<section class="mare-preparo mare-section" aria-labelledby="mare-preparo-{{ section.id }}">
+  <div class="mare-wrap">
+
+    <header class="mare-preparo__head mare-revela">
+      {%- if section.settings.olho != blank -%}
+        <p class="mare-olho">{{ section.settings.olho | escape }}</p>
+      {%- endif -%}
+      <h2 class="mare-h mare-preparo__titulo" id="mare-preparo-{{ section.id }}">
+        {{ section.settings.titulo | escape }}
+      </h2>
+
+      {%- if medida != blank -%}
+        <p class="mare-preparo__medida">
+          <span class="mare-acento" aria-hidden="true"></span>
+          {{ medida }}
+        </p>
+      {%- endif -%}
+    </header>
+
+    <ol class="mare-preparo__passos" role="list">
+      {%- for block in section.blocks -%}
+        <li class="mare-passo2 mare-revela" style="--mare-cor-sku: {{ block.settings.cor }};" {{ block.shopify_attributes }}>
+          <span class="mare-passo2__midia">
+            {%- if block.settings.foto -%}
+              {{ block.settings.foto | image_url: width: 700 | image_tag: loading: 'lazy', sizes: '(min-width: 750px) 30vw, 84vw', class: 'mare-passo2__img', alt: block.settings.verbo }}
+            {%- else -%}
+              <span class="mare-passo2__num" aria-hidden="true">{{ forloop.index }}</span>
+            {%- endif -%}
+          </span>
+          <span class="mare-passo2__corpo">
+            <span class="mare-h mare-passo2__verbo">{{ block.settings.verbo | escape }}</span>
+            <span class="mare-passo2__texto">{{ block.settings.texto | escape }}</span>
+          </span>
+        </li>
+      {%- endfor -%}
+    </ol>
+
+    {%- if section.settings.aviso != blank -%}
+      <p class="mare-preparo__aviso">{{ section.settings.aviso | escape }}</p>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .mare-preparo { padding-block: var(--mare-grid); }
+
+  .mare-preparo__head { max-width: 52ch; margin-bottom: clamp(1.5rem, 3.5vw, 2.5rem); }
+  .mare-preparo__titulo { font-size: var(--mare-t-titulo); }
+
+  .mare-preparo__medida {
+    margin: 1rem 0 0;
+    display: inline-flex; align-items: baseline; gap: .5rem;
+    background: var(--mare-branco); border-radius: 999px;
+    padding: .5rem 1.125rem;
+    font-weight: 600; font-size: .9375rem;
+    box-shadow: var(--mare-sombra-1);
+  }
+  .mare-preparo__medida .mare-acento { color: var(--mare-coral); }
+
+  .mare-preparo__passos {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; gap: var(--mare-gap);
+    grid-template-columns: repeat(auto-fit, minmax(min(230px, 100%), 1fr));
+  }
+
+  .mare-passo2 { display: grid; gap: .875rem; }
+
+  .mare-passo2__midia {
+    display: grid; place-items: center;
+    border-radius: var(--mare-raio); overflow: hidden;
+    aspect-ratio: 1 / 1;
+    background: color-mix(in srgb, var(--mare-cor-sku) 16%, var(--mare-areia));
+  }
+  .mare-passo2__img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .mare-passo2__num {
+    font-family: var(--mare-display); font-weight: 600;
+    font-size: clamp(3rem, 8vw, 5rem); line-height: 1;
+    color: var(--mare-cor-sku);
+  }
+
+  .mare-passo2__corpo { display: grid; gap: .3125rem; }
+  .mare-passo2__verbo { font-size: 1.375rem; }
+  .mare-passo2__texto { font-size: .9375rem; opacity: .78; line-height: 1.5; }
+
+  .mare-preparo__aviso {
+    margin: 1.75rem 0 0; font-size: var(--mare-t-micro); opacity: .6; max-width: 62ch;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Modo de preparo",
+  "tag": "section",
+  "max_blocks": 4,
+  "settings": [
+    { "type": "text", "id": "olho", "label": "Sobretítulo", "default": "Modo de preparo" },
+    { "type": "text", "id": "titulo", "label": "Título", "default": "Leva dez segundos." },
+    { "type": "text", "id": "medida", "label": "Medida", "default": "1 sachê para 300 ml de água gelada" },
+    { "type": "text", "id": "aviso", "label": "Aviso", "default": "Consulte sempre o rótulo do produto. Conservar em local seco e ao abrigo da luz." }
+  ],
+  "blocks": [
+    {
+      "type": "passo",
+      "name": "Passo",
+      "settings": [
+        { "type": "image_picker", "id": "foto", "label": "Foto do passo" },
+        { "type": "text", "id": "verbo", "label": "Verbo", "default": "Mistura." },
+        { "type": "text", "id": "texto", "label": "Texto", "default": "Despeje o sachê na água e mexa até dissolver." },
+        { "type": "color", "id": "cor", "label": "Cor do passo", "default": "#E8156B" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Modo de preparo",
+      "blocks": [
+        { "type": "passo", "settings": { "verbo": "Mistura.", "texto": "Despeje o sachê na água e mexa até dissolver.", "cor": "#E8156B" } },
+        { "type": "passo", "settings": { "verbo": "Gela.", "texto": "Leve à geladeira ou jogue gelo direto no copo.", "cor": "#FF9500" } },
+        { "type": "passo", "settings": { "verbo": "Vai.", "texto": "Bebe e segue o dia.", "cor": "#FF5436" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,134 @@
+{% comment %}
+  MARÉ — seletor de sabor na página de produto
+  ---------------------------------------------------------------------------
+  O PROBLEMA QUE ISTO RESOLVE
+  Os três sabores são PRODUTOS separados, não variantes de um mesmo produto.
+  Por isso o seletor de variantes nativo não mostra nada: cada produto tem uma
+  variante só. Quem cai na página da Melancia não descobre que existem outras
+  duas — e sai.
+
+  Este bloco é o seletor que faltava: lista os irmãos da coleção como pastilhas
+  na cor de cada sabor, marca o atual e leva aos outros. É o padrão da Aura
+  Bora, onde a primeira decisão nunca é "compre", é "qual sabor é você".
+
+  COR DE CADA SABOR
+  Prefere `product.metafields.mare.cor`. Enquanto o metafield não existir, usa
+  as cores de reserva abaixo, na ordem da coleção. Assim funciona hoje e migra
+  sozinho no dia em que os metafields forem criados — sem tocar no código.
+
+  Acessibilidade: é uma lista de links de verdade, com `aria-current` no atual.
+{% endcomment %}
+
+{%- liquid
+  assign col = block.settings.colecao
+  assign atual = closest.product
+  assign reservas = block.settings.cores | split: ','
+-%}
+
+{%- if col.products.size > 1 -%}
+  <div class="mare-sel" {{ block.shopify_attributes }}>
+    <p class="mare-sel__rotulo">
+      {{ block.settings.rotulo | escape }}
+      <span class="mare-sel__atual">{{ atual.title | escape }}</span>
+    </p>
+
+    <ul class="mare-sel__lista" role="list">
+      {%- for p in col.products limit: 6 -%}
+        {%- liquid
+          assign i = forloop.index0 | modulo: reservas.size
+          assign cor = p.metafields.mare.cor.value | default: reservas[i] | strip
+          assign eh_atual = false
+          if p.id == atual.id
+            assign eh_atual = true
+          endif
+        -%}
+        <li>
+          <a
+            class="mare-sel__item{% if eh_atual %} is-atual{% endif %}"
+            href="{{ p.url }}"
+            style="--mare-cor-sku: {{ cor }};"
+            {% if eh_atual %}aria-current="page"{% endif %}
+          >
+            <span class="mare-sel__bolha" aria-hidden="true">
+              {%- if p.featured_image -%}
+                {{ p.featured_image | image_url: width: 140 | image_tag: loading: 'lazy', class: 'mare-sel__img', alt: '' }}
+              {%- endif -%}
+            </span>
+            <span class="mare-sel__nome">{{ p.title | escape }}</span>
+            {%- unless p.available -%}
+              <span class="mare-sel__esgotado">{{ block.settings.rotulo_esgotado | escape }}</span>
+            {%- endunless -%}
+          </a>
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mare-sel { display: grid; gap: .75rem; font-family: var(--mare-corpo); }
+
+  .mare-sel__rotulo {
+    margin: 0; display: flex; flex-wrap: wrap; gap: .5rem;
+    font-size: var(--mare-t-micro); letter-spacing: .14em;
+    text-transform: uppercase; opacity: .62;
+  }
+  .mare-sel__atual { font-weight: 700; opacity: 1; letter-spacing: .06em; }
+
+  .mare-sel__lista {
+    list-style: none; margin: 0; padding: 0;
+    display: flex; flex-wrap: wrap; gap: .5rem;
+  }
+
+  .mare-sel__item {
+    display: inline-flex; align-items: center; gap: .5rem;
+    min-height: 48px; padding: .25rem .875rem .25rem .25rem;
+    border-radius: 999px; text-decoration: none;
+    color: var(--mare-ameixa, inherit);
+    background: color-mix(in srgb, var(--mare-cor-sku) 12%, transparent);
+    box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--mare-cor-sku) 34%, transparent);
+    transition: box-shadow .16s ease, background .16s ease, transform .16s ease;
+  }
+  .mare-sel__item:hover { transform: translateY(-1px); background: color-mix(in srgb, var(--mare-cor-sku) 22%, transparent); }
+  .mare-sel__item.is-atual {
+    background: var(--mare-cor-sku);
+    color: var(--mare-branco, #fff);
+    box-shadow: inset 0 0 0 2px var(--mare-cor-sku);
+  }
+
+  .mare-sel__bolha {
+    width: 38px; height: 38px; flex: 0 0 auto;
+    border-radius: 50%; overflow: hidden;
+    display: grid; place-items: center;
+    background: color-mix(in srgb, var(--mare-cor-sku) 30%, #FFEBD6);
+  }
+  .mare-sel__img { width: 100%; height: 100%; object-fit: contain; display: block; }
+
+  .mare-sel__nome { font-size: .9375rem; font-weight: 600; }
+  .mare-sel__esgotado {
+    font-size: .6875rem; font-weight: 700; letter-spacing: .08em;
+    text-transform: uppercase; opacity: .6;
+  }
+
+  @media (prefers-reduced-motion: reduce) { .mare-sel__item { transition: none; } }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Seletor de sabor",
+  "tag": null,
+  "settings": [
+    { "type": "collection", "id": "colecao", "label": "Coleção dos sabores" },
+    { "type": "text", "id": "rotulo", "label": "Rótulo", "default": "Sabor" },
+    { "type": "text", "id": "rotulo_esgotado", "label": "Texto quando esgotado", "default": "esgotado" },
+    {
+      "type": "text",
+      "id": "cores",
+      "label": "Cores de reserva",
+      "default": "#E8156B,#FF9500,#FF5436,#FFC943",
+      "info": "Separadas por vírgula, na ordem da coleção. Usadas só enquanto o metafield mare.cor não existir."
+    }
+  ],
+  "presets": [{ "name": "Seletor de sabor" }]
+}
+{% endschema %}
