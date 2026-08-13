@@ -1,0 +1,115 @@
+{% comment %}
+  MARÉ — ritual
+  Mistura. Gela. Vai. Prancha 12 do brandbook.
+  Não é decoração: é o bloco que instala o hábito.
+  As fotos ficam VAZIAS de propósito — o lojista sobe cada uma no editor.
+{% endcomment %}
+
+<section class="mare-ritual mare-section">
+  <div class="mare-wrap">
+    {%- if section.settings.olho != blank -%}
+      <p class="mare-ritual__olho">{{ section.settings.olho | escape }}</p>
+    {%- endif -%}
+    <h2 class="mare-h mare-ritual__titulo">{{ section.settings.titulo | escape }}</h2>
+
+    {%- if section.settings.linha_fina != blank -%}
+      <p class="mare-ritual__fina">{{ section.settings.linha_fina | escape }}</p>
+    {%- endif -%}
+
+    <ol class="mare-ritual__passos" role="list">
+      {%- for block in section.blocks -%}
+        <li class="mare-passo" {{ block.shopify_attributes }} style="--mare-cor-sku: {{ block.settings.cor }}">
+          <div class="mare-passo__midia">
+            {%- if block.settings.foto -%}
+              {{ block.settings.foto
+                 | image_url: width: 800
+                 | image_tag:
+                     loading: 'lazy',
+                     sizes: '(min-width: 750px) 33vw, 90vw',
+                     class: 'mare-passo__img',
+                     alt: block.settings.verbo }}
+            {%- else -%}
+              <span class="mare-passo__vazio" aria-hidden="true">{{ forloop.index }}</span>
+            {%- endif -%}
+          </div>
+
+          <h3 class="mare-h mare-passo__verbo">{{ block.settings.verbo | escape }}</h3>
+          <p class="mare-passo__legenda">{{ block.settings.legenda | escape }}</p>
+        </li>
+      {%- endfor -%}
+    </ol>
+
+    {%- if section.settings.link != blank and section.settings.rotulo != blank -%}
+      <a href="{{ section.settings.link }}" class="mare-btn mare-ritual__cta">{{ section.settings.rotulo | escape }}</a>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .mare-ritual { padding-block: var(--mare-grid); }
+  .mare-ritual__olho { font-size: var(--mare-t-micro); letter-spacing: .18em; text-transform: uppercase; opacity: .6; margin: 0 0 .5rem; }
+  .mare-ritual__titulo { font-size: var(--mare-t-titulo); }
+  .mare-ritual__fina { max-width: 46ch; margin: .75rem 0 0; opacity: .8; }
+
+  .mare-ritual__passos {
+    list-style: none; margin: 2.5rem 0 0; padding: 0;
+    display: grid; gap: var(--mare-gap);
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+
+  .mare-passo { display: grid; gap: .625rem; }
+
+  .mare-passo__midia {
+    border-radius: var(--mare-raio); overflow: hidden;
+    background: color-mix(in srgb, var(--mare-cor-sku) 16%, var(--mare-areia));
+    aspect-ratio: 4 / 5;
+  }
+  .mare-passo__img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  .mare-passo__vazio {
+    width: 100%; height: 100%; display: grid; place-items: center;
+    font-family: var(--mare-display); font-weight: 600; font-size: 4rem; color: var(--mare-cor-sku);
+  }
+
+  .mare-passo__verbo { font-size: 1.5rem; }
+  .mare-passo__legenda { margin: 0; font-size: var(--mare-t-micro); opacity: .75; }
+
+  .mare-ritual__cta { margin-top: 2rem; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Ritual MARÉ",
+  "tag": "section",
+  "max_blocks": 4,
+  "settings": [
+    { "type": "text", "id": "olho", "label": "Sobretítulo", "default": "O ritual" },
+    { "type": "text", "id": "titulo", "label": "Título", "default": "Três verbos. Um gesto que fica." },
+    { "type": "text", "id": "linha_fina", "label": "Linha de apoio", "default": "Ritual bom é aquele que a pessoa lembra sem precisar decorar." },
+    { "type": "url", "id": "link", "label": "Link do botão" },
+    { "type": "text", "id": "rotulo", "label": "Texto do botão", "default": "Conheça os sabores" }
+  ],
+  "blocks": [
+    {
+      "type": "passo",
+      "name": "Passo",
+      "settings": [
+        { "type": "image_picker", "id": "foto", "label": "Foto do passo" },
+        { "type": "text", "id": "verbo", "label": "Verbo", "default": "Mistura." },
+        { "type": "text", "id": "legenda", "label": "Legenda", "default": "o pó encontra a água" },
+        { "type": "color", "id": "cor", "label": "Cor do passo", "default": "#FF5436" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Ritual MARÉ",
+      "blocks": [
+        { "type": "passo", "settings": { "verbo": "Mistura.", "legenda": "o pó encontra a água", "cor": "#E8156B" } },
+        { "type": "passo", "settings": { "verbo": "Gela.", "legenda": "o frescor muda o clima", "cor": "#FF9500" } },
+        { "type": "passo", "settings": { "verbo": "Vai.", "legenda": "o dia segue mais leve", "cor": "#FF5436" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

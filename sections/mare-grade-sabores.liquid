@@ -1,0 +1,128 @@
+{% comment %}
+  MARÉ — grade de sabores
+  Cada card traz packshot, descritor de 3 palavras, preço e compra direta.
+  Sem foto no produto, o card mostra um bloco na cor do SKU — nunca quebra.
+{% endcomment %}
+
+{% liquid
+  assign itens = section.settings.colecao.products
+%}
+
+<section class="mare-grade mare-section">
+  <div class="mare-wrap">
+    {%- if section.settings.olho != blank -%}
+      <p class="mare-grade__olho">{{ section.settings.olho | escape }}</p>
+    {%- endif -%}
+    <h2 class="mare-h mare-grade__titulo">{{ section.settings.titulo | escape }}</h2>
+
+    {%- if itens.size > 0 -%}
+      <ul class="mare-grade__lista" role="list">
+        {%- for produto in itens limit: section.settings.limite -%}
+          {%- liquid
+            assign cor = produto.metafields.mare.cor.value | default: '#FF5436'
+            assign descritor = produto.metafields.mare.descritor.value
+            assign v = produto.selected_or_first_available_variant
+          -%}
+          <li class="mare-card" style="--mare-cor-sku: {{ cor }}">
+            <a href="{{ produto.url }}" class="mare-card__midia">
+              {%- if produto.featured_image -%}
+                {{ produto.featured_image
+                   | image_url: width: 700
+                   | image_tag:
+                       loading: 'lazy',
+                       sizes: '(min-width: 990px) 25vw, (min-width: 750px) 33vw, 80vw',
+                       class: 'mare-card__img',
+                       alt: produto.featured_image.alt | default: produto.title }}
+              {%- else -%}
+                <span class="mare-card__vazio" aria-hidden="true"><span class="mare-acento"></span></span>
+              {%- endif -%}
+            </a>
+
+            <div class="mare-card__corpo">
+              <h3 class="mare-h mare-card__nome">
+                <a href="{{ produto.url }}">{{ produto.title | escape }}</a>
+              </h3>
+
+              {%- if descritor -%}
+                <p class="mare-card__descritor">{{ descritor | join: ' · ' }}</p>
+              {%- endif -%}
+
+              {% render 'mare-preco', variant: v, product: produto, compacto: true %}
+
+              {%- if section.settings.compra_rapida and v.available -%}
+                <form method="post" action="{{ routes.cart_add_url }}" data-mare-quick-add>
+                  <input type="hidden" name="form_type" value="product">
+                  <input type="hidden" name="utf8" value="✓">
+                  <input type="hidden" name="id" value="{{ v.id }}">
+                  <input type="hidden" name="quantity" value="1">
+                  <button type="submit" class="mare-btn mare-btn--sku mare-card__btn">
+                    {{ section.settings.rotulo_cta | escape }}
+                  </button>
+                </form>
+              {%- elsif v.available == false -%}
+                <p class="mare-card__esgotado">{{ section.settings.rotulo_esgotado | escape }}</p>
+              {%- else -%}
+                <a href="{{ produto.url }}" class="mare-btn mare-btn--sku mare-card__btn">
+                  {{ section.settings.rotulo_cta | escape }}
+                </a>
+              {%- endif -%}
+            </div>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- else -%}
+      <p class="mare-grade__aviso">Escolha uma coleção nas configurações desta seção.</p>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .mare-grade { padding-block: var(--mare-grid); }
+  .mare-grade__olho { font-size: var(--mare-t-micro); letter-spacing: .18em; text-transform: uppercase; opacity: .6; margin: 0 0 .5rem; }
+  .mare-grade__titulo { font-size: var(--mare-t-titulo); margin-bottom: 2rem; }
+  .mare-grade__aviso { opacity: .6; }
+
+  .mare-grade__lista {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; gap: var(--mare-gap);
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  }
+
+  .mare-card { display: grid; gap: .875rem; }
+
+  .mare-card__midia {
+    display: block; border-radius: var(--mare-raio); overflow: hidden;
+    background: color-mix(in srgb, var(--mare-cor-sku) 14%, var(--mare-areia));
+    aspect-ratio: 1 / 1;
+  }
+  .mare-card__img { width: 100%; height: 100%; object-fit: contain; display: block; }
+
+  .mare-card__vazio { width: 100%; height: 100%; display: grid; place-items: center; color: var(--mare-cor-sku); font-size: 3rem; }
+
+  .mare-card__corpo { display: grid; gap: .5rem; }
+  .mare-card__nome { font-size: 1.25rem; }
+  .mare-card__nome a { color: inherit; text-decoration: none; }
+  .mare-card__nome a:hover { text-decoration: underline; }
+
+  .mare-card__descritor { margin: 0; font-size: var(--mare-t-micro); letter-spacing: .08em; opacity: .7; }
+
+  .mare-card__btn { width: 100%; margin-top: .25rem; }
+  .mare-card__esgotado { margin: .25rem 0 0; font-size: var(--mare-t-micro); font-weight: 600; opacity: .55; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Grade de sabores",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "olho", "label": "Sobretítulo", "default": "Uma família" },
+    { "type": "text", "id": "titulo", "label": "Título", "default": "Três marés." },
+    { "type": "collection", "id": "colecao", "label": "Coleção" },
+    { "type": "range", "id": "limite", "label": "Quantos produtos", "min": 2, "max": 8, "step": 1, "default": 4 },
+    { "type": "checkbox", "id": "compra_rapida", "label": "Compra rápida no card", "default": true },
+    { "type": "text", "id": "rotulo_cta", "label": "Texto do botão", "default": "Adicionar" },
+    { "type": "text", "id": "rotulo_esgotado", "label": "Texto quando esgotado", "default": "Acabou por enquanto" }
+  ],
+  "presets": [{ "name": "Grade de sabores" }]
+}
+{% endschema %}
