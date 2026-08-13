@@ -11,33 +11,46 @@
   "type": "header",
   "name": "t:names.header",
   "sections": {
-    "header_announcements_9jGBFp": {
-      "type": "header-announcements",
+    "mare_topbar": {
+      "type": "mare-topbar",
+      "name": "Barra do topo",
       "blocks": {
-        "announcement_BxgCk9": {
-          "type": "_announcement",
+        "a1": {
+          "type": "aviso",
           "settings": {
-            "text": "Welcome to our store",
-            "font": "var(--font-subheading--family)",
-            "font_size": "0.75rem",
-            "letter_spacing": "normal",
-            "case": "none"
-          },
-          "blocks": {}
+            "texto": "Entrega para todo o Brasil"
+          }
+        },
+        "a2": {
+          "type": "aviso",
+          "settings": {
+            "texto": "Sem açúcar adicionado"
+          }
+        },
+        "a3": {
+          "type": "aviso",
+          "settings": {
+            "texto": "Pague em até 12x"
+          }
         }
       },
       "block_order": [
-        "announcement_BxgCk9"
+        "a1",
+        "a2",
+        "a3"
       ],
-      "name": "t:names.announcement_bar",
       "settings": {
-        "speed": 5,
-        "section_width": "page-width",
-        "background_color": "{{ settings.color_palette.background }}",
-        "divider_width": 1,
-        "divider_color": "{{ settings.color_palette.color2 }}",
-        "padding-block-start": 15,
-        "padding-block-end": 15
+        "rotulo_cupom": "Cupom primeira compra",
+        "cupom": "PRIMEIRAMARE",
+        "texto_copiado": "Copiado",
+        "texto_frete": "Frete grátis a partir de [valor]",
+        "frete_centavos": 20000,
+        "link": "/collections/sabores",
+        "rotulo_link": "Ver sabores",
+        "cor_fundo": "#3A0A24",
+        "cor_texto": "#FFC943",
+        "mostrar_onda": true,
+        "rotulo_acessivel": "Avisos da loja"
       }
     },
     "header_section": {
@@ -102,7 +115,7 @@
     }
   },
   "order": [
-    "header_announcements_9jGBFp",
+    "mare_topbar",
     "header_section"
   ]
 }
