@@ -6,55 +6,27 @@
  * or related systems. Please exercise caution as any changes
  * made to this file may be overwritten.
  * ------------------------------------------------------------
- */{
+ */
+{
   "sections": {
     "main": {
       "type": "product-information",
       "blocks": {
-        "disclosures_g9mWze": {
-          "type": "disclosures",
-          "name": "t:names.disclosures",
-          "settings": {
-            "heading": "Disclosures",
-            "heading_preset": "h5",
-            "open_by_default": false,
-            "icon": "caret",
-            "disclosure_heading_preset": "h6",
-            "text_color": "",
-            "dividers": true,
-            "divider_color": "{{ settings.color_palette.color2 }}",
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
-        },
         "media-gallery": {
           "type": "_product-media-gallery",
           "static": true,
           "settings": {
-            "media_presentation": "grid",
-            "media_columns": "two",
-            "image_gap": 4,
-            "large_first_image": false,
+            "media_presentation": "carousel",
             "slideshow_controls_style": "counter",
             "slideshow_mobile_controls_style": "dots",
-            "thumbnail_position": "right",
-            "thumbnail_width": 44,
-            "thumbnail_radius": 0,
-            "aspect_ratio": "adapt",
-            "constrain_to_viewport": true,
+            "thumbnail_position": "below",
+            "thumbnail_width": 64,
+            "thumbnail_radius": 16,
+            "aspect_ratio": "square",
             "media_fit": "contain",
-            "media_radius": 0,
-            "extend_media": false,
+            "media_radius": 16,
             "zoom": true,
-            "video_loop": false,
-            "hide_variants": true,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
+            "hide_variants": true
           },
           "blocks": {}
         },
@@ -63,193 +35,103 @@
           "static": true,
           "settings": {
             "width": "fill",
-            "custom_width": 100,
-            "width_mobile": "fill",
-            "custom_width_mobile": 100,
             "height": "fit",
-            "details_position": "flex-start",
-            "gap": 28,
+            "details_position": "center",
+            "gap": 24,
             "sticky_details_desktop": true,
-            "background_media": "none",
-            "background_color": "",
-            "video_position": "cover",
-            "background_image_position": "cover",
-            "border": "none",
-            "border_width": 1,
-            "border_opacity": 100,
-            "border_color": "",
-            "border_radius": 0,
             "padding-block-start": 24,
-            "padding-block-end": 24,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
+            "padding-block-end": 24
           },
           "blocks": {
-            "group_icgrde": {
+            "topo": {
               "type": "group",
-              "name": "t:names.header",
+              "name": "Nome e preço",
               "settings": {
                 "content_direction": "column",
-                "vertical_on_mobile": true,
-                "horizontal_alignment": "flex-start",
-                "vertical_alignment": "center",
-                "align_baseline": false,
                 "horizontal_alignment_flex_direction_column": "flex-start",
-                "vertical_alignment_flex_direction_column": "center",
-                "gap": 12,
+                "gap": 8,
                 "width": "fill",
-                "custom_width": 100,
-                "width_mobile": "fill",
-                "custom_width_mobile": 100,
-                "height": "fit",
-                "custom_height": 100,
-                "background_media": "none",
-                "background_color": "",
-                "video_position": "cover",
-                "background_image_position": "cover",
-                "toggle_overlay": false,
-                "overlay_color": "#00000026",
-                "overlay_style": "solid",
-                "gradient_direction": "to top",
-                "border": "none",
-                "border_width": 1,
-                "border_opacity": 100,
-                "border_color": "",
-                "border_radius": 0,
-                "open_in_new_tab": false,
-                "placeholder": "",
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
+                "height": "fit"
               },
               "blocks": {
-                "text_xrnftG": {
+                "olho": {
                   "type": "text",
-                  "name": "t:names.product_title",
+                  "name": "Sobretítulo",
                   "settings": {
-                    "text": "<h1>{{ closest.product.title }}</h1>",
+                    "text": "<p>Refresco funcional em pó</p>",
                     "width": "100%",
-                    "max_width": "normal",
                     "alignment": "left",
-                    "type_preset": "h3",
-                    "font": "var(--font-body--family)",
-                    "font_size": "1rem",
-                    "line_height": "normal",
-                    "letter_spacing": "normal",
-                    "case": "none",
-                    "wrap": "pretty",
-                    "text_color": "",
-                    "background": false,
-                    "background_color": "#00000026",
-                    "corner_radius": 0,
-                    "padding-block-start": 0,
-                    "padding-block-end": 0,
-                    "padding-inline-start": 0,
-                    "padding-inline-end": 0
+                    "type_preset": "h6",
+                    "letter_spacing": "0.18em",
+                    "case": "uppercase"
                   },
                   "blocks": {}
                 },
-                "price_tVjtKg": {
+                "titulo": {
+                  "type": "text",
+                  "name": "Nome do produto",
+                  "settings": {
+                    "text": "<h1>{{ closest.product.title }}</h1>",
+                    "width": "100%",
+                    "alignment": "left",
+                    "type_preset": "h2",
+                    "font": "var(--font-heading--family)",
+                    "wrap": "balance"
+                  },
+                  "blocks": {}
+                },
+                "preco": {
                   "type": "price",
                   "settings": {
                     "show_sale_price_first": true,
-                    "show_installments": false,
-                    "show_tax_info": false,
-                    "type_preset": "paragraph",
+                    "show_installments": true,
+                    "type_preset": "h4",
                     "width": "100%",
                     "alignment": "left",
-                    "font": "var(--font-body--family)",
-                    "font_size": "1rem",
-                    "line_height": "normal",
-                    "letter_spacing": "normal",
-                    "case": "none",
-                    "text_color": "",
-                    "padding-block-start": 4,
-                    "padding-block-end": 0,
-                    "padding-inline-start": 0,
-                    "padding-inline-end": 0
+                    "padding-block-start": 4
                   },
                   "blocks": {}
                 }
               },
               "block_order": [
-                "text_xrnftG",
-                "price_tVjtKg"
+                "olho",
+                "titulo",
+                "preco"
               ]
             },
-            "divider_VJhene": {
-              "type": "_divider",
-              "name": "t:names.divider",
+            "sabores": {
+              "type": "mare-sabores",
+              "name": "Seletor de sabor",
               "settings": {
-                "thickness": 1,
-                "corner_radius": "square",
-                "divider_color": "{{ settings.color_palette.color2 }}",
-                "width_percent": 100,
-                "padding-block-start": 0,
-                "padding-block-end": 0
+                "colecao": "sabores",
+                "rotulo": "Sabor",
+                "rotulo_esgotado": "esgotado",
+                "cores": "#E8156B,#FF9500,#FF5436,#FFC943"
               },
               "blocks": {}
             },
-            "variant_picker_R3rGDr": {
+            "variantes": {
               "type": "variant-picker",
               "settings": {
                 "variant_style": "buttons",
                 "show_swatches": false,
-                "option_label_text_color": "",
-                "variant_style_class": "default",
-                "custom_variant_background": "{{ settings.color_palette.background }}",
-                "custom_variant_text": "{{ settings.color_palette.foreground }}",
-                "custom_variant_border": "{{ settings.color_palette.foreground }}",
-                "selected_variant_style_class": "default",
-                "custom_selected_variant_background": "{{ settings.color_palette.foreground }}",
-                "custom_selected_variant_text": "{{ settings.color_palette.background }}",
-                "custom_selected_variant_border": "{{ settings.color_palette.foreground }}",
-                "alignment": "left",
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
+                "alignment": "left"
               },
               "blocks": {}
             },
-            "buy_buttons_eYQEYi": {
+            "comprar": {
               "type": "buy-buttons",
               "settings": {
                 "stacking": true,
-                "text_color": "",
-                "show_pickup_availability": false,
-                "gift_card_form": true,
-                "recipient_button_style": "default",
-                "recipient_button_background": "{{ settings.color_palette.background }}",
-                "recipient_button_text": "{{ settings.color_palette.foreground }}",
-                "recipient_button_border": "{{ settings.color_palette.foreground }}",
-                "selected_recipient_button_style": "default",
-                "selected_recipient_button_background": "{{ settings.color_palette.foreground }}",
-                "selected_recipient_button_text": "{{ settings.color_palette.background }}",
-                "selected_recipient_button_border": "{{ settings.color_palette.foreground }}",
-                "input_style": "default",
-                "input_background_color": "{{ settings.color_palette.background }}",
-                "input_text_color": "{{ settings.color_palette.foreground }}",
-                "input_border_color": "{{ settings.color_palette.foreground }}",
-                "border_width": 1,
-                "border_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
+                "show_pickup_availability": true,
+                "border_radius": 50
               },
               "blocks": {
                 "quantity": {
                   "type": "quantity",
                   "static": true,
                   "settings": {
-                    "input_style": "default",
-                    "input_background_color": "{{ settings.color_palette.background }}",
-                    "input_text_color": "{{ settings.color_palette.foreground }}",
-                    "input_border_color": "{{ settings.color_palette.foreground }}",
-                    "border_width": 1,
-                    "border_radius": 0
+                    "border_radius": 50
                   },
                   "blocks": {}
                 },
@@ -257,10 +139,7 @@
                   "type": "add-to-cart",
                   "static": true,
                   "settings": {
-                    "style_class": "button",
-                    "custom_button_background": "{{ settings.color_palette.foreground }}",
-                    "custom_button_text": "{{ settings.color_palette.background }}",
-                    "custom_button_border": "{{ settings.color_palette.background }}"
+                    "style_class": "button"
                   },
                   "blocks": {}
                 },
@@ -273,202 +152,253 @@
               },
               "block_order": []
             },
-            "text_aEtTtq": {
+            "descricao": {
               "type": "text",
-              "name": "t:names.product_description",
+              "name": "Descrição",
               "settings": {
                 "text": "{{ closest.product.description }}",
                 "width": "100%",
-                "max_width": "normal",
                 "alignment": "left",
                 "type_preset": "rte",
-                "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "text_color": "",
-                "background": false,
-                "background_color": "#00000026",
-                "corner_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
+                "wrap": "pretty"
               },
               "blocks": {}
+            },
+            "detalhes": {
+              "type": "accordion",
+              "name": "Detalhes",
+              "settings": {
+                "icon": "caret",
+                "dividers": true
+              },
+              "blocks": {
+                "d1": {
+                  "type": "_accordion-row",
+                  "settings": {
+                    "heading": "Modo de preparo"
+                  },
+                  "blocks": {}
+                },
+                "d2": {
+                  "type": "_accordion-row",
+                  "settings": {
+                    "heading": "Ingredientes e informação nutricional"
+                  },
+                  "blocks": {}
+                },
+                "d3": {
+                  "type": "_accordion-row",
+                  "settings": {
+                    "heading": "Advertências"
+                  },
+                  "blocks": {}
+                },
+                "d4": {
+                  "type": "_accordion-row",
+                  "settings": {
+                    "heading": "Entrega, trocas e devoluções"
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "d1",
+                "d2",
+                "d3",
+                "d4"
+              ]
             }
           },
           "block_order": [
-            "group_icgrde",
-            "divider_VJhene",
-            "variant_picker_R3rGDr",
-            "buy_buttons_eYQEYi",
-            "text_aEtTtq"
+            "topo",
+            "sabores",
+            "variantes",
+            "comprar",
+            "descricao",
+            "detalhes"
           ]
         }
       },
-      "block_order": [
-        "disclosures_g9mWze"
-      ],
       "settings": {
-        "content_width": "content-center-aligned",
+        "content_width": "page-width",
         "desktop_media_position": "left",
-        "equal_columns": false,
-        "limit_details_width": false,
         "gap": 48,
         "enable_sticky_add_to_cart": true,
-        "background_color": "{{ settings.color_palette.background }}",
-        "padding-block-start": 0,
-        "padding-block-end": 0
+        "padding-block-start": 24,
+        "padding-block-end": 24
       }
     },
-    "product_recommendations_qggXJq": {
-      "type": "product-recommendations",
+    "preparo": {
+      "type": "mare-preparo",
       "blocks": {
-        "text_cbcgyb": {
-          "type": "text",
-          "name": "t:names.header",
+        "p1": {
+          "type": "passo",
           "settings": {
-            "text": "<h3>You may also like </h3>",
-            "width": "fit-content",
-            "max_width": "normal",
-            "alignment": "left",
-            "type_preset": "h4",
-            "font": "var(--font-body--family)",
-            "font_size": "1rem",
-            "line_height": "normal",
-            "letter_spacing": "normal",
-            "case": "none",
-            "wrap": "pretty",
-            "text_color": "",
-            "background": false,
-            "background_color": "#00000026",
-            "corner_radius": 0,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
+            "verbo": "Mistura.",
+            "texto": "Um sachê em 300 ml de água. Mexe até sumir o pó.",
+            "cor": "#E8156B"
+          }
         },
-        "static-product-card": {
-          "type": "_product-card",
-          "name": "t:names.product_card",
-          "static": true,
+        "p2": {
+          "type": "passo",
           "settings": {
-            "product_card_gap": 8,
-            "background_color": "",
-            "border": "none",
-            "border_width": 1,
-            "border_opacity": 100,
-            "border_color": "",
-            "border_radius": 0,
-            "padding-block-start": 0,
-            "padding-block-end": 8,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {
-            "product_card_gallery_DNizbJ": {
-              "type": "_product-card-gallery",
-              "name": "t:names.product_card_media",
-              "settings": {
-                "image_ratio": "adapt",
-                "border": "none",
-                "border_width": 1,
-                "border_opacity": 100,
-                "border_color": "",
-                "border_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
-            "product_title_M7MJkb": {
-              "type": "product-title",
-              "name": "t:names.product_title",
-              "settings": {
-                "width": "100%",
-                "max_width": "normal",
-                "alignment": "left",
-                "type_preset": "rte",
-                "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "text_color": "",
-                "background": false,
-                "background_color": "#00000026",
-                "corner_radius": 0,
-                "padding-block-start": 4,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
-            "price_gLWgA6": {
-              "type": "price",
-              "settings": {
-                "show_sale_price_first": true,
-                "show_installments": false,
-                "show_tax_info": false,
-                "type_preset": "h6",
-                "width": "100%",
-                "alignment": "left",
-                "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "text_color": "",
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "product_card_gallery_DNizbJ",
-            "product_title_M7MJkb",
-            "price_gLWgA6"
-          ]
+            "verbo": "Gela.",
+            "texto": "Gelo direto no copo, ou dez minutos de geladeira.",
+            "cor": "#FF9500"
+          }
+        },
+        "p3": {
+          "type": "passo",
+          "settings": {
+            "verbo": "Vai.",
+            "texto": "Toma no copo americano e segue o dia.",
+            "cor": "#FF5436"
+          }
         }
       },
       "block_order": [
-        "text_cbcgyb"
+        "p1",
+        "p2",
+        "p3"
       ],
-      "name": "t:names.product_recommendations",
+      "name": "Modo de preparo",
       "settings": {
-        "product": "{{ closest.product }}",
-        "recommendation_type": "related",
-        "layout_type": "grid",
-        "carousel_on_mobile": false,
-        "max_products": 4,
-        "columns": 4,
-        "mobile_columns": "2",
-        "columns_gap": 12,
-        "rows_gap": 24,
-        "icons_style": "arrow",
-        "icons_shape": "none",
-        "section_width": "page-width",
-        "gap": 28,
-        "background_color": "{{ settings.color_palette.background }}",
-        "padding-block-start": 48,
-        "padding-block-end": 48
+        "olho": "Modo de preparo",
+        "titulo": "Leva dez segundos.",
+        "medida": "1 sachê para 300 ml de água gelada",
+        "aviso": "Consulte sempre o rótulo do produto. Conservar em local seco e ao abrigo da luz."
+      }
+    },
+    "comparativo": {
+      "type": "mare-comparativo",
+      "blocks": {
+        "l1": {
+          "type": "linha",
+          "settings": {
+            "item": "Açúcar adicionado",
+            "nos": "não contém",
+            "eles": "contém"
+          }
+        },
+        "l2": {
+          "type": "linha",
+          "settings": {
+            "item": "Corante artificial",
+            "nos": "não contém",
+            "eles": "contém"
+          }
+        },
+        "l3": {
+          "type": "linha",
+          "settings": {
+            "item": "Fibra alimentar",
+            "nos": "contém",
+            "eles": "não contém"
+          }
+        },
+        "l4": {
+          "type": "linha",
+          "settings": {
+            "item": "Sabor",
+            "nos": "de fruta",
+            "eles": "aroma artificial"
+          }
+        }
+      },
+      "block_order": [
+        "l1",
+        "l2",
+        "l3",
+        "l4"
+      ],
+      "name": "Compare o rótulo",
+      "settings": {
+        "olho": "Lado a lado",
+        "titulo": "O rótulo responde.",
+        "coluna_nos": "MARÉ",
+        "coluna_eles": "Refresco comum",
+        "nota": "Comparação por porção preparada. Confira sempre o rótulo do produto."
+      }
+    },
+    "outras": {
+      "type": "mare-grade-sabores",
+      "name": "As outras marés",
+      "settings": {
+        "olho": "Leve a linha",
+        "titulo": "As outras marés.",
+        "colecao": "sabores",
+        "limite": 4,
+        "compra_rapida": true,
+        "rotulo_cta": "Adicionar",
+        "rotulo_esgotado": "Acabou por enquanto"
+      }
+    },
+    "duvidas": {
+      "type": "mare-faq",
+      "blocks": {
+        "q1": {
+          "type": "pergunta",
+          "settings": {
+            "pergunta": "Qual a medida certa?",
+            "resposta": "<p>Um sachê para 300 ml de água. Menos água deixa o sabor mais concentrado; mais água, mais leve. A medida oficial está no rótulo.</p>"
+          }
+        },
+        "q2": {
+          "type": "pergunta",
+          "settings": {
+            "pergunta": "Precisa gelar?",
+            "resposta": "<p>Não precisa, mas muda tudo. O sabor foi desenhado para ser tomado gelado — gelo direto no copo resolve.</p>"
+          }
+        },
+        "q3": {
+          "type": "pergunta",
+          "settings": {
+            "pergunta": "Posso misturar em outra coisa?",
+            "resposta": "<p>Água é o padrão. Com água de coco ou com gás também funciona — muda o corpo da bebida, não o preparo.</p>"
+          }
+        },
+        "q4": {
+          "type": "pergunta",
+          "settings": {
+            "pergunta": "Quantas doses vem?",
+            "resposta": "<p>A quantidade de doses por embalagem está no rótulo e na descrição deste produto.</p>"
+          }
+        },
+        "q5": {
+          "type": "pergunta",
+          "settings": {
+            "pergunta": "Como guardo depois de aberto?",
+            "resposta": "<p>Em local seco e ao abrigo da luz, bem fechado. Não precisa de geladeira.</p>"
+          }
+        },
+        "q6": {
+          "type": "pergunta",
+          "settings": {
+            "pergunta": "Quem não deve consumir?",
+            "resposta": "<p>As advertências e o público a que o produto não se destina estão no rótulo. Em caso de dúvida, converse com um profissional de saúde.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "q1",
+        "q2",
+        "q3",
+        "q4",
+        "q5",
+        "q6"
+      ],
+      "name": "Dúvidas do produto",
+      "settings": {
+        "olho": "Antes de comprar",
+        "titulo": "O que as pessoas perguntam sobre este."
       }
     }
   },
   "order": [
     "main",
-    "product_recommendations_qggXJq"
+    "preparo",
+    "comparativo",
+    "outras",
+    "duvidas"
   ]
 }
