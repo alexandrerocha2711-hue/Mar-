@@ -1,0 +1,242 @@
+{% comment %}
+  MARÉ — barra do topo
+  ---------------------------------------------------------------------------
+  Primeira linha de texto que o cliente lê. Carrega duas promessas comerciais:
+  o cupom de primeira compra e a meta de frete grátis.
+
+  REGRA DURA — O NÚMERO NÃO É ESCRITO À MÃO.
+  A meta de frete vem de `shop.metafields.mare.frete_gratis` (inteiro, em
+  centavos) e é formatada pelo filtro `money`. A barra do topo, a barra de
+  progresso do carrinho e a página de envio passam a ler a MESMA fonte.
+  Divergência entre o que a vitrine promete e o que o checkout cobra não é bug
+  de front-end: é infração ao art. 30 do CDC.
+
+  O cupom também vem de metafield (`mare.cupom_primeira`). Se o código mudar,
+  muda em um lugar só — e o botão de copiar continua verdadeiro.
+
+  SEM JAVASCRIPT A BARRA CONTINUA CORRETA: o código aparece como texto
+  selecionável e as mensagens ficam visíveis. O JS só adiciona o copiar em um
+  toque e o rodízio das mensagens laterais.
+
+  Vive dentro do grupo `header` — por isso o `enabled_on`.
+{% endcomment %}
+
+{%- liquid
+  assign meta_frete = shop.metafields.mare.frete_gratis.value | default: section.settings.frete_centavos
+  assign cupom = shop.metafields.mare.cupom_primeira.value | default: section.settings.cupom
+  assign valor_formatado = meta_frete | money
+  assign frete_texto = section.settings.texto_frete | escape | replace: '[valor]', valor_formatado
+-%}
+
+<aside
+  class="mare-topbar"
+  aria-label="{{ section.settings.rotulo_acessivel | escape }}"
+  style="--mare-topbar-fundo: {{ section.settings.cor_fundo }}; --mare-topbar-texto: {{ section.settings.cor_texto }};"
+>
+  <div class="mare-topbar__inner">
+
+    {%- if section.blocks.size > 0 -%}
+      <div class="mare-topbar__lado mare-topbar__lado--esq" data-mare-rodizio>
+        {%- for block in section.blocks -%}
+          <span
+            class="mare-topbar__msg{% if forloop.first %} is-ativa{% endif %}"
+            {{ block.shopify_attributes }}
+          >
+            <span class="mare-acento" aria-hidden="true"></span>
+            {{ block.settings.texto | escape }}
+          </span>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    <p class="mare-topbar__centro">
+      {%- if cupom != blank -%}
+        <span class="mare-topbar__cupom">
+          {{ section.settings.rotulo_cupom | escape }}
+          <button
+            type="button"
+            class="mare-topbar__codigo"
+            data-mare-copiar="{{ cupom | escape }}"
+            data-mare-copiado="{{ section.settings.texto_copiado | escape }}"
+          >
+            <span class="mare-topbar__codigo-txt">{{ cupom | escape }}</span>
+          </button>
+        </span>
+      {%- endif -%}
+
+      {%- if meta_frete > 0 -%}
+        <span class="mare-topbar__sep" aria-hidden="true">·</span>
+        <span class="mare-topbar__frete">{{ frete_texto }}</span>
+      {%- endif -%}
+    </p>
+
+    {%- if section.settings.link != blank and section.settings.rotulo_link != blank -%}
+      <a class="mare-topbar__link" href="{{ section.settings.link }}">
+        {{ section.settings.rotulo_link | escape }}
+      </a>
+    {%- endif -%}
+
+  </div>
+
+  {%- if section.settings.mostrar_onda -%}
+    <span class="mare-calcadao mare-topbar__onda" aria-hidden="true"></span>
+  {%- endif -%}
+</aside>
+
+{% stylesheet %}
+  .mare-topbar {
+    background: var(--mare-topbar-fundo, #3A0A24);
+    color: var(--mare-topbar-texto, #FFC943);
+    font-family: var(--mare-corpo);
+    position: relative;
+    z-index: 3;
+  }
+
+  .mare-topbar__inner {
+    max-width: var(--mare-largura);
+    margin-inline: auto;
+    padding: .625rem clamp(1rem, 4vw, 2.5rem);
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 1rem;
+    min-height: 44px;
+  }
+
+  .mare-topbar__lado {
+    position: relative;
+    font-size: var(--mare-t-micro);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    opacity: .82;
+    min-height: 1.2em;
+  }
+  .mare-topbar__lado--esq { justify-self: start; }
+
+  /* Sem JS, a primeira mensagem fica; com JS, elas se revezam. */
+  .mare-topbar__msg {
+    display: none;
+    align-items: baseline;
+    gap: .4rem;
+    white-space: nowrap;
+  }
+  .mare-topbar__msg.is-ativa { display: inline-flex; }
+
+  .mare-topbar__centro {
+    grid-column: 2;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem .625rem;
+    font-size: .8125rem;
+    font-weight: 600;
+    letter-spacing: .04em;
+    text-align: center;
+  }
+
+  .mare-topbar__cupom {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    text-transform: uppercase;
+  }
+
+  .mare-topbar__codigo {
+    font: inherit;
+    font-weight: 700;
+    letter-spacing: .12em;
+    cursor: pointer;
+    border: 1px dashed currentColor;
+    border-radius: 999px;
+    background: color-mix(in srgb, currentColor 14%, transparent);
+    color: inherit;
+    padding: .1875rem .625rem;
+    min-height: 28px;
+    transition: background .16s ease, transform .16s ease;
+  }
+  .mare-topbar__codigo:hover { background: color-mix(in srgb, currentColor 26%, transparent); }
+  .mare-topbar__codigo:active { transform: scale(.97); }
+  .mare-topbar__codigo.is-copiado { border-style: solid; }
+
+  .mare-topbar__sep { opacity: .45; }
+  .mare-topbar__frete { text-transform: uppercase; }
+
+  .mare-topbar__link {
+    grid-column: 3;
+    justify-self: end;
+    color: inherit;
+    font-size: var(--mare-t-micro);
+    font-weight: 600;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-bottom: 1px solid color-mix(in srgb, currentColor 45%, transparent);
+    white-space: nowrap;
+  }
+  .mare-topbar__link:hover { border-bottom-color: currentColor; }
+
+  .mare-topbar__onda { height: 8px; opacity: .34; color: inherit; }
+
+  /* Mobile: só o essencial. A promessa comercial nunca some. */
+  @media (max-width: 899px) {
+    .mare-topbar__inner { grid-template-columns: 1fr; padding-inline: 1rem; }
+    .mare-topbar__lado,
+    .mare-topbar__link { display: none; }
+    .mare-topbar__centro { grid-column: 1; font-size: .75rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mare-topbar__codigo { transition: none; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Barra do topo",
+  "tag": "aside",
+  "class": "mare-topbar-secao",
+  "enabled_on": { "groups": ["header"] },
+  "max_blocks": 5,
+  "settings": [
+    { "type": "header", "content": "Promessa comercial" },
+    {
+      "type": "paragraph",
+      "content": "O código do cupom e a meta de frete são lidos dos metafields da loja (mare.cupom_primeira e mare.frete_gratis). Os campos abaixo só valem se o metafield estiver vazio. Editar em um lugar só evita divergência entre vitrine e checkout."
+    },
+    { "type": "text", "id": "rotulo_cupom", "label": "Rótulo do cupom", "default": "Cupom primeira compra" },
+    { "type": "text", "id": "cupom", "label": "Código (reserva)", "default": "PRIMEIRAMARE" },
+    { "type": "text", "id": "texto_copiado", "label": "Aviso ao copiar", "default": "Copiado" },
+    { "type": "text", "id": "texto_frete", "label": "Texto do frete", "default": "Frete grátis a partir de [valor]", "info": "Use [valor] onde o preço deve entrar." },
+    { "type": "number", "id": "frete_centavos", "label": "Meta de frete em centavos (reserva)", "default": 20000 },
+    { "type": "header", "content": "Link" },
+    { "type": "url", "id": "link", "label": "Link à direita" },
+    { "type": "text", "id": "rotulo_link", "label": "Texto do link", "default": "Ver sabores" },
+    { "type": "header", "content": "Aparência" },
+    { "type": "color", "id": "cor_fundo", "label": "Fundo", "default": "#3A0A24" },
+    { "type": "color", "id": "cor_texto", "label": "Texto", "default": "#FFC943" },
+    { "type": "checkbox", "id": "mostrar_onda", "label": "Onda do calçadão abaixo", "default": true },
+    { "type": "text", "id": "rotulo_acessivel", "label": "Rótulo para leitor de tela", "default": "Avisos da loja" }
+  ],
+  "blocks": [
+    {
+      "type": "aviso",
+      "name": "Aviso lateral",
+      "settings": [
+        { "type": "text", "id": "texto", "label": "Texto", "default": "Entrega para todo o Brasil" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Barra do topo",
+      "blocks": [
+        { "type": "aviso", "settings": { "texto": "Entrega para todo o Brasil" } },
+        { "type": "aviso", "settings": { "texto": "Sem açúcar adicionado" } },
+        { "type": "aviso", "settings": { "texto": "Pague em até 12x" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
