@@ -1,0 +1,360 @@
+{% comment %}
+  MARÉ — banner em foto
+  ---------------------------------------------------------------------------
+  O padrão do Cafellow: o topo da home é FOTO, não composição de layout. Cada
+  slide é uma peça inteira, com arte vertical própria para o celular e arte
+  larga para o desktop — porque recortar uma foto horizontal em 9:16 destrói o
+  enquadramento, e é no celular que está a maior parte do tráfego.
+
+  DECISÕES QUE SUSTENTAM A CONVERSÃO
+  · Todo slide tem UM destino. Banner sem link é banner que não converte.
+  · O título vive em HTML de verdade, sobre a foto — não dentro do JPG. Texto
+    em imagem não é indexado, não é lido por leitor de tela, não reflui no
+    celular e não dá para corrigir sem voltar ao Photoshop.
+  · Véu em gradiente por trás do texto: garante contraste legível sobre
+    qualquer foto, inclusive as claras.
+
+  DESEMPENHO
+  O primeiro slide carrega `eager` + `fetchpriority=high` — ele é o LCP da
+  home. Os demais são `lazy`. O carrossel é scroll-snap nativo: arrasta com o
+  dedo sem JavaScript nenhum. O JS só liga o rodízio automático e o estado
+  ativo dos pontinhos, e desliga sozinho em `prefers-reduced-motion`.
+
+  SEM FOTO O BANNER NÃO QUEBRA: cai no fundo na cor do SKU e o texto continua
+  legível.
+{% endcomment %}
+
+{%- liquid
+  assign slides = section.blocks
+  assign auto = section.settings.autoplay | default: false
+-%}
+
+<section
+  class="mare-banner mare-section"
+  aria-roledescription="carrossel"
+  aria-label="{{ section.settings.rotulo_acessivel | escape }}"
+  data-mare-banner
+  data-mare-autoplay="{% if auto %}{{ section.settings.intervalo }}{% else %}0{% endif %}"
+  style="--mare-banner-alt-desk: {{ section.settings.altura_desktop }}; --mare-banner-alt-mob: {{ section.settings.altura_mobile }};"
+>
+  {%- if slides.size > 0 -%}
+    <div class="mare-banner__trilho" data-mare-trilho tabindex="0">
+      {%- for block in slides -%}
+        {%- liquid
+          assign s = block.settings
+          assign cor = s.cor_sku | default: '#FF5436'
+          assign eh_primeiro = forloop.first
+          assign principal = s.foto_desktop | default: s.foto_mobile
+        -%}
+        <article
+          class="mare-banner__slide"
+          id="mare-slide-{{ section.id }}-{{ forloop.index }}"
+          style="--mare-cor-sku: {{ cor }}; --mare-banner-texto: {{ s.cor_texto }};"
+          aria-roledescription="slide"
+          aria-label="{{ forloop.index }} de {{ slides.size }}"
+          {{ block.shopify_attributes }}
+        >
+          <div class="mare-banner__midia">
+            {%- if principal -%}
+              <picture>
+                {%- if s.foto_mobile -%}
+                  <source
+                    media="(max-width: 749px)"
+                    srcset="{{ s.foto_mobile | image_url: width: 750 }} 750w, {{ s.foto_mobile | image_url: width: 1100 }} 1100w, {{ s.foto_mobile | image_url: width: 1500 }} 1500w"
+                    sizes="100vw"
+                  >
+                {%- endif -%}
+                <img
+                  src="{{ principal | image_url: width: 1600 }}"
+                  srcset="{{ principal | image_url: width: 1000 }} 1000w, {{ principal | image_url: width: 1600 }} 1600w, {{ principal | image_url: width: 2200 }} 2200w, {{ principal | image_url: width: 2800 }} 2800w"
+                  sizes="100vw"
+                  width="{{ principal.width }}"
+                  height="{{ principal.height }}"
+                  alt="{{ s.foto_alt | default: s.titulo | escape }}"
+                  class="mare-banner__img"
+                  {% if eh_primeiro %}loading="eager" fetchpriority="high"{% else %}loading="lazy"{% endif %}
+                  decoding="async"
+                >
+              </picture>
+            {%- else -%}
+              <span class="mare-banner__sem-foto mare-fundo--sku" aria-hidden="true"></span>
+            {%- endif -%}
+
+            <span
+              class="mare-banner__veu"
+              aria-hidden="true"
+              style="--mare-veu-forca: {{ s.veu | divided_by: 100.0 }};"
+            ></span>
+          </div>
+
+          <div class="mare-banner__conteudo mare-banner__conteudo--{{ s.posicao }}">
+            <div class="mare-wrap mare-banner__caixa">
+              {%- if s.olho != blank -%}
+                <p class="mare-olho mare-banner__olho">{{ s.olho | escape }}</p>
+              {%- endif -%}
+
+              {%- if s.titulo != blank -%}
+                {%- if eh_primeiro -%}
+                  <h1 class="mare-h mare-banner__titulo">{{ s.titulo | escape }}</h1>
+                {%- else -%}
+                  <p class="mare-h mare-banner__titulo">{{ s.titulo | escape }}</p>
+                {%- endif -%}
+              {%- endif -%}
+
+              {%- if s.linha_fina != blank -%}
+                <p class="mare-banner__fina">{{ s.linha_fina | escape }}</p>
+              {%- endif -%}
+
+              {%- if s.link != blank and s.rotulo != blank -%}
+                <a href="{{ s.link }}" class="mare-btn mare-btn--sku mare-banner__cta">
+                  {{ s.rotulo | escape }}
+                </a>
+              {%- endif -%}
+            </div>
+          </div>
+
+          {%- comment -%}
+            Link que cobre o slide inteiro. Fica ABAIXO do botão no
+            empilhamento, então o CTA continua clicável e o resto da foto
+            também leva ao mesmo destino — como no Cafellow.
+          {%- endcomment -%}
+          {%- if s.link != blank -%}
+            <a class="mare-banner__area" href="{{ s.link }}" tabindex="-1" aria-hidden="true"></a>
+          {%- endif -%}
+        </article>
+      {%- endfor -%}
+    </div>
+
+    {%- if slides.size > 1 -%}
+      <nav class="mare-banner__pontos" aria-label="{{ section.settings.rotulo_navegacao | escape }}">
+        {%- for block in slides -%}
+          <a
+            class="mare-banner__ponto{% if forloop.first %} is-ativo{% endif %}"
+            href="#mare-slide-{{ section.id }}-{{ forloop.index }}"
+            data-mare-ponto="{{ forloop.index0 }}"
+            style="--mare-cor-sku: {{ block.settings.cor_sku | default: '#FF5436' }};"
+          >
+            <span class="visually-hidden">{{ block.settings.titulo | default: forloop.index | escape }}</span>
+          </a>
+        {%- endfor -%}
+      </nav>
+    {%- endif -%}
+  {%- else -%}
+    <div class="mare-wrap mare-banner__vazio">
+      <p>Adicione ao menos um slide nas configurações desta seção.</p>
+    </div>
+  {%- endif -%}
+
+  {%- if section.settings.mostrar_onda -%}
+    <span class="mare-calcadao mare-calcadao--cheio mare-banner__onda" aria-hidden="true"></span>
+  {%- endif -%}
+</section>
+
+{% stylesheet %}
+  .mare-banner { padding: 0; overflow: hidden; }
+
+  .mare-banner__trilho {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .mare-banner__trilho::-webkit-scrollbar { display: none; }
+
+  .mare-banner__slide {
+    position: relative;
+    flex: 0 0 100%;
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
+    display: grid;
+    isolation: isolate;
+  }
+
+  .mare-banner__midia,
+  .mare-banner__conteudo { grid-area: 1 / 1; }
+
+  .mare-banner__midia { position: relative; overflow: hidden; }
+
+  .mare-banner__img,
+  .mare-banner__sem-foto {
+    display: block;
+    width: 100%;
+    height: var(--mare-banner-alt-mob, 78svh);
+    object-fit: cover;
+    object-position: center;
+  }
+  @media (min-width: 750px) {
+    .mare-banner__img,
+    .mare-banner__sem-foto { height: var(--mare-banner-alt-desk, 72svh); }
+  }
+
+  /* Véu: garante contraste do texto sobre qualquer foto. */
+  .mare-banner__veu {
+    position: absolute; inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      to top,
+      rgba(58,10,36, calc(var(--mare-veu-forca, .45) * 1.15)) 0%,
+      rgba(58,10,36, calc(var(--mare-veu-forca, .45) * .55)) 42%,
+      transparent 78%
+    );
+  }
+
+  .mare-banner__conteudo {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    pointer-events: none;
+    padding-block: clamp(1.75rem, 5vw, 4rem);
+  }
+  .mare-banner__conteudo--baixo    { align-content: end;    justify-items: start; }
+  .mare-banner__conteudo--centro   { align-content: center; justify-items: center; text-align: center; }
+  .mare-banner__conteudo--esquerda { align-content: center; justify-items: start; }
+
+  .mare-banner__caixa {
+    display: grid;
+    gap: .875rem;
+    justify-items: inherit;
+    max-width: 100%;
+    width: 100%;
+  }
+  .mare-banner__conteudo--centro .mare-banner__caixa { justify-items: center; }
+
+  .mare-banner__olho,
+  .mare-banner__titulo,
+  .mare-banner__fina { color: var(--mare-banner-texto, #FFFDFB); margin: 0; }
+
+  .mare-banner__olho { opacity: .9; }
+
+  .mare-banner__titulo {
+    font-size: clamp(2.25rem, 6.4vw, 5rem);
+    max-width: 16ch;
+    text-shadow: 0 2px 24px rgba(58,10,36,.35);
+  }
+  .mare-banner__conteudo--centro .mare-banner__titulo { max-width: 20ch; }
+
+  .mare-banner__fina {
+    max-width: 42ch;
+    font-size: clamp(.9375rem, 1.6vw, 1.125rem);
+    opacity: .92;
+    text-shadow: 0 1px 12px rgba(58,10,36,.4);
+  }
+
+  .mare-banner__cta { pointer-events: auto; margin-top: .5rem; }
+
+  .mare-banner__area { position: absolute; inset: 0; z-index: 1; }
+
+  .mare-banner__pontos {
+    position: absolute;
+    inset: auto 0 clamp(.875rem, 2.4vw, 1.75rem) 0;
+    z-index: 3;
+    display: flex;
+    justify-content: center;
+    gap: .5rem;
+  }
+  .mare-banner__ponto {
+    width: 40px; height: 4px;
+    border-radius: 999px;
+    background: rgba(255,253,251,.42);
+    transition: background .2s ease, transform .2s ease;
+  }
+  .mare-banner__ponto.is-ativo {
+    background: var(--mare-cor-sku, #FF5436);
+    transform: scaleY(1.6);
+  }
+
+  .mare-banner__onda { margin-top: -1px; }
+
+  .mare-banner__vazio { padding-block: 4rem; opacity: .6; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mare-banner__trilho { scroll-behavior: auto; }
+    .mare-banner__ponto { transition: none; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Banner em foto",
+  "tag": "section",
+  "max_blocks": 6,
+  "settings": [
+    { "type": "header", "content": "Formato" },
+    {
+      "type": "select",
+      "id": "altura_desktop",
+      "label": "Altura no desktop",
+      "options": [
+        { "value": "58svh", "label": "Baixo" },
+        { "value": "72svh", "label": "Médio" },
+        { "value": "88svh", "label": "Alto" },
+        { "value": "100svh", "label": "Tela cheia" }
+      ],
+      "default": "72svh"
+    },
+    {
+      "type": "select",
+      "id": "altura_mobile",
+      "label": "Altura no celular",
+      "options": [
+        { "value": "62svh", "label": "Baixo" },
+        { "value": "78svh", "label": "Médio" },
+        { "value": "92svh", "label": "Alto" }
+      ],
+      "default": "78svh"
+    },
+    { "type": "checkbox", "id": "mostrar_onda", "label": "Onda do calçadão no rodapé do banner", "default": true },
+    { "type": "header", "content": "Rodízio" },
+    { "type": "checkbox", "id": "autoplay", "label": "Trocar de slide sozinho", "default": true },
+    { "type": "range", "id": "intervalo", "label": "Segundos por slide", "min": 4, "max": 12, "step": 1, "unit": "s", "default": 6 },
+    { "type": "header", "content": "Acessibilidade" },
+    { "type": "text", "id": "rotulo_acessivel", "label": "Rótulo do carrossel", "default": "Destaques da MARÉ" },
+    { "type": "text", "id": "rotulo_navegacao", "label": "Rótulo dos pontinhos", "default": "Escolher destaque" }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "settings": [
+        { "type": "header", "content": "Fotos" },
+        { "type": "image_picker", "id": "foto_desktop", "label": "Foto — desktop", "info": "Horizontal. Ideal 2800x1400 px." },
+        { "type": "image_picker", "id": "foto_mobile", "label": "Foto — celular", "info": "Vertical. Ideal 1080x1920 px. Sem ela o celular usa a foto do desktop recortada." },
+        { "type": "text", "id": "foto_alt", "label": "Descrição da foto", "default": "Pouch MARÉ em cena de verão" },
+        { "type": "header", "content": "Texto sobre a foto" },
+        { "type": "text", "id": "olho", "label": "Sobretítulo", "default": "Refresco funcional tropical" },
+        { "type": "text", "id": "titulo", "label": "Título", "default": "Bateu o calor? Tá dando maré." },
+        { "type": "text", "id": "linha_fina", "label": "Linha de apoio", "default": "Frescor de fruta em pó. Mistura, gela, vai." },
+        { "type": "url", "id": "link", "label": "Destino do slide" },
+        { "type": "text", "id": "rotulo", "label": "Texto do botão", "default": "Quero essa maré" },
+        { "type": "header", "content": "Aparência" },
+        {
+          "type": "select",
+          "id": "posicao",
+          "label": "Posição do texto",
+          "options": [
+            { "value": "baixo", "label": "Embaixo, à esquerda" },
+            { "value": "esquerda", "label": "No meio, à esquerda" },
+            { "value": "centro", "label": "Centralizado" }
+          ],
+          "default": "baixo"
+        },
+        { "type": "range", "id": "veu", "label": "Força do véu sobre a foto", "min": 0, "max": 80, "step": 5, "unit": "%", "default": 45 },
+        { "type": "color", "id": "cor_texto", "label": "Cor do texto", "default": "#FFFDFB" },
+        { "type": "color", "id": "cor_sku", "label": "Cor de destaque do slide", "default": "#FF5436" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Banner em foto",
+      "blocks": [
+        { "type": "slide", "settings": { "olho": "Refresco funcional tropical", "titulo": "Bateu o calor? Tá dando maré.", "linha_fina": "Frescor de fruta em pó. Mistura, gela, vai.", "rotulo": "Quero essa maré", "cor_sku": "#FF5436" } },
+        { "type": "slide", "settings": { "olho": "Sabor herói", "titulo": "Morango com pitaya.", "linha_fina": "Doce, floral, cor de fim de tarde.", "rotulo": "Conhecer", "posicao": "esquerda", "cor_sku": "#E8156B" } },
+        { "type": "slide", "settings": { "olho": "O clube", "titulo": "Sua maré chega sozinha.", "linha_fina": "Toda primeira terça do mês, sem precisar lembrar.", "rotulo": "Entrar no clube", "posicao": "centro", "cor_sku": "#FF9500" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
