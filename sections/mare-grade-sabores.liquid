@@ -1,73 +1,95 @@
 {% comment %}
   MARÉ — grade de sabores
-  Cada card traz packshot, descritor de 3 palavras, preço e compra direta.
-  Sem foto no produto, o card mostra um bloco na cor do SKU — nunca quebra.
+  ---------------------------------------------------------------------------
+  MUDANÇA IMPORTANTE: esta grade agora percorre VARIANTES, não produtos.
+
+  Por quê: os três sabores viraram variantes de um produto só, para que a
+  página de produto troque de sabor no lugar, sem recarregar. Se a grade
+  continuasse percorrendo produtos, a home mostraria UM card em vez de três.
+  Percorrendo variantes, a vitrine volta a ter os três sabores lado a lado — e
+  cada card leva direto para o sabor certo já selecionado, via `?variant=`.
+
+  Funciona nos dois mundos: se um dia houver vários produtos de uma variante
+  só, cada um vira um card normalmente.
+
+  Cor e descritor vêm dos metafields da variante (`mare.cor`, `mare.descritor`),
+  com o metafield do produto e a cor de reserva como escada de fallback.
+  Sem foto, o card mostra um bloco na cor do sabor — nunca quebra.
 {% endcomment %}
 
-{% liquid
+{%- liquid
   assign itens = section.settings.colecao.products
-%}
+  assign limite = section.settings.limite
+  assign contador = 0
+-%}
 
 <section class="mare-grade mare-section">
   <div class="mare-wrap">
     {%- if section.settings.olho != blank -%}
-      <p class="mare-grade__olho">{{ section.settings.olho | escape }}</p>
+      <p class="mare-olho">{{ section.settings.olho | escape }}</p>
     {%- endif -%}
     <h2 class="mare-h mare-grade__titulo">{{ section.settings.titulo | escape }}</h2>
 
     {%- if itens.size > 0 -%}
       <ul class="mare-grade__lista" role="list">
-        {%- for produto in itens limit: section.settings.limite -%}
-          {%- liquid
-            assign cor = produto.metafields.mare.cor.value | default: '#FF5436'
-            assign descritor = produto.metafields.mare.descritor.value
-            assign v = produto.selected_or_first_available_variant
-          -%}
-          <li class="mare-card" style="--mare-cor-sku: {{ cor }}">
-            <a href="{{ produto.url }}" class="mare-card__midia">
-              {%- if produto.featured_image -%}
-                {{ produto.featured_image
-                   | image_url: width: 700
-                   | image_tag:
-                       loading: 'lazy',
-                       sizes: '(min-width: 990px) 25vw, (min-width: 750px) 33vw, 80vw',
-                       class: 'mare-card__img',
-                       alt: produto.featured_image.alt | default: produto.title }}
-              {%- else -%}
-                <span class="mare-card__vazio" aria-hidden="true"><span class="mare-acento"></span></span>
-              {%- endif -%}
-            </a>
+        {%- for produto in itens -%}
+          {%- for v in produto.variants -%}
+            {%- if contador < limite -%}
+              {%- liquid
+                assign contador = contador | plus: 1
 
-            <div class="mare-card__corpo">
-              <h3 class="mare-h mare-card__nome">
-                <a href="{{ produto.url }}">{{ produto.title | escape }}</a>
-              </h3>
+                assign cor = v.metafields.mare.cor.value | default: produto.metafields.mare.cor.value | default: section.settings.cor_padrao
+                assign descritor = v.metafields.mare.descritor.value | default: produto.metafields.mare.descritor.value
 
-              {%- if descritor -%}
-                <p class="mare-card__descritor">{{ descritor | join: ' · ' }}</p>
-              {%- endif -%}
+                assign nome = v.title
+                if produto.has_only_default_variant
+                  assign nome = produto.title
+                endif
 
-              {% render 'mare-preco', variant: v, product: produto, compacto: true %}
-
-              {%- if section.settings.compra_rapida and v.available -%}
-                <form method="post" action="{{ routes.cart_add_url }}" data-mare-quick-add>
-                  <input type="hidden" name="form_type" value="product">
-                  <input type="hidden" name="utf8" value="✓">
-                  <input type="hidden" name="id" value="{{ v.id }}">
-                  <input type="hidden" name="quantity" value="1">
-                  <button type="submit" class="mare-btn mare-btn--sku mare-card__btn">
-                    {{ section.settings.rotulo_cta | escape }}
-                  </button>
-                </form>
-              {%- elsif v.available == false -%}
-                <p class="mare-card__esgotado">{{ section.settings.rotulo_esgotado | escape }}</p>
-              {%- else -%}
-                <a href="{{ produto.url }}" class="mare-btn mare-btn--sku mare-card__btn">
-                  {{ section.settings.rotulo_cta | escape }}
+                assign foto = v.image | default: produto.featured_image
+                assign destino = produto.url | append: '?variant=' | append: v.id
+              -%}
+              <li class="mare-card" style="--mare-cor-sku: {{ cor }}">
+                <a href="{{ destino }}" class="mare-card__midia">
+                  {%- if foto -%}
+                    {{ foto | image_url: width: 700 | image_tag: loading: 'lazy', sizes: '(min-width: 990px) 25vw, (min-width: 750px) 33vw, 80vw', class: 'mare-card__img', alt: foto.alt | default: nome }}
+                  {%- else -%}
+                    <span class="mare-card__vazio" aria-hidden="true"><span class="mare-acento"></span></span>
+                  {%- endif -%}
                 </a>
-              {%- endif -%}
-            </div>
-          </li>
+
+                <div class="mare-card__corpo">
+                  <h3 class="mare-h mare-card__nome">
+                    <a href="{{ destino }}">{{ nome | escape }}</a>
+                  </h3>
+
+                  {%- if descritor != blank -%}
+                    <p class="mare-card__descritor">{{ descritor | escape }}</p>
+                  {%- endif -%}
+
+                  {% render 'mare-preco', variant: v, product: produto, compacto: true %}
+
+                  {%- if section.settings.compra_rapida and v.available -%}
+                    <form method="post" action="{{ routes.cart_add_url }}" data-mare-quick-add>
+                      <input type="hidden" name="form_type" value="product">
+                      <input type="hidden" name="utf8" value="✓">
+                      <input type="hidden" name="id" value="{{ v.id }}">
+                      <input type="hidden" name="quantity" value="1">
+                      <button type="submit" class="mare-btn mare-btn--sku mare-card__btn">
+                        {{ section.settings.rotulo_cta | escape }}
+                      </button>
+                    </form>
+                  {%- elsif v.available == false -%}
+                    <p class="mare-card__esgotado">{{ section.settings.rotulo_esgotado | escape }}</p>
+                  {%- else -%}
+                    <a href="{{ destino }}" class="mare-btn mare-btn--sku mare-card__btn">
+                      {{ section.settings.rotulo_cta | escape }}
+                    </a>
+                  {%- endif -%}
+                </div>
+              </li>
+            {%- endif -%}
+          {%- endfor -%}
         {%- endfor -%}
       </ul>
     {%- else -%}
@@ -78,36 +100,54 @@
 
 {% stylesheet %}
   .mare-grade { padding-block: var(--mare-grid); }
-  .mare-grade__olho { font-size: var(--mare-t-micro); letter-spacing: .18em; text-transform: uppercase; opacity: .6; margin: 0 0 .5rem; }
   .mare-grade__titulo { font-size: var(--mare-t-titulo); margin-bottom: 2rem; }
   .mare-grade__aviso { opacity: .6; }
 
   .mare-grade__lista {
     list-style: none; margin: 0; padding: 0;
     display: grid; gap: var(--mare-gap);
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
   }
 
   .mare-card { display: grid; gap: .875rem; }
 
   .mare-card__midia {
     display: block; border-radius: var(--mare-raio); overflow: hidden;
-    background: color-mix(in srgb, var(--mare-cor-sku) 14%, var(--mare-areia));
+    background:
+      radial-gradient(72% 62% at 50% 38%, color-mix(in srgb, var(--mare-cor-sku) 34%, transparent) 0%, transparent 70%),
+      color-mix(in srgb, var(--mare-cor-sku) 12%, var(--mare-areia));
     aspect-ratio: 1 / 1;
+    box-shadow: var(--mare-sombra-1);
+    transition: transform .3s cubic-bezier(.2,.7,.3,1), box-shadow .3s ease;
   }
+  .mare-card__midia:hover { transform: translateY(-6px); box-shadow: var(--mare-sombra-3); }
   .mare-card__img { width: 100%; height: 100%; object-fit: contain; display: block; }
 
-  .mare-card__vazio { width: 100%; height: 100%; display: grid; place-items: center; color: var(--mare-cor-sku); font-size: 3rem; }
+  .mare-card__vazio {
+    width: 100%; height: 100%; display: grid; place-items: center;
+    color: var(--mare-cor-sku); font-size: 3rem;
+  }
 
   .mare-card__corpo { display: grid; gap: .5rem; }
   .mare-card__nome { font-size: 1.25rem; }
   .mare-card__nome a { color: inherit; text-decoration: none; }
   .mare-card__nome a:hover { text-decoration: underline; }
 
-  .mare-card__descritor { margin: 0; font-size: var(--mare-t-micro); letter-spacing: .08em; opacity: .7; }
+  .mare-card__descritor {
+    margin: 0; font-size: var(--mare-t-micro);
+    letter-spacing: .08em; opacity: .7;
+  }
 
   .mare-card__btn { width: 100%; margin-top: .25rem; }
-  .mare-card__esgotado { margin: .25rem 0 0; font-size: var(--mare-t-micro); font-weight: 600; opacity: .55; }
+  .mare-card__esgotado {
+    margin: .25rem 0 0; font-size: var(--mare-t-micro);
+    font-weight: 600; opacity: .55;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mare-card__midia { transition: none; }
+    .mare-card__midia:hover { transform: none; }
+  }
 {% endstylesheet %}
 
 {% schema %}
@@ -115,13 +155,15 @@
   "name": "Grade de sabores",
   "tag": "section",
   "settings": [
+    { "type": "paragraph", "content": "Mostra uma card por SABOR (variante). Com um produto de três variantes, aparecem três cards." },
     { "type": "text", "id": "olho", "label": "Sobretítulo", "default": "Uma família" },
     { "type": "text", "id": "titulo", "label": "Título", "default": "Três marés." },
     { "type": "collection", "id": "colecao", "label": "Coleção" },
-    { "type": "range", "id": "limite", "label": "Quantos produtos", "min": 2, "max": 8, "step": 1, "default": 4 },
+    { "type": "range", "id": "limite", "label": "Quantos sabores", "min": 2, "max": 12, "step": 1, "default": 4 },
     { "type": "checkbox", "id": "compra_rapida", "label": "Compra rápida no card", "default": true },
     { "type": "text", "id": "rotulo_cta", "label": "Texto do botão", "default": "Adicionar" },
-    { "type": "text", "id": "rotulo_esgotado", "label": "Texto quando esgotado", "default": "Acabou por enquanto" }
+    { "type": "text", "id": "rotulo_esgotado", "label": "Texto quando esgotado", "default": "Acabou por enquanto" },
+    { "type": "color", "id": "cor_padrao", "label": "Cor de reserva", "default": "#FF5436" }
   ],
   "presets": [{ "name": "Grade de sabores" }]
 }
