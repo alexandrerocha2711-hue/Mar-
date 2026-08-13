@@ -9,27 +9,118 @@
  */
 {
   "sections": {
-    "hero": {
-      "type": "mare-hero-sabores",
-      "name": "1. Hero sabores",
+    "banner": {
+      "type": "mare-hero-foto",
+      "name": "1. Banner em foto",
       "blocks": {
-        "t1": { "type": "tira", "settings": { "texto": "Frescor de fruta" } },
-        "t2": { "type": "tira", "settings": { "texto": "Verão o ano inteiro" } },
-        "t3": { "type": "tira", "settings": { "texto": "Mistura. Gela. Vai." } }
+        "s1": {
+          "type": "slide",
+          "settings": {
+            "foto_alt": "Pouch MARÉ Pitaya com Morango em cena de verão",
+            "olho": "Refresco funcional tropical",
+            "titulo": "Bateu o calor? Tá dando maré.",
+            "linha_fina": "Frescor de fruta em pó. Mistura, gela, vai.",
+            "link": "shopify://products/pitaya-com-morango",
+            "rotulo": "Quero essa maré",
+            "posicao": "baixo",
+            "veu": 45,
+            "cor_texto": "#FFFDFB",
+            "cor_sku": "#E8156B"
+          }
+        },
+        "s2": {
+          "type": "slide",
+          "settings": {
+            "foto_alt": "Pouch MARÉ Melancia com copo gelado",
+            "olho": "Fresco · leve · suave",
+            "titulo": "Melancia. O verão em pó.",
+            "linha_fina": "A maré mais leve da família.",
+            "link": "shopify://products/melancia",
+            "rotulo": "Provar melancia",
+            "posicao": "baixo",
+            "veu": 45,
+            "cor_texto": "#FFFDFB",
+            "cor_sku": "#FF5436"
+          }
+        },
+        "s3": {
+          "type": "slide",
+          "settings": {
+            "foto_alt": "Pouch MARÉ Morango com Limão ao sol",
+            "olho": "Cítrico · doce · redondo",
+            "titulo": "Morango com limão. Dupla de praia.",
+            "linha_fina": "O equilíbrio entre o doce e o cítrico.",
+            "link": "shopify://products/morango-com-limao",
+            "rotulo": "Provar a dupla",
+            "posicao": "baixo",
+            "veu": 45,
+            "cor_texto": "#FFFDFB",
+            "cor_sku": "#FF9500"
+          }
+        }
       },
-      "block_order": ["t1", "t2", "t3"],
+      "block_order": [
+        "s1",
+        "s2",
+        "s3"
+      ],
       "settings": {
-        "olho": "Refresco funcional com alma de verão",
-        "titulo": "Bateu o calor? Tá dando maré.",
-        "linha_fina": "Frescor de fruta em pó. Mistura, gela, vai — e o dia segue mais leve.",
-        "rotulo_cta": "Quero essa maré",
-        "colecao": "sabores",
-        "cor_padrao": "#FF5436"
+        "altura_desktop": "72svh",
+        "altura_mobile": "78svh",
+        "mostrar_onda": true,
+        "autoplay": true,
+        "intervalo": 6,
+        "rotulo_acessivel": "Destaques da MARÉ",
+        "rotulo_navegacao": "Escolher destaque"
       }
+    },
+    "esteira": {
+      "type": "mare-esteira",
+      "name": "2. Esteira de selos",
+      "blocks": {
+        "e1": {
+          "type": "selo",
+          "settings": {
+            "texto": "Sem açúcar adicionado"
+          }
+        },
+        "e2": {
+          "type": "selo",
+          "settings": {
+            "texto": "Sabor de fruta"
+          }
+        },
+        "e3": {
+          "type": "selo",
+          "settings": {
+            "texto": "Feito no Brasil"
+          }
+        },
+        "e4": {
+          "type": "selo",
+          "settings": {
+            "texto": "Entrega para todo o país"
+          }
+        },
+        "e5": {
+          "type": "selo",
+          "settings": {
+            "texto": "Troca fácil em 7 dias"
+          }
+        }
+      },
+      "block_order": [
+        "e1",
+        "e2",
+        "e3",
+        "e4",
+        "e5"
+      ],
+      "settings": {}
     },
     "grade": {
       "type": "mare-grade-sabores",
-      "name": "2. Grade de sabores",
+      "name": "3. Grade de sabores",
       "settings": {
         "olho": "Uma família",
         "titulo": "Três marés. Escolha a sua.",
@@ -42,13 +133,38 @@
     },
     "ritual": {
       "type": "mare-ritual",
-      "name": "3. Ritual",
+      "name": "4. Ritual",
       "blocks": {
-        "p1": { "type": "passo", "settings": { "verbo": "Mistura.", "legenda": "o pó encontra a água", "cor": "#E8156B" } },
-        "p2": { "type": "passo", "settings": { "verbo": "Gela.", "legenda": "o frescor muda o clima", "cor": "#FF9500" } },
-        "p3": { "type": "passo", "settings": { "verbo": "Vai.", "legenda": "o dia segue mais leve", "cor": "#FF5436" } }
+        "p1": {
+          "type": "passo",
+          "settings": {
+            "verbo": "Mistura.",
+            "legenda": "o pó encontra a água",
+            "cor": "#E8156B"
+          }
+        },
+        "p2": {
+          "type": "passo",
+          "settings": {
+            "verbo": "Gela.",
+            "legenda": "o frescor muda o clima",
+            "cor": "#FF9500"
+          }
+        },
+        "p3": {
+          "type": "passo",
+          "settings": {
+            "verbo": "Vai.",
+            "legenda": "o dia segue mais leve",
+            "cor": "#FF5436"
+          }
+        }
       },
-      "block_order": ["p1", "p2", "p3"],
+      "block_order": [
+        "p1",
+        "p2",
+        "p3"
+      ],
       "settings": {
         "olho": "O ritual",
         "titulo": "Três verbos. Um gesto que fica.",
@@ -58,14 +174,43 @@
     },
     "manifesto": {
       "type": "mare-manifesto",
-      "name": "4. Manifesto",
+      "name": "5. Manifesto",
       "blocks": {
-        "f1": { "type": "foto", "settings": { "legenda": "De manhã", "cor": "#FFC943" } },
-        "f2": { "type": "foto", "settings": { "legenda": "Quando bate o calor", "cor": "#FF9500" } },
-        "f3": { "type": "foto", "settings": { "legenda": "Fim de tarde", "cor": "#E8156B" } },
-        "f4": { "type": "foto", "settings": { "legenda": "Fim de semana", "cor": "#FF5436" } }
+        "f1": {
+          "type": "foto",
+          "settings": {
+            "legenda": "De manhã",
+            "cor": "#FFC943"
+          }
+        },
+        "f2": {
+          "type": "foto",
+          "settings": {
+            "legenda": "Quando bate o calor",
+            "cor": "#FF9500"
+          }
+        },
+        "f3": {
+          "type": "foto",
+          "settings": {
+            "legenda": "Fim de tarde",
+            "cor": "#E8156B"
+          }
+        },
+        "f4": {
+          "type": "foto",
+          "settings": {
+            "legenda": "Fim de semana",
+            "cor": "#FF5436"
+          }
+        }
       },
-      "block_order": ["f1", "f2", "f3", "f4"],
+      "block_order": [
+        "f1",
+        "f2",
+        "f3",
+        "f4"
+      ],
       "settings": {
         "olho": "A ideia central",
         "titulo": "Verão não é estação. É sensação.",
@@ -76,14 +221,47 @@
     },
     "comparativo": {
       "type": "mare-comparativo",
-      "name": "5. Comparativo",
+      "name": "6. Comparativo",
       "blocks": {
-        "l1": { "type": "linha", "settings": { "item": "Açúcar adicionado", "nos": "não contém", "eles": "contém" } },
-        "l2": { "type": "linha", "settings": { "item": "Corante artificial", "nos": "não contém", "eles": "contém" } },
-        "l3": { "type": "linha", "settings": { "item": "Fibra alimentar", "nos": "contém", "eles": "não contém" } },
-        "l4": { "type": "linha", "settings": { "item": "Sabor", "nos": "de fruta", "eles": "aroma artificial" } }
+        "l1": {
+          "type": "linha",
+          "settings": {
+            "item": "Açúcar adicionado",
+            "nos": "não contém",
+            "eles": "contém"
+          }
+        },
+        "l2": {
+          "type": "linha",
+          "settings": {
+            "item": "Corante artificial",
+            "nos": "não contém",
+            "eles": "contém"
+          }
+        },
+        "l3": {
+          "type": "linha",
+          "settings": {
+            "item": "Fibra alimentar",
+            "nos": "contém",
+            "eles": "não contém"
+          }
+        },
+        "l4": {
+          "type": "linha",
+          "settings": {
+            "item": "Sabor",
+            "nos": "de fruta",
+            "eles": "aroma artificial"
+          }
+        }
       },
-      "block_order": ["l1", "l2", "l3", "l4"],
+      "block_order": [
+        "l1",
+        "l2",
+        "l3",
+        "l4"
+      ],
       "settings": {
         "olho": "O que tem dentro",
         "titulo": "Compare o rótulo.",
@@ -92,16 +270,115 @@
         "nota": "Comparação por porção preparada. Confira sempre o rótulo do produto."
       }
     },
+    "prova": {
+      "type": "mare-prova",
+      "name": "7. Prova social",
+      "blocks": {
+        "f1": {
+          "type": "foto",
+          "settings": {
+            "alt": "Cliente com a MARÉ na praia",
+            "legenda": "@suamare",
+            "cor": "#FF5436"
+          }
+        },
+        "c1": {
+          "type": "citacao",
+          "settings": {
+            "texto": "Virou o meu ritual de todo fim de tarde.",
+            "autor": "Larissa",
+            "contexto": "Recife · PE",
+            "cor": "#E8156B"
+          }
+        },
+        "f2": {
+          "type": "foto",
+          "settings": {
+            "alt": "Copo com MARÉ gelada",
+            "legenda": "@suamare",
+            "cor": "#FF9500"
+          }
+        },
+        "c2": {
+          "type": "citacao",
+          "settings": {
+            "texto": "O gosto é de fruta de verdade, não de essência.",
+            "autor": "Dandara",
+            "contexto": "Salvador · BA",
+            "cor": "#FF9500"
+          }
+        },
+        "f3": {
+          "type": "foto",
+          "settings": {
+            "alt": "Pouch MARÉ na bolsa de praia",
+            "legenda": "@suamare",
+            "cor": "#E8156B"
+          }
+        },
+        "c3": {
+          "type": "citacao",
+          "settings": {
+            "texto": "Levo o pouch na bolsa e preparo em qualquer lugar.",
+            "autor": "Bel",
+            "contexto": "São Paulo · SP",
+            "cor": "#FF5436"
+          }
+        }
+      },
+      "block_order": [
+        "f1",
+        "c1",
+        "f2",
+        "c2",
+        "f3",
+        "c3"
+      ],
+      "settings": {
+        "olho": "Quem já pegou essa maré",
+        "titulo": "Todo mundo tem uma maré favorita.",
+        "nota": "Depoimentos ilustrativos — troque pelos reais assim que as primeiras avaliações chegarem."
+      }
+    },
     "clube": {
       "type": "mare-clube",
-      "name": "6. Clube",
+      "name": "8. Clube",
       "blocks": {
-        "v1": { "type": "vantagem", "settings": { "nome": "Economize", "texto": "Melhor preço por dose, e frete grátis em todo ciclo." } },
-        "v2": { "type": "vantagem", "settings": { "nome": "Sem esforço", "texto": "Chega sempre na mesma data. Você não pensa nisso." } },
-        "v3": { "type": "vantagem", "settings": { "nome": "Sabores antes", "texto": "Lançamentos primeiro, e você pede o próximo da linha." } },
-        "v4": { "type": "vantagem", "settings": { "nome": "Sem amarras", "texto": "Troque o sabor, adie ou cancele em uma tela, quando quiser." } }
+        "v1": {
+          "type": "vantagem",
+          "settings": {
+            "nome": "Economize",
+            "texto": "Melhor preço por dose, e frete grátis em todo ciclo."
+          }
+        },
+        "v2": {
+          "type": "vantagem",
+          "settings": {
+            "nome": "Sem esforço",
+            "texto": "Chega sempre na mesma data. Você não pensa nisso."
+          }
+        },
+        "v3": {
+          "type": "vantagem",
+          "settings": {
+            "nome": "Sabores antes",
+            "texto": "Lançamentos primeiro, e você pede o próximo da linha."
+          }
+        },
+        "v4": {
+          "type": "vantagem",
+          "settings": {
+            "nome": "Sem amarras",
+            "texto": "Troque o sabor, adie ou cancele em uma tela, quando quiser."
+          }
+        }
       },
-      "block_order": ["v1", "v2", "v3", "v4"],
+      "block_order": [
+        "v1",
+        "v2",
+        "v3",
+        "v4"
+      ],
       "settings": {
         "olho": "O clube",
         "titulo": "Sua maré chega sozinha.",
@@ -112,21 +389,74 @@
     },
     "faq": {
       "type": "mare-faq",
-      "name": "7. Dúvidas",
+      "name": "9. Dúvidas",
       "blocks": {
-        "q1": { "type": "pergunta", "settings": { "pergunta": "Qual o gosto?", "resposta": "<p>Frescor de fruta de verdade. Cada maré tem um perfil próprio — o descritor de sabor está na página de cada uma.</p>" } },
-        "q2": { "type": "pergunta", "settings": { "pergunta": "Como preparo?", "resposta": "<p>Mistura o pó na água, gela e bebe. A medida exata está na embalagem.</p>" } },
-        "q3": { "type": "pergunta", "settings": { "pergunta": "Tem açúcar?", "resposta": "<p>Confira a tabela nutricional e a lista de ingredientes na página do produto — elas trazem a informação completa do rótulo.</p>" } },
-        "q4": { "type": "pergunta", "settings": { "pergunta": "Quem não deve consumir?", "resposta": "<p>As advertências e o público a que o produto não se destina estão no rótulo e na página do produto. Em caso de dúvida, converse com um profissional de saúde.</p>" } },
-        "q5": { "type": "pergunta", "settings": { "pergunta": "Em quanto tempo chega?", "resposta": "<p>O prazo aparece no carrinho depois que você informa o CEP.</p>" } },
-        "q6": { "type": "pergunta", "settings": { "pergunta": "Posso trocar ou devolver?", "resposta": "<p>Sim. Você tem 7 dias a partir do recebimento para desistir da compra, sem custo. Veja a política de trocas e devoluções no rodapé.</p>" } }
+        "q1": {
+          "type": "pergunta",
+          "settings": {
+            "pergunta": "Qual o gosto?",
+            "resposta": "<p>Frescor de fruta de verdade. Cada maré tem um perfil próprio — o descritor de sabor está na página de cada uma.</p>"
+          }
+        },
+        "q2": {
+          "type": "pergunta",
+          "settings": {
+            "pergunta": "Como preparo?",
+            "resposta": "<p>Mistura o pó na água, gela e bebe. A medida exata está na embalagem.</p>"
+          }
+        },
+        "q3": {
+          "type": "pergunta",
+          "settings": {
+            "pergunta": "Tem açúcar?",
+            "resposta": "<p>Confira a tabela nutricional e a lista de ingredientes na página do produto — elas trazem a informação completa do rótulo.</p>"
+          }
+        },
+        "q4": {
+          "type": "pergunta",
+          "settings": {
+            "pergunta": "Quem não deve consumir?",
+            "resposta": "<p>As advertências e o público a que o produto não se destina estão no rótulo e na página do produto. Em caso de dúvida, converse com um profissional de saúde.</p>"
+          }
+        },
+        "q5": {
+          "type": "pergunta",
+          "settings": {
+            "pergunta": "Em quanto tempo chega?",
+            "resposta": "<p>O prazo aparece no carrinho depois que você informa o CEP.</p>"
+          }
+        },
+        "q6": {
+          "type": "pergunta",
+          "settings": {
+            "pergunta": "Posso trocar ou devolver?",
+            "resposta": "<p>Sim. Você tem 7 dias a partir do recebimento para desistir da compra, sem custo. Veja a política de trocas e devoluções no rodapé.</p>"
+          }
+        }
       },
-      "block_order": ["q1", "q2", "q3", "q4", "q5", "q6"],
+      "block_order": [
+        "q1",
+        "q2",
+        "q3",
+        "q4",
+        "q5",
+        "q6"
+      ],
       "settings": {
         "olho": "Dúvidas",
         "titulo": "Perguntas que a gente recebe."
       }
     }
   },
-  "order": ["hero", "grade", "ritual", "manifesto", "comparativo", "clube", "faq"]
+  "order": [
+    "banner",
+    "esteira",
+    "grade",
+    "ritual",
+    "manifesto",
+    "comparativo",
+    "prova",
+    "clube",
+    "faq"
+  ]
 }
