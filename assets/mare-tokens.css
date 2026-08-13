@@ -1,14 +1,38 @@
 /* ==========================================================================
-   MARÉ — tokens, fundos, profundidade e movimento
+   MARÉ — tokens, fontes, fundos, profundidade e movimento
    Brandbook 2026. Prefixo `mare-`: nunca editar arquivo do tema base.
 
-   PALETA É NORMATIVA. A prancha 23 lista "trocar a paleta" como proibição de
-   marca. Não substituir, não aproximar, não gerar variante.
+   PALETA É NORMATIVA (prancha 23/25). Não substituir, não aproximar.
+   "Maré sem azul": nenhum token azul existe aqui, por decisão de marca.
 
-   ORÇAMENTO: este arquivo não carrega nenhuma imagem, fonte ou biblioteca.
-   Textura, brilho, onda e profundidade são gradiente e SVG inline — custo de
-   rede zero. É por isso que dá para ter atmosfera sem estourar o LCP.
+   ORÇAMENTO DE REDE
+   As duas fontes são woff2 latinos servidos pelo CDN da própria loja
+   (~30 KB cada, eixo de peso 400–600 num único arquivo variável). Nenhuma
+   requisição a domínio de terceiro, nenhum FOUT vindo do Google Fonts.
+   Todo o resto — grão, aurora, onda, brilho, profundidade — é gradiente e
+   SVG inline: custo de rede zero.
    ========================================================================== */
+
+/* 0. FONTES DA MARCA ------------------------------------------------------ */
+@font-face {
+  font-family: "Fredoka MARE";
+  src: url("mare-fredoka.woff2") format("woff2");
+  font-weight: 400 600;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
+                 U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2212, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Instrument MARE";
+  src: url("mare-instrument.woff2") format("woff2");
+  font-weight: 400 600;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
+                 U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2212, U+FEFF, U+FFFD;
+}
 
 :root {
   /* --- Paleta oficial (prancha 25) --- */
@@ -20,56 +44,74 @@
   --mare-ameixa:     #3A0A24;
   --mare-branco:     #FFFDFB;
 
-  /* Maré sem azul. Nenhum token azul existe aqui, por decisão de marca. */
-
   /* --- Tipografia (prancha 26) --- */
-  --mare-display: "Fredoka", ui-rounded, system-ui, sans-serif;
-  --mare-corpo:   "Instrument Sans", system-ui, -apple-system, sans-serif;
+  --mare-display: "Fredoka MARE", ui-rounded, system-ui, sans-serif;
+  --mare-corpo:   "Instrument MARE", system-ui, -apple-system, sans-serif;
 
   --mare-t-hero:   clamp(2.75rem, 8vw, 6rem);
   --mare-t-titulo: clamp(1.75rem, 4.5vw, 3rem);
   --mare-t-corpo:  1rem;
   --mare-t-micro:  0.8125rem;
 
-  --mare-grid: 72px;   /* prancha 29 */
+  --mare-grid: clamp(48px, 7vw, 88px);
   --mare-gap:  1.5rem;
   --mare-raio: 16px;
+  --mare-largura: 1320px;
 
   --mare-cor-sku: var(--mare-coral);
 
-  /* Sombra quente. Sombra cinza mata cor tropical — a sombra aqui é ameixa. */
+  /* Sombra quente. Sombra cinza mata cor tropical — aqui a sombra é ameixa. */
   --mare-sombra-1: 0 2px 8px rgba(58,10,36,.06);
   --mare-sombra-2: 0 12px 32px -8px rgba(58,10,36,.16);
   --mare-sombra-3: 0 32px 64px -16px rgba(58,10,36,.24);
+
+  --mare-borda: color-mix(in srgb, var(--mare-ameixa) 12%, transparent);
 }
 
-/* ==========================================================================
-   1. GRÃO — a textura que tira o plano do digital
-   feTurbulence inline. ~300 bytes. Aplicado como ::before para não interferir
-   no fundo real do elemento.
-   ========================================================================== */
-.mare-section { position: relative; isolation: isolate; }
+/* 1. PELE DO SITE INTEIRO -------------------------------------------------
+   O tema base pinta a página de branco. Aqui a página inteira — inclusive
+   cabeçalho, rodapé, carrinho e PDP — passa a viver sobre areia com aurora.
+   Fica atrás de tudo e não custa repaint no scroll.
+   ------------------------------------------------------------------------ */
+body {
+  background-color: var(--mare-areia);
+  color: var(--mare-ameixa);
+}
 
-.mare-section::before {
+body::before {
   content: "";
-  position: absolute; inset: 0;
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(64rem 48rem at 82% -8%,  color-mix(in srgb, var(--mare-sol) 42%, transparent), transparent 62%),
+    radial-gradient(52rem 46rem at 4% 22%,   color-mix(in srgb, var(--mare-coral) 20%, transparent), transparent 60%),
+    radial-gradient(60rem 50rem at 96% 78%,  color-mix(in srgb, var(--mare-pitaya) 16%, transparent), transparent 58%),
+    var(--mare-areia);
+}
+
+/* Grão sobre a página toda. ~300 bytes de SVG inline. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
   z-index: -1;
   pointer-events: none;
-  opacity: .30;
+  opacity: .22;
   mix-blend-mode: multiply;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23g)' opacity='.42'/%3E%3C/svg%3E");
 }
 
-/* ==========================================================================
-   2. FUNDOS — variantes de superfície
-   ========================================================================== */
+/* 2. SEÇÕES E SUPERFÍCIES ------------------------------------------------- */
 .mare-section {
-  background: var(--mare-areia);
+  position: relative;
+  isolation: isolate;
+  background: transparent;
   color: var(--mare-ameixa);
   font-family: var(--mare-corpo);
 }
 
-/* Areia com sol batendo no canto. O gesto "cor do sol na fruta". */
 .mare-fundo--sol {
   background:
     radial-gradient(120% 90% at 85% -10%, color-mix(in srgb, var(--mare-sol) 55%, transparent) 0%, transparent 62%),
@@ -77,14 +119,12 @@
     var(--mare-areia);
 }
 
-/* Banho na cor do SKU. Usa --mare-cor-sku, então muda sozinho por sabor. */
 .mare-fundo--sku {
   background:
     radial-gradient(130% 100% at 50% -20%, color-mix(in srgb, var(--mare-cor-sku) 42%, transparent) 0%, transparent 66%),
     color-mix(in srgb, var(--mare-cor-sku) 8%, var(--mare-areia));
 }
 
-/* Noite ameixa. Para o bloco de manifesto e fechamento. */
 .mare-fundo--noite {
   background:
     radial-gradient(100% 80% at 20% 0%, color-mix(in srgb, var(--mare-pitaya) 34%, transparent) 0%, transparent 60%),
@@ -93,14 +133,13 @@
   color: var(--mare-areia);
 }
 .mare-fundo--noite .mare-h { color: var(--mare-branco); }
+.mare-fundo--noite .mare-btn { background: var(--mare-sol); color: var(--mare-ameixa); }
 
-/* ==========================================================================
-   3. GRAFISMOS (prancha 27)
-   RASTRO · impulso e assinatura   MAROLA · fluxo e repetição
-   ========================================================================== */
+.mare-fundo--papel { background: var(--mare-branco); }
 
-/* O acento agudo isolado. Permitido pela prancha 24 como assinatura.
-   PROIBIDO destacar o acento de dentro do logotipo. */
+/* 3. GRAFISMOS (prancha 27) -----------------------------------------------
+   RASTRO · impulso    MAROLA · repetição    CALÇADÃO · a onda de Burle Marx
+   ------------------------------------------------------------------------ */
 .mare-acento {
   display: inline-block;
   width: .62em; height: .16em;
@@ -111,7 +150,6 @@
   margin: 0 .1em;
 }
 
-/* Marola: onda repetida. Divide seções sem virar régua reta. */
 .mare-marola {
   display: block; width: 100%; height: 28px;
   background:
@@ -120,7 +158,18 @@
   opacity: .85;
 }
 
-/* Rastro: risco diagonal de impulso, atrás do conteúdo. */
+.mare-calcadao {
+  display: block; width: 100%; height: clamp(28px, 4vw, 52px);
+  background-repeat: repeat-x;
+  background-size: auto 100%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 60' preserveAspectRatio='none'%3E%3Cpath d='M0 30 C 30 0, 60 0, 90 30 S 150 60, 180 30 S 240 0, 240 30' fill='none' stroke='%233A0A24' stroke-width='9' stroke-linecap='round'/%3E%3C/svg%3E");
+  opacity: .28;
+}
+.mare-calcadao--cheio {
+  opacity: 1;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 60' preserveAspectRatio='none'%3E%3Cpath d='M0 42 C 30 12, 60 12, 90 42 S 150 72, 180 42 S 240 12, 240 42' fill='none' stroke='%23FF5436' stroke-width='11' stroke-linecap='round'/%3E%3Cpath d='M0 16 C 30 -14, 60 -14, 90 16 S 150 46, 180 16 S 240 -14, 240 16' fill='none' stroke='%23FFC943' stroke-width='11' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
 .mare-rastro {
   position: absolute; inset: auto 0 0 0; height: 60%;
   z-index: -1; pointer-events: none; overflow: hidden;
@@ -138,13 +187,23 @@
   filter: blur(38px);
 }
 
-/* ==========================================================================
-   4. PROFUNDIDADE — 3D sem biblioteca
-   Perspectiva + rotação em CSS. Custo de rede: 0 KB.
-   Uma biblioteca 3D custaria ~150 KB comprimidos e derrubaria o LCP.
-   Para 3D de verdade, use o model-viewer NATIVO da Shopify na PDP:
-   suba um .glb como mídia do produto e a plataforma cuida do resto.
-   ========================================================================== */
+.mare-halo { position: relative; isolation: isolate; }
+.mare-halo::before {
+  content: "";
+  position: absolute; inset: -12%;
+  z-index: -1; pointer-events: none;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 45%,
+    color-mix(in srgb, var(--mare-cor-sku) 46%, transparent) 0%,
+    color-mix(in srgb, var(--mare-cor-sku) 12%, transparent) 46%,
+    transparent 70%);
+}
+
+/* 4. PROFUNDIDADE — 3D sem biblioteca --------------------------------------
+   Custo de rede: 0 KB. Uma biblioteca 3D custaria ~150 KB comprimidos e
+   derrubaria o LCP. Para 3D real na PDP, use o model-viewer NATIVO da
+   Shopify: suba um .glb como mídia do produto.
+   ------------------------------------------------------------------------ */
 .mare-palco3d { perspective: 1200px; perspective-origin: 50% 40%; }
 
 .mare-flutua {
@@ -159,18 +218,15 @@
   filter: drop-shadow(0 46px 56px rgba(58,10,36,.34));
 }
 
-/* Respiro lento e contínuo — dá vida sem pedir interação. */
 @keyframes mare-boia {
   0%, 100% { translate: 0 0; }
   50%      { translate: 0 -14px; }
 }
 .mare-boia { animation: mare-boia 7s ease-in-out infinite; }
 
-/* ==========================================================================
-   5. REVELAÇÃO NO SCROLL
+/* 5. REVELAÇÃO NO SCROLL --------------------------------------------------
    Animação nativa dirigida por scroll. Sem JavaScript, sem observer.
-   Só aplica onde o navegador suporta; nos demais o conteúdo já nasce visível.
-   ========================================================================== */
+   ------------------------------------------------------------------------ */
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
     .mare-revela {
@@ -185,10 +241,13 @@
   }
 }
 
-/* ==========================================================================
-   6. BASE
-   ========================================================================== */
-.mare-wrap { max-width: 1280px; margin-inline: auto; padding-inline: var(--mare-gap); }
+/* 6. BASE ----------------------------------------------------------------- */
+.mare-wrap {
+  max-width: var(--mare-largura);
+  margin-inline: auto;
+  padding-inline: clamp(1rem, 4vw, 2.5rem);
+}
+.mare-wrap--estreito { max-width: 960px; }
 
 .mare-h {
   font-family: var(--mare-display);
@@ -198,6 +257,7 @@
 }
 
 .mare-olho {
+  font-family: var(--mare-corpo);
   font-size: var(--mare-t-micro); letter-spacing: .2em;
   text-transform: uppercase; opacity: .62; margin: 0 0 .625rem;
 }
@@ -217,6 +277,11 @@
 .mare-btn[disabled] { opacity: .5; cursor: not-allowed; transform: none; }
 .mare-btn--sku { background: var(--mare-cor-sku); color: var(--mare-branco); }
 .mare-btn--claro { background: var(--mare-sol); color: var(--mare-ameixa); }
+.mare-btn--contorno {
+  background: transparent; color: var(--mare-ameixa);
+  box-shadow: inset 0 0 0 2px var(--mare-ameixa);
+}
+.mare-btn--contorno:hover { box-shadow: inset 0 0 0 2px var(--mare-ameixa), var(--mare-sombra-2); }
 
 .mare-preco        { display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem .75rem; }
 .mare-preco__atual { font-family: var(--mare-display); font-weight: 600; font-size: 1.875rem; line-height: 1; }
@@ -237,4 +302,24 @@
     animation: none !important; transition: none !important;
   }
   .mare-flutua { transform: none; }
+}
+
+/* 7. PONTE COM O TEMA BASE ------------------------------------------------
+   O Horizon expõe a tipografia em variáveis no `:root` (snippet
+   theme-styles-variables). Este arquivo é carregado DEPOIS desse bloco, então
+   redeclarar as mesmas variáveis com a mesma especificidade basta — não é
+   preciso `!important`, e nenhum arquivo do tema base é editado.
+
+   Por que não usar o seletor de fontes do editor: a biblioteca da Shopify não
+   tem Fredoka nem Instrument Sans. Escolher "a mais parecida" seria trocar a
+   tipografia da marca, o que a prancha 26 não autoriza.
+   ------------------------------------------------------------------------ */
+:root {
+  --font-body--family:       var(--mare-corpo);
+  --font-subheading--family: var(--mare-corpo);
+  --font-heading--family:    var(--mare-display);
+  --font-accent--family:     var(--mare-display);
+
+  --font-heading--weight: 600;
+  --font-accent--weight:  600;
 }
