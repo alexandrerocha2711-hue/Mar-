@@ -6,8 +6,20 @@
  * or related systems. Please exercise caution as any changes
  * made to this file may be overwritten.
  * ------------------------------------------------------------
- */{
+ */
+{
   "sections": {
+    "mare_barra": {
+      "type": "mare-barra-frete",
+      "name": "Barra de frete",
+      "settings": {
+        "degrau_1": 20000,
+        "premio_1": "frete grátis",
+        "degrau_2": 0,
+        "degrau_3": 0,
+        "texto_completo": "Frete grátis liberado. Sua maré está cheia."
+      }
+    },
     "cart-section": {
       "type": "main-cart",
       "blocks": {
@@ -15,7 +27,7 @@
           "type": "_cart-title",
           "static": true,
           "settings": {
-            "title": "Cart",
+            "title": "Sua sacola",
             "show_count": true,
             "type_preset": "h4",
             "alignment": "left",
@@ -101,7 +113,7 @@
               "type": "_product-list-text",
               "name": "t:names.collection_title",
               "settings": {
-                "text": "<h3>You may also like</h3>",
+                "text": "<h3>Você também vai gostar</h3>",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",
@@ -125,7 +137,7 @@
               "type": "_product-list-button",
               "name": "t:names.product_list_button",
               "settings": {
-                "label": "View all",
+                "label": "Ver tudo",
                 "open_in_new_tab": false,
                 "style_class": "link",
                 "width": "fit-content",
@@ -249,6 +261,7 @@
     }
   },
   "order": [
+    "mare_barra",
     "cart-section",
     "product_list_NNFgcy"
   ]
