@@ -48,24 +48,25 @@
     {% endif %}
 
     {%- comment -%}
-      MARÉ — fontes, tokens e interações.
+      MARÉ — fontes, tokens, sobrescritas do tema e interações.
+
+      A ORDEM AQUI É A REGRA INTEIRA:
+      theme-styles-variables (Horizon) → mare-tokens (marca) → mare-tema
+      (sobrescritas). É o que permite reapontar as variáveis de fonte e vestir
+      o cabeçalho de vidro sem `!important` e sem editar arquivo do tema base.
 
       Os dois `preload` são os únicos resource hints do tema (a Shopify
-      recomenda no máximo 2 por template). Vão nas fontes porque o LCP da home
-      é o título do banner, escrito em Fredoka: sem o preload o navegador só
-      descobre a fonte depois de baixar e analisar o CSS, e o texto pisca.
-
-      `crossorigin` é obrigatório em preload de fonte mesmo vindo do CDN da
-      própria loja — sem ele o navegador baixa o arquivo duas vezes.
-
-      `mare-tokens.css` vem DEPOIS de theme-styles-variables de propósito: é o
-      que permite reapontar as variáveis de fonte do tema para a tipografia da
-      marca sem `!important` e sem editar arquivo do tema base.
+      recomenda no máximo 2 por template). Vão nas fontes porque o LCP é texto
+      em Fredoka: sem preload o navegador só descobre a fonte depois de baixar
+      e analisar o CSS, e o texto pisca. `crossorigin` é obrigatório em preload
+      de fonte mesmo vindo do CDN da própria loja — sem ele o arquivo é baixado
+      duas vezes.
     {%- endcomment -%}
     <link rel="preload" as="font" type="font/woff2" crossorigin href="{{ 'mare-fredoka.woff2' | asset_url }}">
     <link rel="preload" as="font" type="font/woff2" crossorigin href="{{ 'mare-instrument.woff2' | asset_url }}">
 
     {{ 'mare-tokens.css' | asset_url | stylesheet_tag }}
+    {{ 'mare-tema.css' | asset_url | stylesheet_tag }}
     <script src="{{ 'mare-carrinho.js' | asset_url }}" defer></script>
     <script src="{{ 'mare-ui.js' | asset_url }}" defer></script>
 
