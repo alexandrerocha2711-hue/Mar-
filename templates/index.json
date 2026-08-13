@@ -12,11 +12,18 @@
     "hero": {
       "type": "mare-hero-sabores",
       "name": "1. Hero sabores",
+      "blocks": {
+        "t1": { "type": "tira", "settings": { "texto": "Frescor de fruta" } },
+        "t2": { "type": "tira", "settings": { "texto": "Verão o ano inteiro" } },
+        "t3": { "type": "tira", "settings": { "texto": "Mistura. Gela. Vai." } }
+      },
+      "block_order": ["t1", "t2", "t3"],
       "settings": {
         "olho": "Refresco funcional com alma de verão",
-        "titulo": "Verão o ano inteiro.",
-        "colecao": "sabores",
+        "titulo": "Bateu o calor? Tá dando maré.",
+        "linha_fina": "Frescor de fruta em pó. Mistura, gela, vai — e o dia segue mais leve.",
         "rotulo_cta": "Quero essa maré",
+        "colecao": "sabores",
         "cor_padrao": "#FF5436"
       }
     },
@@ -25,7 +32,7 @@
       "name": "2. Grade de sabores",
       "settings": {
         "olho": "Uma família",
-        "titulo": "Três marés.",
+        "titulo": "Três marés. Escolha a sua.",
         "colecao": "sabores",
         "limite": 4,
         "compra_rapida": true,
@@ -49,9 +56,27 @@
         "rotulo": "Conheça os sabores"
       }
     },
+    "manifesto": {
+      "type": "mare-manifesto",
+      "name": "4. Manifesto",
+      "blocks": {
+        "f1": { "type": "foto", "settings": { "legenda": "De manhã", "cor": "#FFC943" } },
+        "f2": { "type": "foto", "settings": { "legenda": "Quando bate o calor", "cor": "#FF9500" } },
+        "f3": { "type": "foto", "settings": { "legenda": "Fim de tarde", "cor": "#E8156B" } },
+        "f4": { "type": "foto", "settings": { "legenda": "Fim de semana", "cor": "#FF5436" } }
+      },
+      "block_order": ["f1", "f2", "f3", "f4"],
+      "settings": {
+        "olho": "A ideia central",
+        "titulo": "Verão não é estação. É sensação.",
+        "texto": "<p>A categoria vende disciplina. A MARÉ vende prazer.</p><p>Saúde não precisa ser castigo — e bem-estar não precisa virar projeto de si mesma. A gente coloca essa sensação dentro de um hábito simples: mistura, gela, vai.</p>",
+        "assinatura": "MARÉ · Brasil",
+        "rotulo": "Conheça a MARÉ"
+      }
+    },
     "comparativo": {
       "type": "mare-comparativo",
-      "name": "4. Comparativo",
+      "name": "5. Comparativo",
       "blocks": {
         "l1": { "type": "linha", "settings": { "item": "Açúcar adicionado", "nos": "não contém", "eles": "contém" } },
         "l2": { "type": "linha", "settings": { "item": "Corante artificial", "nos": "não contém", "eles": "contém" } },
@@ -69,7 +94,7 @@
     },
     "clube": {
       "type": "mare-clube",
-      "name": "5. Clube",
+      "name": "6. Clube",
       "blocks": {
         "v1": { "type": "vantagem", "settings": { "nome": "Economize", "texto": "Melhor preço por dose, e frete grátis em todo ciclo." } },
         "v2": { "type": "vantagem", "settings": { "nome": "Sem esforço", "texto": "Chega sempre na mesma data. Você não pensa nisso." } },
@@ -87,7 +112,7 @@
     },
     "faq": {
       "type": "mare-faq",
-      "name": "6. Dúvidas",
+      "name": "7. Dúvidas",
       "blocks": {
         "q1": { "type": "pergunta", "settings": { "pergunta": "Qual o gosto?", "resposta": "<p>Frescor de fruta de verdade. Cada maré tem um perfil próprio — o descritor de sabor está na página de cada uma.</p>" } },
         "q2": { "type": "pergunta", "settings": { "pergunta": "Como preparo?", "resposta": "<p>Mistura o pó na água, gela e bebe. A medida exata está na embalagem.</p>" } },
@@ -103,5 +128,5 @@
       }
     }
   },
-  "order": ["hero", "grade", "ritual", "comparativo", "clube", "faq"]
+  "order": ["hero", "grade", "ritual", "manifesto", "comparativo", "clube", "faq"]
 }
