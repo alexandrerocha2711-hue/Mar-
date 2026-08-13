@@ -1,0 +1,100 @@
+{% comment %}
+  MARÉ — perguntas frequentes
+  Usa <details>/<summary> nativos: zero JavaScript, acessível por teclado e por
+  leitor de tela, e funciona antes de qualquer script carregar.
+
+  ATENÇÃO DE CONTEÚDO: nenhuma resposta aqui deve prometer efeito no corpo.
+  Descreva composição, modo de uso e público a que não se destina. Se a pergunta
+  pedir orientação de saúde, a resposta é indicar profissional.
+{% endcomment %}
+
+<section class="mare-faq mare-section">
+  <div class="mare-wrap">
+    {%- if section.settings.olho != blank -%}
+      <p class="mare-faq__olho">{{ section.settings.olho | escape }}</p>
+    {%- endif -%}
+    <h2 class="mare-h mare-faq__titulo">{{ section.settings.titulo | escape }}</h2>
+
+    <div class="mare-faq__lista">
+      {%- for block in section.blocks -%}
+        <details class="mare-faq__item" {{ block.shopify_attributes }}>
+          <summary class="mare-faq__pergunta">
+            {{ block.settings.pergunta | escape }}
+            <span class="mare-faq__sinal" aria-hidden="true"></span>
+          </summary>
+          <div class="mare-faq__resposta">{{ block.settings.resposta }}</div>
+        </details>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mare-faq { padding-block: var(--mare-grid); }
+  .mare-faq__olho { font-size: var(--mare-t-micro); letter-spacing: .18em; text-transform: uppercase; opacity: .6; margin: 0 0 .5rem; }
+  .mare-faq__titulo { font-size: var(--mare-t-titulo); margin-bottom: 1.75rem; }
+
+  .mare-faq__lista { max-width: 62ch; }
+
+  .mare-faq__item { border-top: 1px solid color-mix(in srgb, var(--mare-ameixa) 14%, transparent); }
+  .mare-faq__item:last-child { border-bottom: 1px solid color-mix(in srgb, var(--mare-ameixa) 14%, transparent); }
+
+  .mare-faq__pergunta {
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    padding: 1.125rem 0; cursor: pointer; list-style: none;
+    font-family: var(--mare-display); font-weight: 600; font-size: 1.0625rem;
+    min-height: 44px;
+  }
+  .mare-faq__pergunta::-webkit-details-marker { display: none; }
+
+  .mare-faq__sinal { flex: 0 0 auto; width: 14px; height: 14px; position: relative; }
+  .mare-faq__sinal::before,
+  .mare-faq__sinal::after {
+    content: ""; position: absolute; inset: 50% 0 auto 0;
+    height: 2.5px; background: var(--mare-coral); border-radius: 2px;
+    transform: translateY(-50%);
+  }
+  .mare-faq__sinal::after { transform: translateY(-50%) rotate(90deg); transition: transform .2s ease; }
+  .mare-faq__item[open] .mare-faq__sinal::after { transform: translateY(-50%) rotate(0deg); }
+
+  .mare-faq__resposta { padding: 0 0 1.25rem; font-size: .9375rem; line-height: 1.65; opacity: .82; }
+  .mare-faq__resposta p { margin: 0 0 .75rem; }
+  .mare-faq__resposta p:last-child { margin-bottom: 0; }
+
+  @media (prefers-reduced-motion: reduce) { .mare-faq__sinal::after { transition: none; } }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Perguntas frequentes",
+  "tag": "section",
+  "max_blocks": 12,
+  "settings": [
+    { "type": "text", "id": "olho", "label": "Sobretítulo", "default": "Dúvidas" },
+    { "type": "text", "id": "titulo", "label": "Título", "default": "Perguntas que a gente recebe." }
+  ],
+  "blocks": [
+    {
+      "type": "pergunta",
+      "name": "Pergunta",
+      "settings": [
+        { "type": "text", "id": "pergunta", "label": "Pergunta", "default": "Qual o gosto?" },
+        { "type": "richtext", "id": "resposta", "label": "Resposta", "default": "<p>Frescor de fruta. Cada sabor tem um perfil próprio descrito na página do produto.</p>" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Perguntas frequentes",
+      "blocks": [
+        { "type": "pergunta", "settings": { "pergunta": "Qual o gosto?", "resposta": "<p>Frescor de fruta de verdade. Cada maré tem um perfil próprio — o descritor de sabor está na página de cada uma.</p>" } },
+        { "type": "pergunta", "settings": { "pergunta": "Como preparo?", "resposta": "<p>Mistura o pó na água, gela e bebe. A medida exata está na embalagem.</p>" } },
+        { "type": "pergunta", "settings": { "pergunta": "Tem açúcar?", "resposta": "<p>Confira a tabela nutricional e a lista de ingredientes na página do produto — elas trazem a informação completa do rótulo.</p>" } },
+        { "type": "pergunta", "settings": { "pergunta": "Quem não deve consumir?", "resposta": "<p>As advertências e o público a que o produto não se destina estão no rótulo e na página do produto. Em caso de dúvida, converse com um profissional de saúde.</p>" } },
+        { "type": "pergunta", "settings": { "pergunta": "Em quanto tempo chega?", "resposta": "<p>O prazo aparece no carrinho depois que você informa o CEP.</p>" } },
+        { "type": "pergunta", "settings": { "pergunta": "Posso trocar ou devolver?", "resposta": "<p>Sim. Você tem 7 dias a partir do recebimento para desistir da compra, sem custo. Veja a política de trocas e devoluções no rodapé.</p>" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
