@@ -12,14 +12,8 @@
     {% render 'mare-preco', variant: variante, product: product %}
     {% render 'mare-preco', variant: variante, product: product, compacto: true %}
 
-  Parâmetros:
-    variant  (obrigatório) — objeto variant
-    product  (opcional)    — usado para ler o metafield de doses
-    compacto (opcional)    — esconde parcelamento e dose (grade de coleção)
-
-  Depende do metafield opcional:
-    product.metafields.mare.doses  (number_integer)
-    Se ausente, o preço por dose simplesmente não é exibido. Nunca inventar.
+  Depende do metafield opcional product.metafields.mare.doses (number_integer).
+  Se ausente, o preço por dose simplesmente não é exibido. Nunca inventar.
 {% endcomment %}
 
 {% liquid
