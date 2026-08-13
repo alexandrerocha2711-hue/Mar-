@@ -11,11 +11,11 @@
   "sections": {
     "banner": {
       "type": "mare-hero-foto",
-      "name": "1. Banner em foto",
       "blocks": {
         "s1": {
           "type": "slide",
           "settings": {
+            "foto_desktop": "shopify://shop_images/mockup-outdoor-mare-personagens-save-the-date-25-10-2560x1440.png",
             "foto_alt": "Pouch MARÉ Pitaya com Morango em cena de verão",
             "olho": "Refresco funcional tropical",
             "titulo": "Bateu o calor? Tá dando maré.",
@@ -24,13 +24,14 @@
             "rotulo": "Quero essa maré",
             "posicao": "baixo",
             "veu": 45,
-            "cor_texto": "#FFFDFB",
-            "cor_sku": "#E8156B"
+            "cor_texto": "#fffdfb",
+            "cor_sku": "#e8156b"
           }
         },
         "s2": {
           "type": "slide",
           "settings": {
+            "foto_desktop": "shopify://shop_images/mockup-outdoor-mare-personagens-save-the-date-25-10-2560x1440.png",
             "foto_alt": "Pouch MARÉ Melancia com copo gelado",
             "olho": "Fresco · leve · suave",
             "titulo": "Melancia. O verão em pó.",
@@ -39,13 +40,14 @@
             "rotulo": "Provar melancia",
             "posicao": "baixo",
             "veu": 45,
-            "cor_texto": "#FFFDFB",
-            "cor_sku": "#FF5436"
+            "cor_texto": "#fffdfb",
+            "cor_sku": "#ff5436"
           }
         },
         "s3": {
           "type": "slide",
           "settings": {
+            "foto_desktop": "shopify://shop_images/mockup-outdoor-mare-personagens-save-the-date-25-10-2560x1440.png",
             "foto_alt": "Pouch MARÉ Morango com Limão ao sol",
             "olho": "Cítrico · doce · redondo",
             "titulo": "Morango com limão. Dupla de praia.",
@@ -54,8 +56,8 @@
             "rotulo": "Provar a dupla",
             "posicao": "baixo",
             "veu": 45,
-            "cor_texto": "#FFFDFB",
-            "cor_sku": "#FF9500"
+            "cor_texto": "#fffdfb",
+            "cor_sku": "#ff9500"
           }
         }
       },
@@ -64,6 +66,7 @@
         "s2",
         "s3"
       ],
+      "name": "1. Banner em foto",
       "settings": {
         "altura_desktop": "72svh",
         "altura_mobile": "78svh",
@@ -76,7 +79,6 @@
     },
     "esteira": {
       "type": "mare-esteira",
-      "name": "2. Esteira de selos",
       "blocks": {
         "e1": {
           "type": "selo",
@@ -116,7 +118,13 @@
         "e4",
         "e5"
       ],
-      "settings": {}
+      "name": "2. Esteira de selos",
+      "settings": {
+        "velocidade": 30,
+        "cor_fundo": "#3a0a24",
+        "cor_texto": "#ffebd6",
+        "rotulo_acessivel": "Atributos do produto"
+      }
     },
     "grade": {
       "type": "mare-grade-sabores",
@@ -133,14 +141,13 @@
     },
     "ritual": {
       "type": "mare-ritual",
-      "name": "4. Ritual",
       "blocks": {
         "p1": {
           "type": "passo",
           "settings": {
             "verbo": "Mistura.",
             "legenda": "o pó encontra a água",
-            "cor": "#E8156B"
+            "cor": "#e8156b"
           }
         },
         "p2": {
@@ -148,7 +155,7 @@
           "settings": {
             "verbo": "Gela.",
             "legenda": "o frescor muda o clima",
-            "cor": "#FF9500"
+            "cor": "#ff9500"
           }
         },
         "p3": {
@@ -156,7 +163,7 @@
           "settings": {
             "verbo": "Vai.",
             "legenda": "o dia segue mais leve",
-            "cor": "#FF5436"
+            "cor": "#ff5436"
           }
         }
       },
@@ -165,43 +172,44 @@
         "p2",
         "p3"
       ],
+      "name": "4. Ritual",
       "settings": {
         "olho": "O ritual",
         "titulo": "Três verbos. Um gesto que fica.",
         "linha_fina": "Ritual bom é aquele que a pessoa lembra sem precisar decorar.",
+        "link": "",
         "rotulo": "Conheça os sabores"
       }
     },
     "manifesto": {
       "type": "mare-manifesto",
-      "name": "5. Manifesto",
       "blocks": {
         "f1": {
           "type": "foto",
           "settings": {
             "legenda": "De manhã",
-            "cor": "#FFC943"
+            "cor": "#ffc943"
           }
         },
         "f2": {
           "type": "foto",
           "settings": {
             "legenda": "Quando bate o calor",
-            "cor": "#FF9500"
+            "cor": "#ff9500"
           }
         },
         "f3": {
           "type": "foto",
           "settings": {
             "legenda": "Fim de tarde",
-            "cor": "#E8156B"
+            "cor": "#e8156b"
           }
         },
         "f4": {
           "type": "foto",
           "settings": {
             "legenda": "Fim de semana",
-            "cor": "#FF5436"
+            "cor": "#ff5436"
           }
         }
       },
@@ -211,17 +219,18 @@
         "f3",
         "f4"
       ],
+      "name": "5. Manifesto",
       "settings": {
         "olho": "A ideia central",
         "titulo": "Verão não é estação. É sensação.",
         "texto": "<p>A categoria vende disciplina. A MARÉ vende prazer.</p><p>Saúde não precisa ser castigo — e bem-estar não precisa virar projeto de si mesma. A gente coloca essa sensação dentro de um hábito simples: mistura, gela, vai.</p>",
         "assinatura": "MARÉ · Brasil",
+        "link": "",
         "rotulo": "Conheça a MARÉ"
       }
     },
     "comparativo": {
       "type": "mare-comparativo",
-      "name": "6. Comparativo",
       "blocks": {
         "l1": {
           "type": "linha",
@@ -262,6 +271,7 @@
         "l3",
         "l4"
       ],
+      "name": "6. Comparativo",
       "settings": {
         "olho": "O que tem dentro",
         "titulo": "Compare o rótulo.",
@@ -272,14 +282,13 @@
     },
     "prova": {
       "type": "mare-prova",
-      "name": "7. Prova social",
       "blocks": {
         "f1": {
           "type": "foto",
           "settings": {
             "alt": "Cliente com a MARÉ na praia",
             "legenda": "@suamare",
-            "cor": "#FF5436"
+            "cor": "#ff5436"
           }
         },
         "c1": {
@@ -288,7 +297,7 @@
             "texto": "Virou o meu ritual de todo fim de tarde.",
             "autor": "Larissa",
             "contexto": "Recife · PE",
-            "cor": "#E8156B"
+            "cor": "#e8156b"
           }
         },
         "f2": {
@@ -296,7 +305,7 @@
           "settings": {
             "alt": "Copo com MARÉ gelada",
             "legenda": "@suamare",
-            "cor": "#FF9500"
+            "cor": "#ff9500"
           }
         },
         "c2": {
@@ -305,7 +314,7 @@
             "texto": "O gosto é de fruta de verdade, não de essência.",
             "autor": "Dandara",
             "contexto": "Salvador · BA",
-            "cor": "#FF9500"
+            "cor": "#ff9500"
           }
         },
         "f3": {
@@ -313,7 +322,7 @@
           "settings": {
             "alt": "Pouch MARÉ na bolsa de praia",
             "legenda": "@suamare",
-            "cor": "#E8156B"
+            "cor": "#e8156b"
           }
         },
         "c3": {
@@ -322,7 +331,7 @@
             "texto": "Levo o pouch na bolsa e preparo em qualquer lugar.",
             "autor": "Bel",
             "contexto": "São Paulo · SP",
-            "cor": "#FF5436"
+            "cor": "#ff5436"
           }
         }
       },
@@ -334,15 +343,18 @@
         "f3",
         "c3"
       ],
+      "name": "7. Prova social",
       "settings": {
         "olho": "Quem já pegou essa maré",
         "titulo": "Todo mundo tem uma maré favorita.",
-        "nota": "Depoimentos ilustrativos — troque pelos reais assim que as primeiras avaliações chegarem."
+        "nota": "Depoimentos ilustrativos — troque pelos reais assim que as primeiras avaliações chegarem.",
+        "origem": "",
+        "link": "",
+        "rotulo": "Escolher meu sabor"
       }
     },
     "clube": {
       "type": "mare-clube",
-      "name": "8. Clube",
       "blocks": {
         "v1": {
           "type": "vantagem",
@@ -379,17 +391,18 @@
         "v3",
         "v4"
       ],
+      "name": "8. Clube",
       "settings": {
         "olho": "O clube",
         "titulo": "Sua maré chega sozinha.",
         "linha_fina": "Verão o ano inteiro, sem precisar lembrar de comprar.",
+        "link": "",
         "rotulo": "Entrar no clube",
         "rotulo_politica": "Veja a política de assinatura"
       }
     },
     "faq": {
       "type": "mare-faq",
-      "name": "9. Dúvidas",
       "blocks": {
         "q1": {
           "type": "pergunta",
@@ -442,6 +455,7 @@
         "q5",
         "q6"
       ],
+      "name": "9. Dúvidas",
       "settings": {
         "olho": "Dúvidas",
         "titulo": "Perguntas que a gente recebe."
