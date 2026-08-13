@@ -1,0 +1,158 @@
+/* ==========================================================================
+   MARÉ — sobrescritas do tema base (Horizon)
+   ---------------------------------------------------------------------------
+   Este arquivo existe para NÃO editar nenhum arquivo do Horizon. Ele carrega
+   depois do CSS do tema, então vence por ordem, e toda regra é ancorada num
+   id (`#header-component`) ou numa classe do próprio tema — sem `!important`
+   em lugar nenhum. Quando a Shopify atualizar o Horizon, nada aqui é perdido:
+   no pior caso um seletor deixa de casar e o tema volta ao padrão dele.
+
+   Depende de `mare-tokens.css`, que precisa vir ANTES no layout.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. CABEÇALHO DE VIDRO, FLUTUANTE
+   `backdrop-filter` é o que faz o vidro: desfoca o que passa POR TRÁS. O
+   `saturate` acompanha porque desfoque sozinho lava a cor — a saturação
+   devolve o coral e o pitaya que passam por baixo. É o mesmo truque do
+   material translúcido da Apple, e o motivo de ele só funcionar sobre fundo
+   colorido: em cima de branco chapado não há nada para desfocar. A aurora
+   quente do body é o que dá vida a ele.
+   -------------------------------------------------------------------------- */
+#header-component {
+  --mare-vidro: color-mix(in srgb, var(--mare-branco) 55%, transparent);
+  --mare-vidro-forte: color-mix(in srgb, var(--mare-branco) 74%, transparent);
+  --mare-vidro-borda: color-mix(in srgb, var(--mare-branco) 70%, transparent);
+
+  background: transparent;
+  padding-block-start: clamp(.5rem, 1.4vw, .875rem);
+  padding-inline: clamp(.5rem, 2.4vw, 1.5rem);
+}
+
+#header-component .header__row {
+  max-width: var(--mare-largura);
+  margin-inline: auto;
+  border-radius: 999px;
+  padding-inline: clamp(1rem, 2.4vw, 1.75rem);
+  background-color: var(--mare-vidro);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+  box-shadow:
+    inset 0 0 0 1px var(--mare-vidro-borda),
+    0 10px 30px -14px rgba(58, 10, 36, .28);
+  transition: background-color .3s ease, box-shadow .3s ease;
+}
+
+#header-component[data-sticky-state='active'] .header__row {
+  background-color: var(--mare-vidro-forte);
+  box-shadow:
+    inset 0 0 0 1px var(--mare-vidro-borda),
+    0 18px 44px -18px rgba(58, 10, 36, .36);
+}
+
+#header-component .header__underlay-closed {
+  background: transparent;
+  box-shadow: none;
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  #header-component .header__row {
+    background-color: color-mix(in srgb, var(--mare-areia) 88%, var(--mare-branco));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #header-component .header__row { transition: none; }
+}
+
+/* --------------------------------------------------------------------------
+   2. BARRA DO TOPO
+   Uma linha só, centralizada, baixa. A barra existe para carregar duas
+   promessas comerciais, e qualquer coisa a mais rouba atenção delas.
+   -------------------------------------------------------------------------- */
+.mare-topbar__inner { min-height: 38px; padding-block: .4375rem; }
+
+.mare-topbar__centro {
+  grid-column: 1 / -1;
+  font-size: .75rem;
+  letter-spacing: .08em;
+  gap: .375rem .5rem;
+}
+
+.mare-topbar__codigo {
+  min-height: 24px;
+  padding: .0625rem .5rem;
+  letter-spacing: .16em;
+}
+
+.mare-topbar__onda { display: none; }
+
+/* --------------------------------------------------------------------------
+   3. CARRINHO LATERAL
+   O tipo de carrinho é configuração (`cart_type: drawer`), não CSS. Aqui só
+   damos o acabamento da marca.
+   -------------------------------------------------------------------------- */
+dialog.cart-drawer,
+.cart-drawer__inner {
+  border-start-start-radius: clamp(16px, 2vw, 28px);
+  border-end-start-radius: clamp(16px, 2vw, 28px);
+}
+
+dialog.cart-drawer {
+  box-shadow: -24px 0 60px -24px rgba(58, 10, 36, .38);
+  border: 0;
+}
+
+/* --------------------------------------------------------------------------
+   4. PÁGINA DE PRODUTO
+   -------------------------------------------------------------------------- */
+.product-media-container,
+.product-media,
+.media-gallery__grid-item {
+  border-radius: var(--mare-raio);
+  overflow: hidden;
+}
+
+.product-media-container {
+  background:
+    radial-gradient(70% 60% at 50% 38%,
+      color-mix(in srgb, var(--mare-sol) 34%, transparent) 0%,
+      transparent 68%),
+    color-mix(in srgb, var(--mare-areia) 70%, var(--mare-branco));
+}
+
+.product-details { row-gap: clamp(1.25rem, 2.4vw, 1.75rem); }
+
+/* --------------------------------------------------------------------------
+   5. SELETOR DE SABOR (variant picker nativo)
+   Os três sabores agora são VARIANTES de um produto só, então quem troca de
+   sabor é o seletor nativo da Shopify — sem recarregar a página, trocando a
+   foto e o preço sozinho. Não reescrevemos esse componente de propósito:
+   qualquer picker caseiro perde a sincronia com o formulário de compra, com o
+   `?variant=` da URL e com o estado de esgotado.
+
+   Aqui só damos a ele o corpo da marca: pílulas altas, com área de toque de
+   48px, que é o mínimo confortável no celular.
+   -------------------------------------------------------------------------- */
+.variant-option__button-label,
+.variant-option__swatch {
+  min-height: 48px;
+  border-radius: 999px;
+  padding-inline: 1.125rem;
+  font-family: var(--mare-corpo);
+  font-weight: 600;
+  letter-spacing: -.005em;
+  transition: transform .16s ease, box-shadow .16s ease;
+}
+
+.variant-option__button-label:hover { transform: translateY(-1px); }
+
+.variant-option__button-label:has(input:checked) {
+  box-shadow: 0 8px 20px -10px rgba(58, 10, 36, .45);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .variant-option__button-label,
+  .variant-option__swatch { transition: none; }
+  .variant-option__button-label:hover { transform: none; }
+}
