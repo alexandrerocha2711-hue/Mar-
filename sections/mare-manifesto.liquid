@@ -1,0 +1,159 @@
+{% comment %}
+  MARÉ — manifesto
+  Fundo ameixa. É o único bloco escuro da home, e existe para dar respiro:
+  sem contraste de superfície, uma página toda em areia cansa a meio caminho.
+
+  Mosaico de fotos com 4 campos VAZIOS. Sem foto, cada moldura vira um bloco
+  na cor da paleta — a seção nunca aparece quebrada enquanto você sobe imagem.
+
+  Copy da prancha 02 e 11 do brandbook. Nenhuma alegação de efeito.
+{% endcomment %}
+
+<section class="mare-mani mare-section mare-fundo--noite">
+  <div class="mare-wrap mare-mani__grid">
+
+    <div class="mare-mani__texto mare-revela">
+      {%- if section.settings.olho != blank -%}
+        <p class="mare-olho">{{ section.settings.olho | escape }}</p>
+      {%- endif -%}
+
+      <h2 class="mare-h mare-mani__titulo">{{ section.settings.titulo | escape }}</h2>
+
+      {%- if section.settings.texto != blank -%}
+        <div class="mare-mani__corpo">{{ section.settings.texto }}</div>
+      {%- endif -%}
+
+      {%- if section.settings.assinatura != blank -%}
+        <p class="mare-mani__assina">
+          <span class="mare-acento" aria-hidden="true"></span>
+          {{ section.settings.assinatura | escape }}
+        </p>
+      {%- endif -%}
+
+      {%- if section.settings.link != blank and section.settings.rotulo != blank -%}
+        <a href="{{ section.settings.link }}" class="mare-btn mare-btn--claro mare-mani__cta">
+          {{ section.settings.rotulo | escape }}
+        </a>
+      {%- endif -%}
+    </div>
+
+    <div class="mare-mani__mosaico">
+      {%- for block in section.blocks -%}
+        <figure class="mare-moldura mare-moldura--{{ forloop.index }} mare-revela"
+                {{ block.shopify_attributes }}
+                style="--mare-cor-sku: {{ block.settings.cor }}">
+          {%- if block.settings.foto -%}
+            {{ block.settings.foto
+               | image_url: width: 900
+               | image_tag:
+                   loading: 'lazy',
+                   sizes: '(min-width: 750px) 24vw, 44vw',
+                   class: 'mare-moldura__img',
+                   alt: block.settings.legenda }}
+          {%- else -%}
+            <span class="mare-moldura__vazio" aria-hidden="true">
+              <span class="mare-acento"></span>
+            </span>
+          {%- endif -%}
+
+          {%- if block.settings.legenda != blank -%}
+            <figcaption class="mare-moldura__legenda">{{ block.settings.legenda | escape }}</figcaption>
+          {%- endif -%}
+        </figure>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mare-mani { padding-block: calc(var(--mare-grid) * 1.15); overflow: hidden; }
+
+  .mare-mani__grid { display: grid; gap: 2.5rem; align-items: center; }
+  @media (min-width: 900px) {
+    .mare-mani__grid { grid-template-columns: 1fr 1.05fr; gap: 4rem; }
+  }
+
+  .mare-mani__titulo { font-size: var(--mare-t-titulo); max-width: 15ch; }
+  .mare-mani__corpo { margin-top: 1.25rem; max-width: 44ch; opacity: .85; line-height: 1.7; }
+  .mare-mani__corpo p { margin: 0 0 .875rem; }
+  .mare-mani__corpo p:last-child { margin-bottom: 0; }
+
+  .mare-mani__assina {
+    margin: 1.5rem 0 0; display: flex; align-items: baseline; gap: .5rem;
+    font-size: var(--mare-t-micro); letter-spacing: .16em; text-transform: uppercase; opacity: .7;
+  }
+  .mare-mani__assina .mare-acento { color: var(--mare-sol); }
+  .mare-mani__cta { margin-top: 1.75rem; }
+
+  /* Mosaico com alturas alternadas — evita o grid rigido de catalogo. */
+  .mare-mani__mosaico {
+    display: grid; gap: 1rem;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .mare-moldura {
+    margin: 0; position: relative;
+    border-radius: var(--mare-raio); overflow: hidden;
+    background: color-mix(in srgb, var(--mare-cor-sku) 30%, var(--mare-ameixa));
+    box-shadow: var(--mare-sombra-2);
+    aspect-ratio: 3 / 4;
+  }
+  .mare-moldura--1 { aspect-ratio: 3 / 4; }
+  .mare-moldura--2 { aspect-ratio: 1 / 1; align-self: end; }
+  .mare-moldura--3 { aspect-ratio: 1 / 1; }
+  .mare-moldura--4 { aspect-ratio: 3 / 4; align-self: start; }
+
+  .mare-moldura__img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  .mare-moldura__vazio {
+    width: 100%; height: 100%; display: grid; place-items: center;
+    color: var(--mare-cor-sku); font-size: 2.5rem;
+    filter: brightness(1.9);
+  }
+
+  .mare-moldura__legenda {
+    position: absolute; inset: auto 0 0 0;
+    padding: 1.75rem .875rem .75rem;
+    font-size: var(--mare-t-micro); font-weight: 600; color: var(--mare-branco);
+    background: linear-gradient(to top, rgba(58,10,36,.82), transparent);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Manifesto",
+  "tag": "section",
+  "max_blocks": 4,
+  "settings": [
+    { "type": "header", "content": "Texto" },
+    { "type": "text", "id": "olho", "label": "Sobretítulo", "default": "A ideia central" },
+    { "type": "text", "id": "titulo", "label": "Título", "default": "Verão não é estação. É sensação." },
+    { "type": "richtext", "id": "texto", "label": "Texto", "default": "<p>A categoria vende disciplina. A MARÉ vende prazer.</p><p>Saúde não precisa ser castigo — e bem-estar não precisa virar projeto de si mesma. A gente coloca essa sensação dentro de um hábito simples: mistura, gela, vai.</p>" },
+    { "type": "text", "id": "assinatura", "label": "Assinatura", "default": "MARÉ · Brasil" },
+    { "type": "url", "id": "link", "label": "Link do botão" },
+    { "type": "text", "id": "rotulo", "label": "Texto do botão", "default": "Conheça a MARÉ" }
+  ],
+  "blocks": [
+    {
+      "type": "foto",
+      "name": "Foto do mosaico",
+      "settings": [
+        { "type": "image_picker", "id": "foto", "label": "Foto" },
+        { "type": "text", "id": "legenda", "label": "Legenda", "default": "Fim de tarde" },
+        { "type": "color", "id": "cor", "label": "Cor do espaço vazio", "default": "#FF5436" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Manifesto",
+      "blocks": [
+        { "type": "foto", "settings": { "legenda": "De manhã", "cor": "#FFC943" } },
+        { "type": "foto", "settings": { "legenda": "Quando bate o calor", "cor": "#FF9500" } },
+        { "type": "foto", "settings": { "legenda": "Fim de tarde", "cor": "#E8156B" } },
+        { "type": "foto", "settings": { "legenda": "Fim de semana", "cor": "#FF5436" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
