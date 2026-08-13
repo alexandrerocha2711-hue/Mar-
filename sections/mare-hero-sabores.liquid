@@ -1,19 +1,13 @@
 {% comment %}
   MARÉ — hero explorador de sabores
-  ---------------------------------------------------------------------------
   A primeira decisão que a home pede não é "compre". É "qual maré é a sua?".
-  Padrão derivado do teardown de referências (Aura Bora).
-
-  Zero JavaScript: a troca de sabor é `:target`/`:checked` em CSS puro, então
-  funciona antes de qualquer script carregar e não entra no orçamento de 16 KB.
-
-  Cor de fundo por SKU: metafield `mare.cor` (color). Sem ele, cai no padrão
-  da section — nunca quebra.
+  Zero JavaScript: a troca de sabor é :checked em CSS puro.
+  Cor de fundo por SKU vem do metafield mare.cor. Sem ele, cai no padrão.
 {% endcomment %}
 
 {% liquid
-  assign colecao = collections[section.settings.colecao]
-  assign itens = colecao.products | default: collection.products
+  assign colecao = section.settings.colecao
+  assign itens = colecao.products
 %}
 
 <section class="mare-hero mare-section" aria-label="{{ section.settings.titulo | escape }}">
@@ -33,12 +27,11 @@
             assign cor = produto.metafields.mare.cor.value | default: section.settings.cor_padrao
             assign descritor = produto.metafields.mare.descritor.value
           -%}
-          <input
-            type="radio"
-            name="mare-hero-{{ section.id }}"
-            id="mare-hero-{{ section.id }}-{{ forloop.index }}"
-            class="mare-hero__radio"
-            {% if forloop.first %}checked{% endif %}>
+          <input type="radio"
+                 name="mare-hero-{{ section.id }}"
+                 id="mare-hero-{{ section.id }}-{{ forloop.index }}"
+                 class="mare-hero__radio"
+                 {% if forloop.first %}checked{% endif %}>
 
           <article class="mare-hero__sabor" style="--mare-cor-sku: {{ cor }}">
             <a href="{{ produto.url }}" class="mare-hero__link">
@@ -70,19 +63,16 @@
         <nav class="mare-hero__abas" aria-label="Escolher sabor">
           {%- for produto in itens limit: 4 -%}
             {%- assign cor = produto.metafields.mare.cor.value | default: section.settings.cor_padrao -%}
-            <label
-              for="mare-hero-{{ section.id }}-{{ forloop.index }}"
-              class="mare-hero__aba"
-              style="--mare-cor-sku: {{ cor }}">
+            <label for="mare-hero-{{ section.id }}-{{ forloop.index }}"
+                   class="mare-hero__aba"
+                   style="--mare-cor-sku: {{ cor }}">
               {{ produto.title | escape }}
             </label>
           {%- endfor -%}
         </nav>
       </div>
     {%- else -%}
-      <p class="mare-hero__vazio">
-        Selecione uma coleção com produtos nas configurações desta seção.
-      </p>
+      <p class="mare-hero__vazio">Selecione uma coleção com produtos nas configurações desta seção.</p>
     {%- endif -%}
 
     <span class="mare-marola" aria-hidden="true"></span>
@@ -135,9 +125,7 @@
 
   .mare-hero__vazio { opacity: .6; }
 
-  @media (prefers-reduced-motion: reduce) {
-    .mare-hero__sabor { transition: none; }
-  }
+  @media (prefers-reduced-motion: reduce) { .mare-hero__sabor { transition: none; } }
 {% endstylesheet %}
 
 {% schema %}
@@ -148,12 +136,7 @@
   "settings": [
     { "type": "text", "id": "olho", "label": "Sobretítulo", "default": "Refresco funcional em pó" },
     { "type": "text", "id": "titulo", "label": "Título", "default": "Verão o ano inteiro." },
-    {
-      "type": "collection",
-      "id": "colecao",
-      "label": "Coleção de sabores",
-      "info": "Use a coleção Sabores. Mostra até 4 produtos."
-    },
+    { "type": "collection", "id": "colecao", "label": "Coleção de sabores", "info": "Use a coleção Sabores. Mostra até 4 produtos." },
     { "type": "text", "id": "rotulo_cta", "label": "Texto do botão", "default": "Quero essa maré" },
     { "type": "color", "id": "cor_padrao", "label": "Cor de fallback do SKU", "default": "#FF5436" }
   ],
