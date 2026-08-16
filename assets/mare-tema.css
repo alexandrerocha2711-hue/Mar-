@@ -1,53 +1,42 @@
 /* ==========================================================================
    MARÉ — sobrescritas do tema base (Horizon)
-   Carrega depois do CSS do tema, então vence por ordem. Toda regra é ancorada
-   num id do tema ou numa classe dele — sem `!important` em lugar nenhum.
+   Carrega depois do CSS do tema, então vence por ordem. Sem `!important`.
    Depende de `mare-tokens.css`, que vem antes no layout.
    ========================================================================== */
 
-/* 1. CABEÇALHO DE VIDRO, FLUTUANTE ----------------------------------------
-   `backdrop-filter` desfoca o que passa POR TRÁS. O `saturate` acompanha
-   porque desfoque sozinho lava a cor — a saturação devolve o coral e o pitaya
-   que passam por baixo. É por isso que vidro só funciona sobre fundo colorido:
-   em cima de branco chapado não há nada para desfocar.
+/* 1. CABEÇALHO ------------------------------------------------------------
+   Vidro discreto, não pílula. A versão anterior desenhava uma cápsula
+   flutuante com sombra forte, e ela competia com o conteúdo — num site que
+   já tem aurora, grão e onda no fundo, o cabeçalho precisa sumir, não brilhar.
+   O Cafellow faz assim: faixa fina, colada no topo, quase invisível.
+
+   `backdrop-filter` desfoca o que passa por trás; `saturate` acompanha porque
+   desfoque sozinho lava a cor. É por isso que vidro só funciona sobre fundo
+   colorido — em cima de branco chapado não há nada para desfocar.
    ------------------------------------------------------------------------ */
 #header-component {
-  --mare-vidro: color-mix(in srgb, var(--mare-branco) 55%, transparent);
-  --mare-vidro-forte: color-mix(in srgb, var(--mare-branco) 74%, transparent);
-  --mare-vidro-borda: color-mix(in srgb, var(--mare-branco) 70%, transparent);
-
   background: transparent;
-  padding-block-start: clamp(.5rem, 1.4vw, .875rem);
-  padding-inline: clamp(.5rem, 2.4vw, 1.5rem);
+  padding: 0;
 }
 
 #header-component .header__row {
-  max-width: var(--mare-largura);
-  margin-inline: auto;
-  border-radius: 999px;
-  padding-inline: clamp(1rem, 2.4vw, 1.75rem);
-  background-color: var(--mare-vidro);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  backdrop-filter: blur(20px) saturate(180%);
-  box-shadow:
-    inset 0 0 0 1px var(--mare-vidro-borda),
-    0 10px 30px -14px rgba(58, 10, 36, .28);
-  transition: background-color .3s ease, box-shadow .3s ease;
+  background-color: color-mix(in srgb, var(--mare-areia) 72%, transparent);
+  -webkit-backdrop-filter: blur(18px) saturate(170%);
+  backdrop-filter: blur(18px) saturate(170%);
+  border-radius: 0;
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--mare-ameixa) 8%, transparent);
+  transition: background-color .25s ease, box-shadow .25s ease;
 }
 
 #header-component[data-sticky-state='active'] .header__row {
-  background-color: var(--mare-vidro-forte);
-  box-shadow:
-    inset 0 0 0 1px var(--mare-vidro-borda),
-    0 18px 44px -18px rgba(58, 10, 36, .36);
+  background-color: color-mix(in srgb, var(--mare-areia) 88%, transparent);
+  box-shadow: 0 8px 24px -18px rgba(58, 10, 36, .5);
 }
 
 #header-component .header__underlay-closed { background: transparent; box-shadow: none; }
 
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  #header-component .header__row {
-    background-color: color-mix(in srgb, var(--mare-areia) 88%, var(--mare-branco));
-  }
+  #header-component .header__row { background-color: var(--mare-areia); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -55,9 +44,9 @@
 }
 
 /* 2. BARRA DO TOPO -------------------------------------------------------- */
-.mare-topbar__inner { min-height: 38px; padding-block: .4375rem; }
-.mare-topbar__centro { grid-column: 1 / -1; font-size: .75rem; letter-spacing: .08em; gap: .375rem .5rem; }
-.mare-topbar__codigo { min-height: 24px; padding: .0625rem .5rem; letter-spacing: .16em; }
+.mare-topbar__inner { min-height: 36px; padding-block: .375rem; }
+.mare-topbar__centro { grid-column: 1 / -1; font-size: .75rem; letter-spacing: .06em; gap: .375rem .5rem; }
+.mare-topbar__codigo { min-height: 24px; padding: .0625rem .5rem; letter-spacing: .14em; }
 .mare-topbar__onda { display: none; }
 
 /* 3. CARRINHO LATERAL ----------------------------------------------------- */
@@ -69,48 +58,36 @@ dialog.cart-drawer,
 dialog.cart-drawer { box-shadow: -24px 0 60px -24px rgba(58, 10, 36, .38); border: 0; }
 
 /* 4. PÁGINA DE PRODUTO — CENÁRIO DE MARCA --------------------------------
-   O tema entrega o packshot boiando no branco. Aqui a foto ganha um leito:
-   luz de sol batendo em cima, sombra quente embaixo, e a onda do calçadão de
-   Burle Marx correndo atrás. Tudo em gradiente e SVG inline — custo de rede
-   zero, nenhuma imagem extra para o navegador baixar.
-
-   O escopo `main[data-template^='product']` vem do atributo que o próprio
-   layout escreve no <main>. É o gancho mais estável para pintar só a PDP sem
-   inventar classe nova.
+   O escopo vem de `data-template`, atributo que o próprio layout escreve no
+   <main>. É o gancho mais estável para pintar só a PDP sem inventar classe.
+   Tudo em gradiente e SVG inline: custo de rede zero, `z-index` negativo e
+   `pointer-events: none` — decora sem roubar clique.
    ------------------------------------------------------------------------ */
 main[data-template^='product'] { position: relative; isolation: isolate; }
 
-/* Faixa do calçadão atrás do bloco de compra. Fica em z-index negativo e
-   pointer-events none: decora sem nunca roubar clique. */
 main[data-template^='product']::before {
   content: "";
   position: absolute;
-  inset-block-start: clamp(120px, 22vw, 320px);
+  inset-block-start: clamp(140px, 24vw, 340px);
   inset-inline: 0;
-  height: clamp(120px, 20vw, 260px);
-  z-index: -1;
-  pointer-events: none;
-  opacity: .16;
-  background-repeat: repeat-x;
-  background-size: auto 100%;
+  height: clamp(100px, 16vw, 200px);
+  z-index: -1; pointer-events: none;
+  opacity: .12;
+  background-repeat: repeat-x; background-size: auto 100%;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 60' preserveAspectRatio='none'%3E%3Cpath d='M0 42 C 30 12, 60 12, 90 42 S 150 72, 180 42 S 240 12, 240 42' fill='none' stroke='%23FF5436' stroke-width='11' stroke-linecap='round'/%3E%3Cpath d='M0 16 C 30 -14, 60 -14, 90 16 S 150 46, 180 16 S 240 -14, 240 16' fill='none' stroke='%23FFC943' stroke-width='11' stroke-linecap='round'/%3E%3C/svg%3E");
 }
 
-/* Aurora quente só na PDP, mais forte que a do site inteiro. */
 main[data-template^='product']::after {
   content: "";
-  position: absolute;
-  inset-block: 0 auto;
-  inset-inline: 0;
+  position: absolute; inset-block: 0 auto; inset-inline: 0;
   height: min(90vh, 900px);
-  z-index: -2;
-  pointer-events: none;
+  z-index: -2; pointer-events: none;
   background:
-    radial-gradient(48rem 34rem at 18% 8%, color-mix(in srgb, var(--mare-sol) 34%, transparent), transparent 62%),
-    radial-gradient(44rem 32rem at 92% 30%, color-mix(in srgb, var(--mare-pitaya) 16%, transparent), transparent 60%);
+    radial-gradient(46rem 32rem at 16% 6%, color-mix(in srgb, var(--mare-sol) 30%, transparent), transparent 62%),
+    radial-gradient(42rem 30rem at 94% 28%, color-mix(in srgb, var(--mare-pitaya) 14%, transparent), transparent 60%);
 }
 
-/* O leito da foto: sol em cima, areia embaixo, canto generoso. */
+/* O leito da foto: sol em cima, areia embaixo. */
 .product-media-container,
 .product-media,
 .media-gallery__grid-item {
@@ -120,29 +97,63 @@ main[data-template^='product']::after {
 
 .product-media-container {
   background:
-    radial-gradient(64% 54% at 50% 30%, color-mix(in srgb, var(--mare-sol) 42%, transparent) 0%, transparent 70%),
+    radial-gradient(64% 54% at 50% 30%, color-mix(in srgb, var(--mare-sol) 40%, transparent) 0%, transparent 70%),
     linear-gradient(180deg,
       color-mix(in srgb, var(--mare-areia) 55%, var(--mare-branco)) 0%,
       color-mix(in srgb, var(--mare-coral) 10%, var(--mare-areia)) 100%);
   box-shadow: 0 26px 60px -32px rgba(58, 10, 36, .45);
 }
 
-/* Respiro dentro do quadro: sem isto o pouch encosta na borda. */
 .product-media-container .product-media img,
 .media-gallery__grid-item img { padding: clamp(8px, 2.4cqw, 28px); }
 
-.product-details { row-gap: clamp(1rem, 2vw, 1.5rem); }
+/* 5. LEITO DE LEITURA -----------------------------------------------------
+   Texto corrido sobre aurora + grão + onda perde contraste. A correção não é
+   escurecer a letra — é dar a ela uma superfície. Cada bloco de texto da PDP
+   passa a viver sobre um papel translucido, que herda a cor de areia do fundo
+   em vez de brigar com ela.
 
-/* 5. SEM BOTÃO NATIVO NA PDP ---------------------------------------------
-   A única forma de compra é o bloco "Monte sua caixa". Se o tema reinjetar
-   qualquer botão de compra (barra fixa, compra rápida), ele fica escondido —
-   duas formas de comprar na mesma tela dividem a atenção e uma delas ignora
-   a escada de desconto.
+   Vale só no desktop: no celular a coluna já ocupa a largura inteira e o
+   papel viraria caixa dentro de caixa.
+   ------------------------------------------------------------------------ */
+main[data-template^='product'] .product-details > .rte,
+main[data-template^='product'] .product-details > .accordion {
+  background: color-mix(in srgb, var(--mare-branco) 70%, transparent);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  border-radius: clamp(14px, 2vw, 20px);
+  padding: clamp(.875rem, 2vw, 1.25rem);
+}
+
+/* Os textos das seções de baixo também ganham superfície. */
+.mare-preparo__head,
+.mare-momentos__head,
+.mare-prova__head,
+.mare-grade__titulo {
+  position: relative;
+}
+
+.mare-preparo__head::before,
+.mare-momentos__head::before,
+.mare-prova__head::before {
+  content: "";
+  position: absolute;
+  inset: -1rem -1.25rem;
+  z-index: -1;
+  border-radius: 20px;
+  background: radial-gradient(120% 120% at 0% 0%,
+    color-mix(in srgb, var(--mare-branco) 62%, transparent) 0%,
+    transparent 78%);
+}
+
+/* 6. SEM BOTÃO NATIVO NA PDP ---------------------------------------------
+   A única forma de compra é o bloco "Monte sua caixa". Duas formas de comprar
+   na mesma tela dividem a atenção, e uma delas ignora a escada de desconto.
    ------------------------------------------------------------------------ */
 main[data-template^='product'] .sticky-add-to-cart,
 main[data-template^='product'] .product-form-buttons { display: none; }
 
-/* 6. SELETOR DE VARIANTE (onde ainda aparecer) ---------------------------- */
+/* 7. SELETOR DE VARIANTE (onde ainda aparecer) ---------------------------- */
 .variant-option__button-label,
 .variant-option__swatch {
   min-height: 48px;
