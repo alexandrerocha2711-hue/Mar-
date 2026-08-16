@@ -52,9 +52,25 @@
       "settings": { "velocidade": 30, "cor_fundo": "#3A0A24", "cor_texto": "#FFEBD6", "rotulo_acessivel": "Atributos do produto" }
     },
 
+    "dobra": {
+      "type": "mare-dobra",
+      "name": "3. Maré sem azul",
+      "settings": {
+        "selo": "Maré sem azul",
+        "titulo": "Fruta, sol\ne movimento.",
+        "texto": "<p>A MARÉ troca a obrigação por um ritual simples: mistura, gela e vai. O frescor vem da fruta, a personalidade vem da cor e o mar aparece no movimento — nunca no azul genérico da categoria.</p>",
+        "alinhamento": "esquerda",
+        "cor_fundo": "#EFD98F",
+        "cor_texto": "#3A0A24",
+        "cor_selo_fundo": "#3A0A24",
+        "cor_selo_texto": "#FFC943",
+        "mostrar_onda": true
+      }
+    },
+
     "grade": {
       "type": "mare-grade-sabores",
-      "name": "3. Grade de sabores",
+      "name": "4. Grade de sabores",
       "settings": {
         "olho": "Uma família",
         "titulo": "Três marés. Escolha a sua.",
@@ -68,7 +84,7 @@
 
     "momentos": {
       "type": "mare-momentos",
-      "name": "4. Momentos do dia",
+      "name": "5. Momentos do dia",
       "blocks": {
         "m1": { "type": "momento", "settings": { "colecao": "de-manha", "nome": "De manhã", "hora": "07h", "legenda": "para começar leve", "cor": "#FFC943" } },
         "m2": { "type": "momento", "settings": { "colecao": "no-meio-do-dia", "nome": "No meio do dia", "hora": "13h", "legenda": "quando bate o calor", "cor": "#FF9500" } },
@@ -85,7 +101,7 @@
 
     "ritual": {
       "type": "mare-ritual",
-      "name": "5. Ritual",
+      "name": "6. Ritual",
       "blocks": {
         "p1": { "type": "passo", "settings": { "verbo": "Mistura.", "legenda": "o pó encontra a água", "cor": "#E8156B" } },
         "p2": { "type": "passo", "settings": { "verbo": "Gela.", "legenda": "o frescor muda o clima", "cor": "#FF9500" } },
@@ -103,7 +119,7 @@
 
     "manifesto": {
       "type": "mare-manifesto",
-      "name": "6. Manifesto",
+      "name": "7. Manifesto",
       "blocks": {
         "f1": { "type": "foto", "settings": { "legenda": "De manhã", "cor": "#FFC943" } },
         "f2": { "type": "foto", "settings": { "legenda": "Quando bate o calor", "cor": "#FF9500" } },
@@ -114,7 +130,7 @@
       "settings": {
         "olho": "A ideia central",
         "titulo": "Verão não é estação. É sensação.",
-        "texto": "<p>A categoria vende disciplina. A MARÉ vende prazer.</p><p>Saúde não precisa ser castigo — e bem-estar não precisa virar projeto de si mesma. A gente coloca essa sensação dentro de um hábito simples: mistura, gela, vai.</p>",
+        "texto": "<p>A categoria vende disciplina. A MARÉ vende prazer.</p><p>Saúde não precisa ser castigo — e bem-estar não precisa virar projeto de si mesma.</p>",
         "assinatura": "MARÉ · Brasil",
         "rotulo": "Conheça a MARÉ"
       }
@@ -122,7 +138,7 @@
 
     "comparativo": {
       "type": "mare-comparativo",
-      "name": "7. Comparativo",
+      "name": "8. Comparativo",
       "blocks": {
         "l1": { "type": "linha", "settings": { "item": "Açúcar adicionado", "nos": "não contém", "eles": "contém" } },
         "l2": { "type": "linha", "settings": { "item": "Corante artificial", "nos": "não contém", "eles": "contém" } },
@@ -141,7 +157,7 @@
 
     "prova": {
       "type": "mare-prova",
-      "name": "8. Prova social",
+      "name": "9. Prova social",
       "blocks": {
         "c1": { "type": "foto", "settings": { "alt": "Cliente com o copo MARÉ", "legenda": "@mare", "cor": "#E8156B" } },
         "c2": { "type": "citacao", "settings": { "texto": "Achei que ia ser mais um pó de gosto artificial. Não é.", "autor": "Larissa R.", "contexto": "Recife · compra verificada", "cor": "#FF9500" } },
@@ -159,7 +175,7 @@
 
     "clube": {
       "type": "mare-clube",
-      "name": "9. Clube",
+      "name": "10. Clube",
       "blocks": {
         "v1": { "type": "vantagem", "settings": { "nome": "Economize", "texto": "Melhor preço por dose, e frete grátis em todo ciclo." } },
         "v2": { "type": "vantagem", "settings": { "nome": "Sem esforço", "texto": "Chega sempre na mesma data. Você não pensa nisso." } },
@@ -178,19 +194,19 @@
 
     "faq": {
       "type": "mare-faq",
-      "name": "10. Dúvidas",
+      "name": "11. Dúvidas",
       "blocks": {
-        "q1": { "type": "pergunta", "settings": { "pergunta": "Qual o gosto?", "resposta": "<p>Frescor de fruta de verdade. Cada maré tem um perfil próprio — o descritor de sabor está na página de cada uma.</p>" } },
-        "q2": { "type": "pergunta", "settings": { "pergunta": "Como preparo?", "resposta": "<p>Mistura o pó na água, gela e bebe. A medida exata está na embalagem.</p>" } },
+        "q1": { "type": "pergunta", "settings": { "pergunta": "Qual o gosto?", "resposta": "<p>Frescor de fruta de verdade. Cada maré tem um perfil próprio — o descritor de sabor está na página do produto.</p>" } },
+        "q2": { "type": "pergunta", "settings": { "pergunta": "Como preparo?", "resposta": "<p>Um sachê para 300 ml de água. Mexe até o pó sumir, gela e bebe.</p>" } },
         "q3": { "type": "pergunta", "settings": { "pergunta": "Tem açúcar?", "resposta": "<p>Confira a tabela nutricional e a lista de ingredientes na página do produto — elas trazem a informação completa do rótulo.</p>" } },
         "q4": { "type": "pergunta", "settings": { "pergunta": "Quem não deve consumir?", "resposta": "<p>As advertências e o público a que o produto não se destina estão no rótulo e na página do produto. Em caso de dúvida, converse com um profissional de saúde.</p>" } },
-        "q5": { "type": "pergunta", "settings": { "pergunta": "Quando o frete é grátis?", "resposta": "<p>A partir do valor anunciado na barra do topo. O carrinho mostra quanto falta depois que você adiciona os produtos.</p>" } },
+        "q5": { "type": "pergunta", "settings": { "pergunta": "Quando o frete é grátis?", "resposta": "<p>A partir do valor anunciado na barra do topo. O carrinho mostra quanto falta.</p>" } },
         "q6": { "type": "pergunta", "settings": { "pergunta": "Em quanto tempo chega?", "resposta": "<p>O prazo aparece no carrinho depois que você informa o CEP.</p>" } },
-        "q7": { "type": "pergunta", "settings": { "pergunta": "Posso trocar ou devolver?", "resposta": "<p>Sim. Você tem 7 dias a partir do recebimento para desistir da compra, sem custo. Veja a política de trocas e devoluções no rodapé.</p>" } }
+        "q7": { "type": "pergunta", "settings": { "pergunta": "Posso trocar ou devolver?", "resposta": "<p>Sim. Você tem 7 dias a partir do recebimento para desistir da compra, sem custo. Veja a política no rodapé.</p>" } }
       },
       "block_order": ["q1", "q2", "q3", "q4", "q5", "q6", "q7"],
       "settings": { "olho": "Dúvidas", "titulo": "Perguntas que a gente recebe." }
     }
   },
-  "order": ["banner", "esteira", "grade", "momentos", "ritual", "manifesto", "comparativo", "prova", "clube", "faq"]
+  "order": ["banner", "esteira", "dobra", "grade", "momentos", "ritual", "manifesto", "comparativo", "prova", "clube", "faq"]
 }
