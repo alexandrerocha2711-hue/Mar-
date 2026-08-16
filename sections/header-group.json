@@ -15,7 +15,7 @@
       "type": "mare-topbar",
       "name": "Barra do topo",
       "settings": {
-        "rotulo_cupom": "Cupom primeira compra",
+        "rotulo_cupom": "Primeira compra",
         "cupom": "PRIMEIRAMARE",
         "texto_copiado": "Copiado",
         "texto_frete": "Frete grátis acima de [valor]",
@@ -43,13 +43,13 @@
           "static": true,
           "settings": {
             "menu": "main-menu",
-            "type_font_primary_size": "0.875rem",
+            "type_font_primary_size": "0.75rem",
+            "menu_font_style": "regular",
             "type_font_primary_link": "body",
-            "type_case_primary_link": "none",
-            "menu_style": "featured_products",
-            "featured_products_aspect_ratio": "4 / 5",
-            "image_border_radius": 16,
-            "navigation_bar": false
+            "type_case_primary_link": "uppercase",
+            "menu_style": "text",
+            "navigation_bar": false,
+            "drawer_dividers": false
           },
           "blocks": {}
         }
@@ -64,11 +64,10 @@
         "show_country": false,
         "show_language": false,
         "section_width": "full-width",
-        "section_height": "standard",
+        "section_height": "small",
         "enable_sticky_header": "always",
         "divider_width": 0,
         "border_width": 0,
-        "background_color_top": "#FFEBD6",
         "enable_transparent_header_home": false,
         "enable_transparent_header_product": false,
         "enable_transparent_header_collection": false
