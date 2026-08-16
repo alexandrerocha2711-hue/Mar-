@@ -21,6 +21,11 @@
       "block_order": ["d1", "d2", "d3", "d4"],
       "settings": {
         "olho": "Refresco funcional em pó · 3 sabores",
+        "linha_fina": "Escolha os sabores, monte sua caixa e deixe o carrinho cuidar do desconto.",
+        "beneficio_1": "Mistura em segundos",
+        "beneficio_2": "3 sabores para combinar",
+        "beneficio_3": "Desconto por quantidade",
+        "beneficio_4": "7 dias para devolver",
         "rotulo_caixa": "Monte sua caixa",
         "degraus": "3:10,5:15",
         "nota_inicial": "A partir de 3, o desconto entra sozinho.",
@@ -28,6 +33,19 @@
         "aviso": "Desconto aplicado automaticamente no carrinho.",
         "max_por_sabor": 10,
         "cores": "#FF5436,#FF9500,#E8156B,#FFC943"
+      }
+    },
+
+    "historia": {
+      "type": "mare-historia-sabor",
+      "name": "História do sabor",
+      "settings": {
+        "cor": "#E8156B",
+        "olho": "Território de sabor",
+        "titulo": "O sabor que muda o clima.",
+        "selo": "MARÉ sem azul",
+        "chamada": "Fruta, sol e movimento.",
+        "texto": "<p>A MARÉ troca a obrigação por um ritual simples: mistura, gela e vai. O frescor vem da fruta, a personalidade vem da cor e o mar aparece no movimento — nunca no azul genérico da categoria.</p>"
       }
     },
 
@@ -43,6 +61,8 @@
       "settings": {
         "olho": "Como se faz",
         "titulo": "Leva dez segundos.",
+        "frase_foto": "Não tem segredo",
+        "tempo": "Feito em segundos",
         "medida": "1 sachê para 300 ml de água gelada",
         "aviso": "Consulte sempre o rótulo. Conservar em local seco e ao abrigo da luz."
       }
@@ -82,5 +102,5 @@
       "settings": { "olho": "Antes de comprar", "titulo": "O que perguntam." }
     }
   },
-  "order": ["main", "preparo", "comparativo", "duvidas"]
+  "order": ["main", "historia", "preparo", "comparativo", "duvidas"]
 }

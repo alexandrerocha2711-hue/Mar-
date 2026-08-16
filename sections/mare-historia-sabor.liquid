@@ -1,0 +1,185 @@
+{% comment %}
+  MARÉ — dobra editorial de sabor
+  Inspirada em páginas que vendem território antes de especificação técnica:
+  uma imagem grande sustenta o desejo, e o card traduz o porquê da marca.
+{% endcomment %}
+
+{%- liquid
+  assign foto = section.settings.foto
+  if foto == blank and product.featured_image
+    assign foto = product.featured_image
+  endif
+-%}
+
+<section class="mare-historia mare-section" aria-labelledby="mare-historia-{{ section.id }}" style="--mare-cor-sku: {{ section.settings.cor }};">
+  <div class="mare-wrap">
+    <header class="mare-historia__head mare-revela">
+      {%- if section.settings.olho != blank -%}
+        <p class="mare-olho">{{ section.settings.olho | escape }}</p>
+      {%- endif -%}
+      <h2 class="mare-h mare-historia__titulo" id="mare-historia-{{ section.id }}">
+        {{ section.settings.titulo | escape }}
+      </h2>
+    </header>
+
+    <div class="mare-historia__quadro mare-revela">
+      <div class="mare-historia__midia">
+        {%- if foto -%}
+          {{ foto
+             | image_url: width: 1600
+             | image_tag:
+                 loading: 'lazy',
+                 sizes: '(min-width: 990px) 78vw, 92vw',
+                 class: 'mare-historia__img',
+                 alt: section.settings.alt | default: product.title }}
+        {%- else -%}
+          <span class="mare-historia__vazio" aria-hidden="true">
+            <span class="mare-acento"></span>
+          </span>
+        {%- endif -%}
+      </div>
+
+      <article class="mare-historia__card">
+        {%- if section.settings.selo != blank -%}
+          <p class="mare-historia__selo">{{ section.settings.selo | escape }}</p>
+        {%- endif -%}
+        <h3 class="mare-h mare-historia__chamada">{{ section.settings.chamada | escape }}</h3>
+        <div class="mare-historia__texto rte">
+          {{ section.settings.texto }}
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mare-historia { padding-block: var(--mare-grid); }
+
+  .mare-historia__head {
+    margin-inline: auto;
+    margin-bottom: clamp(1.5rem, 4vw, 2.75rem);
+    max-width: 58rem;
+    text-align: center;
+  }
+  .mare-historia__titulo {
+    font-size: clamp(2rem, 6vw, 4.5rem);
+    line-height: .98;
+  }
+
+  .mare-historia__quadro {
+    position: relative;
+    min-height: clamp(520px, 62vw, 760px);
+    border-radius: clamp(18px, 2.5vw, 30px);
+    overflow: hidden;
+    background:
+      radial-gradient(80% 70% at 78% 30%, color-mix(in srgb, var(--mare-cor-sku) 32%, transparent), transparent 68%),
+      color-mix(in srgb, var(--mare-cor-sku) 16%, var(--mare-areia));
+    box-shadow: var(--mare-sombra-2);
+  }
+
+  .mare-historia__midia,
+  .mare-historia__img,
+  .mare-historia__vazio {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .mare-historia__img {
+    object-fit: cover;
+    filter: saturate(1.08) contrast(1.02);
+  }
+  .mare-historia__midia::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(circle at 20% 20%, transparent 0 1.6px, rgba(58,10,36,.13) 1.8px 2.8px, transparent 3px) 0 0 / 13px 13px,
+      linear-gradient(90deg, color-mix(in srgb, var(--mare-areia) 22%, transparent), transparent 48%);
+    mix-blend-mode: multiply;
+  }
+  .mare-historia__vazio {
+    display: grid;
+    place-items: center;
+    color: var(--mare-cor-sku);
+    font-size: clamp(4rem, 16vw, 10rem);
+  }
+
+  .mare-historia__card {
+    position: absolute;
+    inset: auto auto clamp(1rem, 3vw, 2.25rem) clamp(1rem, 3vw, 2.25rem);
+    width: min(46rem, calc(100% - clamp(2rem, 6vw, 4.5rem)));
+    display: grid;
+    gap: .75rem;
+    padding: clamp(1.25rem, 3vw, 2rem);
+    border-radius: clamp(18px, 2.3vw, 26px);
+    background: color-mix(in srgb, var(--mare-sol) 86%, var(--mare-branco));
+    color: var(--mare-ameixa);
+    box-shadow:
+      0 0 0 2px color-mix(in srgb, var(--mare-ameixa) 72%, transparent),
+      var(--mare-sombra-3);
+  }
+  .mare-historia__selo {
+    margin: 0;
+    width: fit-content;
+    border-radius: 999px;
+    background: var(--mare-ameixa);
+    color: var(--mare-sol);
+    padding: .25rem .75rem;
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+  }
+  .mare-historia__chamada {
+    max-width: 12ch;
+    font-size: clamp(1.65rem, 4.4vw, 3.5rem);
+    line-height: .95;
+  }
+  .mare-historia__texto {
+    max-width: 52ch;
+    font-size: clamp(.9375rem, 1.3vw, 1.125rem);
+    line-height: 1.65;
+  }
+  .mare-historia__texto p { margin: 0; }
+
+  @media (max-width: 749px) {
+    .mare-historia__head { text-align: left; }
+    .mare-historia__quadro {
+      min-height: auto;
+      display: grid;
+      gap: 0;
+    }
+    .mare-historia__midia {
+      position: relative;
+      min-height: 320px;
+    }
+    .mare-historia__card {
+      position: relative;
+      inset: auto;
+      width: auto;
+      margin: -2.5rem 1rem 1rem;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "História do sabor",
+  "tag": "section",
+  "settings": [
+    { "type": "image_picker", "id": "foto", "label": "Foto da dobra" },
+    { "type": "text", "id": "alt", "label": "Descrição da foto" },
+    { "type": "color", "id": "cor", "label": "Cor de apoio", "default": "#E8156B" },
+    { "type": "text", "id": "olho", "label": "Sobretítulo", "default": "Território de sabor" },
+    { "type": "text", "id": "titulo", "label": "Título", "default": "O sabor que muda o clima." },
+    { "type": "text", "id": "selo", "label": "Selo do card", "default": "MARÉ sem azul" },
+    { "type": "text", "id": "chamada", "label": "Chamada", "default": "Fruta, sol e movimento." },
+    { "type": "richtext", "id": "texto", "label": "Texto", "default": "<p>A MARÉ troca a obrigação por um ritual simples: mistura, gela e vai. O frescor vem da fruta, a personalidade vem da cor e o mar aparece no movimento — nunca no azul genérico da categoria.</p>" }
+  ],
+  "presets": [
+    { "name": "História do sabor" }
+  ]
+}
+{% endschema %}

@@ -41,23 +41,50 @@
       {%- endif -%}
     </header>
 
-    <ol class="mare-preparo__passos" role="list">
-      {%- for block in section.blocks -%}
-        <li class="mare-passo2 mare-revela" style="--mare-cor-sku: {{ block.settings.cor }};" {{ block.shopify_attributes }}>
-          <span class="mare-passo2__midia">
-            {%- if block.settings.foto -%}
-              {{ block.settings.foto | image_url: width: 700 | image_tag: loading: 'lazy', sizes: '(min-width: 750px) 30vw, 84vw', class: 'mare-passo2__img', alt: block.settings.verbo }}
-            {%- else -%}
-              <span class="mare-passo2__num" aria-hidden="true">{{ forloop.index }}</span>
-            {%- endif -%}
+    <div class="mare-preparo__grid">
+      <figure class="mare-preparo__visual mare-revela">
+        {%- if section.settings.foto -%}
+          {{ section.settings.foto
+             | image_url: width: 1000
+             | image_tag:
+                 loading: 'lazy',
+                 sizes: '(min-width: 990px) 42vw, 90vw',
+                 class: 'mare-preparo__img',
+                 alt: section.settings.frase_foto | default: section.settings.titulo }}
+        {%- else -%}
+          <span class="mare-preparo__copo" aria-hidden="true">
+            <span class="mare-preparo__liquido"></span>
+            <span class="mare-preparo__gelo mare-preparo__gelo--1"></span>
+            <span class="mare-preparo__gelo mare-preparo__gelo--2"></span>
+            <span class="mare-preparo__canudo"></span>
           </span>
-          <span class="mare-passo2__corpo">
-            <span class="mare-h mare-passo2__verbo">{{ block.settings.verbo | escape }}</span>
-            <span class="mare-passo2__texto">{{ block.settings.texto | escape }}</span>
-          </span>
-        </li>
-      {%- endfor -%}
-    </ol>
+        {%- endif -%}
+        {%- if section.settings.frase_foto != blank -%}
+          <figcaption class="mare-preparo__selo">{{ section.settings.frase_foto | escape }}</figcaption>
+        {%- endif -%}
+        {%- if section.settings.tempo != blank -%}
+          <span class="mare-preparo__tempo">{{ section.settings.tempo | escape }}</span>
+        {%- endif -%}
+      </figure>
+
+      <ol class="mare-preparo__passos" role="list">
+        {%- for block in section.blocks -%}
+          <li class="mare-passo2 mare-revela" style="--mare-cor-sku: {{ block.settings.cor }};" {{ block.shopify_attributes }}>
+            <span class="mare-passo2__midia">
+              {%- if block.settings.foto -%}
+                {{ block.settings.foto | image_url: width: 700 | image_tag: loading: 'lazy', sizes: '(min-width: 750px) 12vw, 30vw', class: 'mare-passo2__img', alt: block.settings.verbo }}
+              {%- else -%}
+                <span class="mare-passo2__num" aria-hidden="true">{{ forloop.index }}</span>
+              {%- endif -%}
+            </span>
+            <span class="mare-passo2__corpo">
+              <span class="mare-h mare-passo2__verbo">{{ block.settings.verbo | escape }}</span>
+              <span class="mare-passo2__texto">{{ block.settings.texto | escape }}</span>
+            </span>
+          </li>
+        {%- endfor -%}
+      </ol>
+    </div>
 
     {%- if section.settings.aviso != blank -%}
       <p class="mare-preparo__aviso">{{ section.settings.aviso | escape }}</p>
@@ -81,19 +108,118 @@
   }
   .mare-preparo__medida .mare-acento { color: var(--mare-coral); }
 
+  .mare-preparo__grid {
+    display: grid;
+    gap: clamp(1.5rem, 4vw, 4rem);
+    align-items: center;
+  }
+  @media (min-width: 900px) {
+    .mare-preparo__grid { grid-template-columns: minmax(0, .88fr) minmax(360px, 1fr); }
+  }
+
+  .mare-preparo__visual {
+    position: relative;
+    min-height: clamp(360px, 44vw, 560px);
+    margin: 0;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    border: 12px solid var(--mare-branco);
+    border-radius: 38% 62% 52% 48% / 46% 38% 62% 54%;
+    background:
+      radial-gradient(80% 62% at 50% 28%, color-mix(in srgb, var(--mare-sol) 36%, transparent), transparent 68%),
+      color-mix(in srgb, var(--mare-pitaya) 18%, var(--mare-areia));
+    box-shadow: var(--mare-sombra-3);
+  }
+  .mare-preparo__visual::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: .16;
+    background-repeat: repeat-x;
+    background-size: auto 100%;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 60' preserveAspectRatio='none'%3E%3Cpath d='M0 42 C 30 12, 60 12, 90 42 S 150 72, 180 42 S 240 12, 240 42' fill='none' stroke='%23FF5436' stroke-width='14' stroke-linecap='round'/%3E%3Cpath d='M0 16 C 30 -14, 60 -14, 90 16 S 150 46, 180 16 S 240 -14, 240 16' fill='none' stroke='%23FFC943' stroke-width='14' stroke-linecap='round'/%3E%3C/svg%3E");
+  }
+  .mare-preparo__img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .mare-preparo__selo,
+  .mare-preparo__tempo {
+    position: absolute;
+    z-index: 1;
+    font-weight: 700;
+    box-shadow: var(--mare-sombra-1);
+  }
+  .mare-preparo__selo {
+    inset: auto auto clamp(4.5rem, 9vw, 6rem) clamp(1rem, 5vw, 2rem);
+    max-width: 13ch;
+    color: var(--mare-branco);
+    font-family: var(--mare-display);
+    font-size: clamp(1.8rem, 4.8vw, 3.4rem);
+    line-height: .9;
+    text-shadow:
+      0 3px 0 var(--mare-pitaya),
+      0 6px 0 color-mix(in srgb, var(--mare-ameixa) 28%, transparent);
+  }
+  .mare-preparo__tempo {
+    inset: auto auto clamp(1.25rem, 4vw, 2.25rem) clamp(1rem, 5vw, 2rem);
+    border-radius: 999px;
+    background: var(--mare-sol);
+    color: var(--mare-ameixa);
+    padding: .625rem 1rem;
+    font-size: .875rem;
+  }
+  .mare-preparo__copo {
+    position: relative;
+    width: min(180px, 42vw);
+    height: min(260px, 58vw);
+    border: 4px solid var(--mare-ameixa);
+    border-radius: 18px 18px 38px 38px;
+    background: color-mix(in srgb, var(--mare-branco) 54%, transparent);
+    transform: rotate(-2deg);
+  }
+  .mare-preparo__liquido {
+    position: absolute;
+    inset: 42% 10px 10px;
+    border-radius: 10px 10px 28px 28px;
+    background: linear-gradient(180deg, var(--mare-sol), var(--mare-pitaya));
+  }
+  .mare-preparo__gelo {
+    position: absolute;
+    width: 38px;
+    height: 38px;
+    border: 2px solid color-mix(in srgb, var(--mare-ameixa) 48%, transparent);
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--mare-branco) 68%, transparent);
+  }
+  .mare-preparo__gelo--1 { inset: 28% auto auto 26%; transform: rotate(12deg); }
+  .mare-preparo__gelo--2 { inset: 34% 24% auto auto; transform: rotate(-16deg); }
+  .mare-preparo__canudo {
+    position: absolute;
+    width: 8px;
+    height: 190px;
+    border-radius: 999px;
+    background: var(--mare-coral);
+    inset: -48px 30% auto auto;
+    transform: rotate(16deg);
+  }
+
   .mare-preparo__passos {
     list-style: none; margin: 0; padding: 0;
     display: grid; gap: var(--mare-gap);
-    grid-template-columns: repeat(auto-fit, minmax(min(230px, 100%), 1fr));
   }
 
-  .mare-passo2 { display: grid; gap: .875rem; }
+  .mare-passo2 {
+    display: grid;
+    grid-template-columns: clamp(78px, 10vw, 112px) 1fr;
+    gap: clamp(.875rem, 2vw, 1.25rem);
+    align-items: center;
+  }
 
   .mare-passo2__midia {
     display: grid; place-items: center;
     border-radius: var(--mare-raio); overflow: hidden;
     aspect-ratio: 1 / 1;
     background: color-mix(in srgb, var(--mare-cor-sku) 16%, var(--mare-areia));
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--mare-ameixa) 8%, transparent);
   }
   .mare-passo2__img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .mare-passo2__num {
@@ -119,6 +245,9 @@
   "settings": [
     { "type": "text", "id": "olho", "label": "Sobretítulo", "default": "Modo de preparo" },
     { "type": "text", "id": "titulo", "label": "Título", "default": "Leva dez segundos." },
+    { "type": "image_picker", "id": "foto", "label": "Foto grande" },
+    { "type": "text", "id": "frase_foto", "label": "Frase sobre a foto", "default": "Não tem segredo" },
+    { "type": "text", "id": "tempo", "label": "Etiqueta de tempo", "default": "Feito em segundos" },
     { "type": "text", "id": "medida", "label": "Medida", "default": "1 sachê para 300 ml de água gelada" },
     { "type": "text", "id": "aviso", "label": "Aviso", "default": "Consulte sempre o rótulo do produto. Conservar em local seco e ao abrigo da luz." }
   ],

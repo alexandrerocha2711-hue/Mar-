@@ -15,25 +15,44 @@
     {%- endif -%}
     <h2 class="mare-h mare-comp__titulo">{{ section.settings.titulo | escape }}</h2>
 
-    <div class="mare-comp__tabela" role="table" aria-label="{{ section.settings.titulo | escape }}">
-      <div class="mare-comp__cab" role="row">
-        <span role="columnheader"></span>
-        <span role="columnheader" class="mare-comp__nos">{{ section.settings.coluna_nos | escape }}</span>
-        <span role="columnheader" class="mare-comp__eles">{{ section.settings.coluna_eles | escape }}</span>
+    <div class="mare-comp__grid">
+      <div class="mare-comp__palco" aria-hidden="true">
+        <span class="mare-comp__copo">
+          <span class="mare-comp__liquido"></span>
+          <span class="mare-comp__gelo mare-comp__gelo--1"></span>
+          <span class="mare-comp__gelo mare-comp__gelo--2"></span>
+        </span>
+
+        {%- for block in section.blocks limit: 6 -%}
+          <span class="mare-comp__ponto mare-comp__ponto--{{ forloop.index }}">
+            <strong>{{ block.settings.item | escape }}</strong>
+            <em>{{ block.settings.nos | escape }}</em>
+          </span>
+        {%- endfor -%}
       </div>
 
-      {%- for block in section.blocks -%}
-        <div class="mare-comp__linha" role="row" {{ block.shopify_attributes }}>
-          <span role="cell" class="mare-comp__item">{{ block.settings.item | escape }}</span>
-          <span role="cell" class="mare-comp__nos">{{ block.settings.nos | escape }}</span>
-          <span role="cell" class="mare-comp__eles">{{ block.settings.eles | escape }}</span>
-        </div>
-      {%- endfor -%}
-    </div>
+      <div class="mare-comp__conteudo">
+        <div class="mare-comp__tabela" role="table" aria-label="{{ section.settings.titulo | escape }}">
+          <div class="mare-comp__cab" role="row">
+            <span role="columnheader"></span>
+            <span role="columnheader" class="mare-comp__nos">{{ section.settings.coluna_nos | escape }}</span>
+            <span role="columnheader" class="mare-comp__eles">{{ section.settings.coluna_eles | escape }}</span>
+          </div>
 
-    {%- if section.settings.nota != blank -%}
-      <p class="mare-comp__nota">{{ section.settings.nota | escape }}</p>
-    {%- endif -%}
+          {%- for block in section.blocks -%}
+            <div class="mare-comp__linha" role="row" {{ block.shopify_attributes }}>
+              <span role="cell" class="mare-comp__item">{{ block.settings.item | escape }}</span>
+              <span role="cell" class="mare-comp__nos">{{ block.settings.nos | escape }}</span>
+              <span role="cell" class="mare-comp__eles">{{ block.settings.eles | escape }}</span>
+            </div>
+          {%- endfor -%}
+        </div>
+
+        {%- if section.settings.nota != blank -%}
+          <p class="mare-comp__nota">{{ section.settings.nota | escape }}</p>
+        {%- endif -%}
+      </div>
+    </div>
   </div>
 </section>
 
@@ -41,6 +60,93 @@
   .mare-comp { padding-block: var(--mare-grid); }
   .mare-comp__olho { font-size: var(--mare-t-micro); letter-spacing: .18em; text-transform: uppercase; opacity: .6; margin: 0 0 .5rem; }
   .mare-comp__titulo { font-size: var(--mare-t-titulo); margin-bottom: 2rem; max-width: 20ch; }
+
+  .mare-comp__grid {
+    display: grid;
+    gap: clamp(1.5rem, 4vw, 3.5rem);
+    align-items: center;
+  }
+  @media (min-width: 900px) {
+    .mare-comp__grid { grid-template-columns: minmax(0, .95fr) minmax(420px, 1fr); }
+  }
+
+  .mare-comp__palco {
+    position: relative;
+    min-height: clamp(420px, 48vw, 620px);
+    border-radius: clamp(18px, 2.5vw, 30px);
+    overflow: hidden;
+    background:
+      radial-gradient(56% 48% at 50% 55%, color-mix(in srgb, var(--mare-sol) 42%, transparent), transparent 72%),
+      radial-gradient(42% 38% at 78% 18%, color-mix(in srgb, var(--mare-pitaya) 16%, transparent), transparent 70%),
+      color-mix(in srgb, var(--mare-tangerina) 18%, var(--mare-areia));
+    box-shadow: var(--mare-sombra-2);
+  }
+  .mare-comp__palco::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: .18;
+    background-repeat: repeat;
+    background-size: 86px 54px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='86' height='54' viewBox='0 0 86 54'%3E%3Cpath d='M4 33C17 11 31 11 44 33S72 55 84 33' fill='none' stroke='%23FF5436' stroke-width='7' stroke-linecap='round'/%3E%3C/svg%3E");
+  }
+  .mare-comp__copo {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: clamp(124px, 18vw, 190px);
+    height: clamp(172px, 25vw, 270px);
+    transform: translate(-50%, -42%) rotate(3deg);
+    border: 4px solid var(--mare-ameixa);
+    border-radius: 20px 20px 42px 42px;
+    background: color-mix(in srgb, var(--mare-branco) 58%, transparent);
+    box-shadow: 0 28px 44px -22px rgba(58, 10, 36, .35);
+  }
+  .mare-comp__liquido {
+    position: absolute;
+    inset: 43% 10px 10px;
+    border-radius: 10px 10px 32px 32px;
+    background: linear-gradient(180deg, var(--mare-sol), var(--mare-coral));
+  }
+  .mare-comp__gelo {
+    position: absolute;
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    border: 2px solid color-mix(in srgb, var(--mare-ameixa) 48%, transparent);
+    background: color-mix(in srgb, var(--mare-branco) 68%, transparent);
+  }
+  .mare-comp__gelo--1 { inset: 28% auto auto 28%; transform: rotate(13deg); }
+  .mare-comp__gelo--2 { inset: 34% 24% auto auto; transform: rotate(-15deg); }
+
+  .mare-comp__ponto {
+    position: absolute;
+    display: grid;
+    justify-items: center;
+    gap: .2rem;
+    max-width: 10.5rem;
+    text-align: center;
+    font-size: .8125rem;
+    line-height: 1.2;
+  }
+  .mare-comp__ponto::before {
+    content: "";
+    width: clamp(48px, 8vw, 78px);
+    aspect-ratio: 1;
+    border-radius: 999px;
+    background:
+      radial-gradient(circle at 40% 36%, var(--mare-branco) 0 5px, transparent 6px),
+      var(--mare-pitaya);
+    box-shadow: var(--mare-sombra-1);
+  }
+  .mare-comp__ponto strong { font-weight: 700; }
+  .mare-comp__ponto em { font-style: normal; opacity: .68; }
+  .mare-comp__ponto--1 { inset: 12% auto auto 10%; }
+  .mare-comp__ponto--2 { inset: 9% 12% auto auto; }
+  .mare-comp__ponto--3 { inset: auto 8% 20% auto; }
+  .mare-comp__ponto--4 { inset: auto auto 14% 8%; }
+  .mare-comp__ponto--5 { inset: 48% auto auto 4%; }
+  .mare-comp__ponto--6 { inset: 50% 4% auto auto; }
 
   .mare-comp__tabela { display: grid; gap: 0; background: var(--mare-branco); border-radius: var(--mare-raio); overflow: hidden; }
 
@@ -65,6 +171,8 @@
   .mare-comp__nota { margin: 1rem 0 0; font-size: var(--mare-t-micro); opacity: .6; }
 
   @media (max-width: 600px) {
+    .mare-comp__palco { min-height: 440px; }
+    .mare-comp__ponto { max-width: 8rem; font-size: .75rem; }
     .mare-comp__cab, .mare-comp__linha { grid-template-columns: 1fr .8fr .8fr; gap: .375rem; }
     .mare-comp__item, .mare-comp__linha span { font-size: .8125rem; }
   }

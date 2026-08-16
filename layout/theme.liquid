@@ -62,8 +62,8 @@
       de fonte mesmo vindo do CDN da própria loja — sem ele o arquivo é baixado
       duas vezes.
     {%- endcomment -%}
-    <link rel="preload" as="font" type="font/woff2" crossorigin href="{{ 'mare-fredoka.woff2' | asset_url }}">
-    <link rel="preload" as="font" type="font/woff2" crossorigin href="{{ 'mare-instrument.woff2' | asset_url }}">
+    {{ 'mare-fredoka.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: true }}
+    {{ 'mare-instrument.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: true }}
 
     {{ 'mare-tokens.css' | asset_url | stylesheet_tag }}
     {{ 'mare-tema.css' | asset_url | stylesheet_tag }}

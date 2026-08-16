@@ -91,6 +91,10 @@
 
       <h1 class="mare-h mare-pdp__titulo">{{ p.title | escape }}</h1>
 
+      {%- if section.settings.linha_fina != blank -%}
+        <p class="mare-pdp__fina">{{ section.settings.linha_fina | escape }}</p>
+      {%- endif -%}
+
       <p class="mare-pdp__preco">
         <span class="mare-pdp__preco-atual">{{ p.price | money }}</span>
         {%- if p.compare_at_price > p.price -%}
@@ -98,6 +102,21 @@
           <span class="mare-pdp__selo">−{{ economia }}%</span>
         {%- endif -%}
       </p>
+
+      <ul class="mare-pdp__beneficios" role="list" aria-label="Resumo da MARÉ">
+        {%- if section.settings.beneficio_1 != blank -%}
+          <li><span aria-hidden="true">01</span>{{ section.settings.beneficio_1 | escape }}</li>
+        {%- endif -%}
+        {%- if section.settings.beneficio_2 != blank -%}
+          <li><span aria-hidden="true">02</span>{{ section.settings.beneficio_2 | escape }}</li>
+        {%- endif -%}
+        {%- if section.settings.beneficio_3 != blank -%}
+          <li><span aria-hidden="true">03</span>{{ section.settings.beneficio_3 | escape }}</li>
+        {%- endif -%}
+        {%- if section.settings.beneficio_4 != blank -%}
+          <li><span aria-hidden="true">04</span>{{ section.settings.beneficio_4 | escape }}</li>
+        {%- endif -%}
+      </ul>
 
       {%- comment -%} ---------- A CAIXA ---------- {%- endcomment -%}
       <form
@@ -421,6 +440,13 @@
   .mare-pdp__lado { display: grid; gap: .75rem; container-type: inline-size; }
   .mare-pdp__olho { margin: 0; }
   .mare-pdp__titulo { font-size: clamp(1.875rem, 4vw, 2.75rem); }
+  .mare-pdp__fina {
+    margin: 0;
+    max-width: 34rem;
+    font-size: .9875rem;
+    line-height: 1.55;
+    opacity: .78;
+  }
 
   .mare-pdp__preco {
     margin: 0 0 .375rem;
@@ -432,6 +458,43 @@
     font-size: .75rem; font-weight: 700; letter-spacing: .06em;
     background: var(--mare-pitaya); color: var(--mare-branco);
     padding: .1875rem .5rem; border-radius: 999px;
+  }
+
+  .mare-pdp__beneficios {
+    list-style: none;
+    margin: .25rem 0 .375rem;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: .5rem;
+  }
+  .mare-pdp__beneficios li {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: .5rem;
+    align-items: center;
+    min-height: 50px;
+    padding: .625rem .75rem;
+    border-radius: 16px;
+    background: color-mix(in srgb, var(--mare-branco) 76%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--mare-ameixa) 8%, transparent);
+    font-size: .8125rem;
+    line-height: 1.25;
+    font-weight: 600;
+  }
+  .mare-pdp__beneficios span {
+    display: grid;
+    place-items: center;
+    width: 1.65rem;
+    height: 1.65rem;
+    border-radius: 999px;
+    background: var(--mare-sol);
+    color: var(--mare-ameixa);
+    font-size: .6875rem;
+    letter-spacing: .04em;
+  }
+  @container (max-width: 380px) {
+    .mare-pdp__beneficios { grid-template-columns: 1fr; }
   }
 
   .mare-pdp__texto {
@@ -573,6 +636,12 @@
   "max_blocks": 6,
   "settings": [
     { "type": "text", "id": "olho", "label": "Sobretítulo", "default": "Refresco funcional em pó · 3 sabores" },
+    { "type": "text", "id": "linha_fina", "label": "Linha fina", "default": "Escolha os sabores, monte sua caixa e deixe o carrinho cuidar do desconto." },
+    { "type": "header", "content": "Resumo de conversão" },
+    { "type": "text", "id": "beneficio_1", "label": "Resumo 1", "default": "Mistura em segundos" },
+    { "type": "text", "id": "beneficio_2", "label": "Resumo 2", "default": "3 sabores para combinar" },
+    { "type": "text", "id": "beneficio_3", "label": "Resumo 3", "default": "Desconto por quantidade" },
+    { "type": "text", "id": "beneficio_4", "label": "Resumo 4", "default": "7 dias para devolver" },
     {
       "type": "checkbox",
       "id": "mostrar_descricao",
