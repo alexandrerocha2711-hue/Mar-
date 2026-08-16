@@ -3,36 +3,37 @@
   ---------------------------------------------------------------------------
   TUDO QUE É DESENHO AQUI É SUBSTITUÍVEL POR ARQUIVO.
   A ilustração do pouch + copo e os quatro ícones das faixas são campos de
-  imagem no editor. Enquanto estiverem vazios, entra o desenho feito em SVG.
-  Subiu um arquivo, ele manda — sem precisar mexer no código.
+  imagem no editor. Enquanto estiverem vazios, entra o desenho em SVG.
+  Subiu um arquivo, ele manda.
 
-  Isso importa porque a ilustração em código é boa para não deixar buraco na
-  página, mas nenhum SVG escrito à mão compete com arte feita por um
-  ilustrador. O desenho é o piso, não o teto.
+  ARMADILHA DE LIQUID — lida antes de mexer nas classes abaixo:
+  não dá para usar um filtro dentro da lista de argumentos de outro filtro.
+  Escrever `class: 'x' | append: y` dentro de um `image_tag` faz o Liquid ler
+  o `|` como novo filtro aplicado ao resultado inteiro, e quebra a página com
+  "wrong number of arguments". Por isso `classe_arte` é montada num `assign`
+  próprio, antes. Mesma regra vale para qualquer outro argumento composto.
 
-  POR QUE NÃO É MAIS UMA <table>
-  Cada valor carrega o próprio rótulo ("MARÉ", "Refresco convencional") em vez
-  de depender de um cabeçalho de coluna. Tira a cara de planilha corporativa e
-  faz cada faixa virar um card autônomo no celular sem repetir cabeçalho.
+  POR QUE NÃO É UMA <table>
+  Cada valor carrega o próprio rótulo em vez de depender de um cabeçalho de
+  coluna. Tira a cara de planilha e faz cada faixa virar um card autônomo no
+  celular sem repetir cabeçalho.
 
   A LINGUAGEM ARTESANAL É UM FILTRO SVG, NÃO UM ARQUIVO
   `feTurbulence` gera ruído e `feDisplacementMap` empurra cada ponto do traço
-  por esse ruído — contorno que treme de leve, como caneta sobre papel, com
-  zero KB de rede. As divisórias entre faixas são ondas, não réguas.
+  por esse ruído — contorno que treme de leve, com zero KB de rede. As
+  divisórias entre faixas são ondas, não réguas.
 
   RIGOR NO TEXTO COMPARATIVO
-  "pode conter", "geralmente não contém" e "varia conforme o produto" não são
-  hesitação: são precisão. Afirmar em absoluto o que TODO concorrente contém é
+  "pode conter", "geralmente não contém" e "varia conforme o produto" são
+  precisão, não hesitação. Afirmar em absoluto o que TODO concorrente contém é
   publicidade comparativa sem lastro, e responde no CDC e no CONAR. A nota de
   rodapé fecha a breça. Não troque por absolutos.
-
-  Nada aqui descreve efeito no corpo — "frutada e refrescante" é sensorial, não
-  fisiológico, e portanto não é alegação sob a RDC 243/2018.
 {% endcomment %}
 
 {%- liquid
   assign rab = 'mare-rabisco-' | append: section.id
   assign arte = section.settings.ilustracao
+  assign classe_arte = 'mare-comp__arte-foto mare-comp__arte-foto--' | append: section.settings.ajuste
 -%}
 
 <section
@@ -61,7 +62,7 @@
              | image_tag:
                  loading: 'lazy',
                  sizes: '(min-width: 900px) 42vw, 92vw',
-                 class: 'mare-comp__arte-foto mare-comp__arte-foto--' | append: section.settings.ajuste,
+                 class: classe_arte,
                  alt: section.settings.arte_alt }}
         {%- else -%}
           <svg class="mare-comp__arte" viewBox="0 0 520 480" role="img" aria-label="{{ section.settings.arte_alt | escape }}">
@@ -203,8 +204,6 @@
     min-height: clamp(300px, 34vw, 460px);
   }
 
-  /* Com arquivo próprio a moldura fica, mas o respiro interno sai — quem
-     define o enquadramento passa a ser a arte, não o tema. */
   .mare-comp__palco--foto { padding: 0; place-items: stretch; }
 
   .mare-comp__arte { width: 100%; height: auto; display: block; color: var(--mare-ameixa); }
@@ -213,7 +212,6 @@
   .mare-comp__arte-foto--inteira { object-fit: contain; }
   .mare-comp__arte-foto--preenche { object-fit: cover; }
 
-  /* Textura de papel sobre a ilustração, desenhada ou fotografada. */
   .mare-comp__papel {
     position: absolute; inset: 0; z-index: 2; pointer-events: none;
     opacity: .26; mix-blend-mode: multiply;
@@ -275,7 +273,6 @@
     padding: .75rem .875rem;
   }
 
-  /* Divisória desenhada à mão: onda, não régua. */
   .mare-comp__faixa + .mare-comp__faixa::before {
     content: "";
     position: absolute;
@@ -296,23 +293,37 @@
     font-weight: 700; font-size: .9375rem;
   }
 
-  .mare-comp__valor { grid-column: 2; margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: .375rem; font-size: .875rem; }
+  .mare-comp__valor {
+    grid-column: 2; margin: 0; min-width: 0;
+    display: flex; flex-wrap: wrap; align-items: baseline;
+    gap: .375rem; font-size: .875rem;
+  }
   .mare-comp__quem {
     font-size: .625rem; font-weight: 700;
-    letter-spacing: .12em; text-transform: uppercase;
+    letter-spacing: .1em; text-transform: uppercase;
+    max-width: 100%;
+  }
+
+  /* MARÉ usa pastilha — o rótulo é curto e cabe. */
+  .mare-comp__valor--nos .mare-comp__quem {
+    background: var(--mare-pitaya); color: var(--mare-branco);
     padding: .125rem .4375rem; border-radius: 999px;
     white-space: nowrap;
   }
-
-  .mare-comp__valor--nos .mare-comp__quem { background: var(--mare-pitaya); color: var(--mare-branco); }
   .mare-comp__valor--nos strong { color: var(--mare-coral); font-weight: 700; }
 
-  .mare-comp__valor--eles .mare-comp__quem { background: color-mix(in srgb, var(--mare-ameixa) 12%, transparent); color: var(--mare-ameixa); opacity: .8; }
+  /* "Refresco convencional" é longo demais para pastilha: em coluna estreita
+     a pastilha com `nowrap` vazava para fora do cartão. Vira micro-caps sem
+     fundo, que quebra em duas linhas sem estourar — e de quebra rebaixa
+     visualmente o concorrente, que é o que a hierarquia pede. */
+  .mare-comp__valor--eles .mare-comp__quem {
+    color: var(--mare-ameixa); opacity: .45;
+    white-space: normal; line-height: 1.25;
+  }
   .mare-comp__valor--eles span:last-child { opacity: .6; }
 
-  /* Desktop: rótulo à esquerda, os dois valores lado a lado. */
   @media (min-width: 640px) {
-    .mare-comp__faixa { grid-template-columns: auto minmax(0, 1.1fr) minmax(0, 1fr) minmax(0, 1fr); }
+    .mare-comp__faixa { grid-template-columns: auto minmax(0, 1.05fr) minmax(0, .8fr) minmax(0, 1.15fr); }
     .mare-comp__item  { grid-column: 2; }
     .mare-comp__valor { grid-column: auto; flex-direction: column; align-items: flex-start; gap: .1875rem; }
   }
