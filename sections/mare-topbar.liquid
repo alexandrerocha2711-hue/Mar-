@@ -1,194 +1,148 @@
 {% comment %}
-  MARÉ — barra do topo
+  MARÉ — barra do topo (marquee)
   ---------------------------------------------------------------------------
-  Primeira linha de texto que o cliente lê. Carrega duas promessas comerciais:
-  o cupom de primeira compra e a meta de frete grátis.
+  Faixa que corre sem parar, no padrão do Cafellow. Antes eram duas linhas
+  empilhadas que quebravam no celular; agora é uma linha só, infinita.
 
-  REGRA DURA — O NÚMERO NÃO É ESCRITO À MÃO.
-  A meta de frete vem de `shop.metafields.mare.frete_gratis` (inteiro, em
-  centavos) e é formatada pelo filtro `money`. A barra do topo, a barra de
-  progresso do carrinho e a página de envio passam a ler a MESMA fonte.
-  Divergência entre o que a vitrine promete e o que o checkout cobra não é bug
-  de front-end: é infração ao art. 30 do CDC.
+  COMO O LAÇO FICA CONTÍNUO
+  A mesma fila é renderizada duas vezes lado a lado dentro de uma janela
+  `width: max-content`. As duas deslizam juntas até `translateX(-100%)` da
+  própria largura: quando a primeira sai de cena à esquerda, a segunda ocupa
+  exatamente onde a primeira começou, e a animação reinicia sem emenda visível.
+  A cópia leva `aria-hidden` E `inert` — o primeiro tira do leitor de tela, o
+  segundo tira da ordem de tabulação. Sem `inert`, existiria um botão
+  focalizavel dentro de conteúdo marcado como invisível, que é uma armadilha
+  clássica de acessibilidade.
 
-  O cupom também vem de metafield (`mare.cupom_primeira`). Se o código mudar,
-  muda em um lugar só — e o botão de copiar continua verdadeiro.
+  O NÚMERO DO FRETE NÃO É ESCRITO À MÃO
+  Vem de `shop.metafields.mare.frete_gratis` (centavos) — a MESMA fonte que a
+  barra de progresso do carrinho lê. Anunciar R$ 200 aqui e cobrar frete até
+  R$ 250 no checkout não é desalinhamento de layout: é o art. 30 do CDC.
 
-  SEM JAVASCRIPT A BARRA CONTINUA CORRETA: o código aparece como texto
-  selecionável e as mensagens ficam visíveis. O JS só adiciona o copiar em um
-  toque e o rodízio das mensagens laterais.
+  O CUPOM CONTINUA COPIÁVEL, com uma ressalva honesta: alvo em movimento é
+  difícil de acertar. Por isso a fita PARA quando o mouse entra ou quando algo
+  dentro dela recebe foco. No celular não há hover — lá o código vale como
+  texto legível, e ele também pode ser digitado no carrinho.
 
-  Vive dentro do grupo `header` — por isso o `enabled_on`.
+  Em `prefers-reduced-motion` a animação não roda: a fita vira uma linha
+  centralizada e estática.
 {% endcomment %}
 
 {%- liquid
   assign meta_frete = shop.metafields.mare.frete_gratis.value | default: section.settings.frete_centavos
   assign cupom = shop.metafields.mare.cupom_primeira.value | default: section.settings.cupom
-  assign valor_formatado = meta_frete | money
-  assign frete_texto = section.settings.texto_frete | escape | replace: '[valor]', valor_formatado
+  assign valor = meta_frete | money
+  assign frete_texto = section.settings.texto_frete | escape | replace: '[valor]', valor
 -%}
 
-<aside
-  class="mare-topbar"
-  aria-label="{{ section.settings.rotulo_acessivel | escape }}"
-  style="--mare-topbar-fundo: {{ section.settings.cor_fundo }}; --mare-topbar-texto: {{ section.settings.cor_texto }};"
->
-  <div class="mare-topbar__inner">
-
-    {%- if section.blocks.size > 0 -%}
-      <div class="mare-topbar__lado mare-topbar__lado--esq" data-mare-rodizio>
-        {%- for block in section.blocks -%}
-          <span
-            class="mare-topbar__msg{% if forloop.first %} is-ativa{% endif %}"
-            {{ block.shopify_attributes }}
-          >
-            <span class="mare-acento" aria-hidden="true"></span>
-            {{ block.settings.texto | escape }}
-          </span>
-        {%- endfor -%}
-      </div>
-    {%- endif -%}
-
-    <p class="mare-topbar__centro">
-      {%- if cupom != blank -%}
-        <span class="mare-topbar__cupom">
-          {{ section.settings.rotulo_cupom | escape }}
-          <button
-            type="button"
-            class="mare-topbar__codigo"
-            data-mare-copiar="{{ cupom | escape }}"
-            data-mare-copiado="{{ section.settings.texto_copiado | escape }}"
-          >
-            <span class="mare-topbar__codigo-txt">{{ cupom | escape }}</span>
-          </button>
-        </span>
-      {%- endif -%}
-
-      {%- if meta_frete > 0 -%}
-        <span class="mare-topbar__sep" aria-hidden="true">·</span>
-        <span class="mare-topbar__frete">{{ frete_texto }}</span>
-      {%- endif -%}
-    </p>
-
-    {%- if section.settings.link != blank and section.settings.rotulo_link != blank -%}
-      <a class="mare-topbar__link" href="{{ section.settings.link }}">
-        {{ section.settings.rotulo_link | escape }}
-      </a>
-    {%- endif -%}
-
-  </div>
-
-  {%- if section.settings.mostrar_onda -%}
-    <span class="mare-calcadao mare-topbar__onda" aria-hidden="true"></span>
+{%- capture fila -%}
+  {%- if cupom != blank -%}
+    <li class="mare-fita__item">
+      <span class="mare-acento" aria-hidden="true"></span>
+      {{ section.settings.rotulo_cupom | escape }}
+      <button
+        type="button"
+        class="mare-fita__codigo"
+        data-mare-copiar="{{ cupom | escape }}"
+        data-mare-copiado="{{ section.settings.texto_copiado | escape }}"
+      ><span class="mare-topbar__codigo-txt">{{ cupom | escape }}</span></button>
+    </li>
   {%- endif -%}
+
+  {%- if meta_frete > 0 -%}
+    <li class="mare-fita__item">
+      <span class="mare-acento" aria-hidden="true"></span>
+      {{ frete_texto }}
+    </li>
+  {%- endif -%}
+
+  {%- for block in section.blocks -%}
+    <li class="mare-fita__item" {{ block.shopify_attributes }}>
+      <span class="mare-acento" aria-hidden="true"></span>
+      {{ block.settings.texto | escape }}
+    </li>
+  {%- endfor -%}
+{%- endcapture -%}
+
+<aside
+  class="mare-fita"
+  aria-label="{{ section.settings.rotulo_acessivel | escape }}"
+  style="--mare-fita-fundo: {{ section.settings.cor_fundo }}; --mare-fita-texto: {{ section.settings.cor_texto }}; --mare-fita-vel: {{ section.settings.velocidade }}s;"
+>
+  <div class="mare-fita__janela">
+    <ul class="mare-fita__fila" role="list">{{ fila }}{{ fila }}</ul>
+    <ul class="mare-fita__fila" role="list" aria-hidden="true" inert>{{ fila }}{{ fila }}</ul>
+  </div>
 </aside>
 
 {% stylesheet %}
-  .mare-topbar {
-    background: var(--mare-topbar-fundo, #3A0A24);
-    color: var(--mare-topbar-texto, #FFC943);
-    font-family: var(--mare-corpo);
+  .mare-fita {
+    background: var(--mare-fita-fundo, #FFC943);
+    color: var(--mare-fita-texto, #3A0A24);
+    overflow: hidden;
     position: relative;
     z-index: 3;
   }
 
-  .mare-topbar__inner {
-    max-width: var(--mare-largura);
-    margin-inline: auto;
-    padding: .625rem clamp(1rem, 4vw, 2.5rem);
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    align-items: center;
-    gap: 1rem;
-    min-height: 44px;
-  }
+  .mare-fita__janela { display: flex; width: max-content; }
 
-  .mare-topbar__lado {
-    position: relative;
-    font-size: var(--mare-t-micro);
-    letter-spacing: .1em;
-    text-transform: uppercase;
-    opacity: .82;
-    min-height: 1.2em;
-  }
-  .mare-topbar__lado--esq { justify-self: start; }
-
-  /* Sem JS, a primeira mensagem fica; com JS, elas se revezam. */
-  .mare-topbar__msg {
-    display: none;
-    align-items: baseline;
-    gap: .4rem;
-    white-space: nowrap;
-  }
-  .mare-topbar__msg.is-ativa { display: inline-flex; }
-
-  .mare-topbar__centro {
-    grid-column: 2;
-    margin: 0;
+  .mare-fita__fila {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
-    justify-content: center;
-    gap: .5rem .625rem;
-    font-size: .8125rem;
-    font-weight: 600;
-    letter-spacing: .04em;
-    text-align: center;
+    gap: clamp(1.25rem, 3vw, 2.5rem);
+    list-style: none;
+    margin: 0;
+    padding: .5rem clamp(.625rem, 1.5vw, 1.25rem);
+    animation: mare-fita-corre var(--mare-fita-vel, 40s) linear infinite;
   }
 
-  .mare-topbar__cupom {
+  /* Alvo em movimento é difícil de acertar: a fita para quando o mouse entra
+     ou quando algo dentro dela recebe foco pelo teclado. */
+  .mare-fita:hover .mare-fita__fila,
+  .mare-fita:focus-within .mare-fita__fila { animation-play-state: paused; }
+
+  .mare-fita__item {
     display: inline-flex;
     align-items: center;
     gap: .5rem;
+    white-space: nowrap;
+    font-family: var(--mare-display);
+    font-weight: 600;
+    font-size: clamp(.75rem, 1.5vw, .9375rem);
+    letter-spacing: .04em;
     text-transform: uppercase;
   }
+  .mare-fita__item .mare-acento { color: var(--mare-coral); }
 
-  .mare-topbar__codigo {
+  .mare-fita__codigo {
     font: inherit;
-    font-weight: 700;
-    letter-spacing: .12em;
-    cursor: pointer;
-    border: 1px dashed currentColor;
-    border-radius: 999px;
-    background: color-mix(in srgb, currentColor 14%, transparent);
-    color: inherit;
-    padding: .1875rem .625rem;
-    min-height: 28px;
-    transition: background .16s ease, transform .16s ease;
-  }
-  .mare-topbar__codigo:hover { background: color-mix(in srgb, currentColor 26%, transparent); }
-  .mare-topbar__codigo:active { transform: scale(.97); }
-  .mare-topbar__codigo.is-copiado { border-style: solid; }
-
-  .mare-topbar__sep { opacity: .45; }
-  .mare-topbar__frete { text-transform: uppercase; }
-
-  .mare-topbar__link {
-    grid-column: 3;
-    justify-self: end;
-    color: inherit;
-    font-size: var(--mare-t-micro);
     font-weight: 600;
     letter-spacing: .1em;
-    text-transform: uppercase;
-    text-decoration: none;
-    border-bottom: 1px solid color-mix(in srgb, currentColor 45%, transparent);
-    white-space: nowrap;
+    cursor: pointer;
+    color: inherit;
+    background: color-mix(in srgb, var(--mare-fita-texto, #3A0A24) 10%, transparent);
+    border: 1px dashed color-mix(in srgb, var(--mare-fita-texto, #3A0A24) 55%, transparent);
+    border-radius: 999px;
+    padding: .0625rem .5rem;
+    transition: background .16s ease;
   }
-  .mare-topbar__link:hover { border-bottom-color: currentColor; }
+  .mare-fita__codigo:hover { background: color-mix(in srgb, var(--mare-fita-texto, #3A0A24) 20%, transparent); }
+  .mare-fita__codigo.is-copiado { border-style: solid; }
 
-  .mare-topbar__onda { height: 8px; opacity: .34; color: inherit; }
-
-  /* Mobile: só o essencial. A promessa comercial nunca some. */
-  @media (max-width: 899px) {
-    .mare-topbar__inner { grid-template-columns: 1fr; padding-inline: 1rem; }
-    .mare-topbar__lado,
-    .mare-topbar__link { display: none; }
-    .mare-topbar__centro { grid-column: 1; font-size: .75rem; }
+  @keyframes mare-fita-corre {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-100%); }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .mare-topbar__codigo { transition: none; }
+    .mare-fita__janela { width: 100%; }
+    .mare-fita__fila {
+      animation: none;
+      flex-wrap: wrap;
+      justify-content: center;
+      row-gap: .25rem;
+    }
+    .mare-fita__fila[aria-hidden="true"] { display: none; }
   }
 {% endstylesheet %}
 
@@ -198,31 +152,26 @@
   "tag": "aside",
   "class": "mare-topbar-secao",
   "enabled_on": { "groups": ["header"] },
-  "max_blocks": 5,
+  "max_blocks": 6,
   "settings": [
     { "type": "header", "content": "Promessa comercial" },
-    {
-      "type": "paragraph",
-      "content": "O código do cupom e a meta de frete são lidos dos metafields da loja (mare.cupom_primeira e mare.frete_gratis). Os campos abaixo só valem se o metafield estiver vazio. Editar em um lugar só evita divergência entre vitrine e checkout."
-    },
-    { "type": "text", "id": "rotulo_cupom", "label": "Rótulo do cupom", "default": "Cupom primeira compra" },
+    { "type": "paragraph", "content": "O cupom e a meta de frete são lidos dos metafields da loja (mare.cupom_primeira e mare.frete_gratis). Os campos abaixo só valem se o metafield estiver vazio. Editar em um lugar só evita divergência entre vitrine e checkout." },
+    { "type": "text", "id": "rotulo_cupom", "label": "Rótulo do cupom", "default": "Primeira compra" },
     { "type": "text", "id": "cupom", "label": "Código (reserva)", "default": "PRIMEIRAMARE" },
     { "type": "text", "id": "texto_copiado", "label": "Aviso ao copiar", "default": "Copiado" },
-    { "type": "text", "id": "texto_frete", "label": "Texto do frete", "default": "Frete grátis a partir de [valor]", "info": "Use [valor] onde o preço deve entrar." },
+    { "type": "text", "id": "texto_frete", "label": "Texto do frete", "default": "Frete grátis acima de [valor]", "info": "Use [valor] onde o preço deve entrar." },
     { "type": "number", "id": "frete_centavos", "label": "Meta de frete em centavos (reserva)", "default": 20000 },
-    { "type": "header", "content": "Link" },
-    { "type": "url", "id": "link", "label": "Link à direita" },
-    { "type": "text", "id": "rotulo_link", "label": "Texto do link", "default": "Ver sabores" },
+    { "type": "header", "content": "Movimento" },
+    { "type": "range", "id": "velocidade", "label": "Segundos por volta", "min": 20, "max": 90, "step": 5, "unit": "s", "default": 45 },
     { "type": "header", "content": "Aparência" },
-    { "type": "color", "id": "cor_fundo", "label": "Fundo", "default": "#3A0A24" },
-    { "type": "color", "id": "cor_texto", "label": "Texto", "default": "#FFC943" },
-    { "type": "checkbox", "id": "mostrar_onda", "label": "Onda do calçadão abaixo", "default": true },
+    { "type": "color", "id": "cor_fundo", "label": "Fundo", "default": "#FFC943" },
+    { "type": "color", "id": "cor_texto", "label": "Texto", "default": "#3A0A24" },
     { "type": "text", "id": "rotulo_acessivel", "label": "Rótulo para leitor de tela", "default": "Avisos da loja" }
   ],
   "blocks": [
     {
       "type": "aviso",
-      "name": "Aviso lateral",
+      "name": "Aviso",
       "settings": [
         { "type": "text", "id": "texto", "label": "Texto", "default": "Entrega para todo o Brasil" }
       ]
