@@ -1,0 +1,160 @@
+{% comment %}
+  MARÉ — dobra de marca
+  ---------------------------------------------------------------------------
+  Uma tela chapada com selo, título grande e um parágrafo. Serve para as
+  declarações de posicionamento — as que explicam POR QUE a marca é assim, e
+  não o que o produto faz.
+
+  ATENÇÃO AO QUE ENTRA AQUI
+  Esta seção é sobre estética, origem e postura. Ela é o lugar errado para
+  qualquer coisa que descreva efeito no corpo — tela grande com tipografia
+  grande dá peso de promessa a qualquer frase, e promessa de efeito é alegação
+  sob a RDC 243/2018. Fale de fruta, cor, sol e movimento. Não fale de corpo.
+
+  O TÍTULO RESPEITA A QUEBRA DE LINHA que você digitar. É de propósito: em
+  título de display, onde a linha quebra é decisão de composição, não sobra do
+  navegador. "Fruta, sol" numa linha e "e movimento." na outra tem ritmo; a
+  quebra automática não teria.
+
+  CONTRASTE
+  Fundo e texto são campos separados de propósito. Sol com ameixa passa
+  folgado em AA; se você trocar por duas cores claras, o texto some. Confira
+  antes de publicar.
+{% endcomment %}
+
+<section
+  class="mare-dobra mare-section mare-dobra--{{ section.settings.alinhamento }}"
+  style="--mare-dobra-fundo: {{ section.settings.cor_fundo }}; --mare-dobra-texto: {{ section.settings.cor_texto }}; --mare-dobra-selo-fundo: {{ section.settings.cor_selo_fundo }}; --mare-dobra-selo-texto: {{ section.settings.cor_selo_texto }};"
+>
+  {%- if section.settings.mostrar_onda -%}
+    <span class="mare-dobra__onda" aria-hidden="true"></span>
+  {%- endif -%}
+
+  <div class="mare-wrap mare-dobra__caixa mare-revela">
+    {%- if section.settings.selo != blank -%}
+      <p class="mare-dobra__selo">{{ section.settings.selo | escape }}</p>
+    {%- endif -%}
+
+    {%- if section.settings.titulo != blank -%}
+      <h2 class="mare-h mare-dobra__titulo">{{ section.settings.titulo | escape | newline_to_br }}</h2>
+    {%- endif -%}
+
+    {%- if section.settings.texto != blank -%}
+      <div class="mare-dobra__texto rte">{{ section.settings.texto }}</div>
+    {%- endif -%}
+
+    {%- if section.settings.link != blank and section.settings.rotulo != blank -%}
+      <a class="mare-btn mare-dobra__cta" href="{{ section.settings.link }}">
+        {{ section.settings.rotulo | escape }}
+      </a>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .mare-dobra {
+    background: var(--mare-dobra-fundo, #FFC943);
+    color: var(--mare-dobra-texto, #3A0A24);
+    padding-block: var(--mare-grid);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mare-dobra__caixa {
+    display: grid;
+    gap: 1.125rem;
+    justify-items: start;
+    max-width: min(var(--mare-largura), 100%);
+  }
+  .mare-dobra--centro .mare-dobra__caixa { justify-items: center; text-align: center; }
+
+  .mare-dobra__selo {
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    background: var(--mare-dobra-selo-fundo, #3A0A24);
+    color: var(--mare-dobra-selo-texto, #FFC943);
+    font-family: var(--mare-corpo);
+    font-size: .8125rem;
+    font-weight: 600;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    padding: .5rem 1.125rem;
+    border-radius: 999px;
+  }
+
+  .mare-dobra__titulo {
+    margin: 0;
+    font-size: clamp(2.5rem, 7vw, 5rem);
+    line-height: .95;
+    letter-spacing: -.03em;
+    color: inherit;
+    /* O título carrega <br> vindo do editor: `balance` brigaria com a quebra
+       manual, então aqui o texto não é reequilibrado. */
+    text-wrap: nowrap;
+  }
+  @supports not (text-wrap: nowrap) {
+    .mare-dobra__titulo { white-space: normal; }
+  }
+
+  .mare-dobra__texto {
+    max-width: 62ch;
+    font-size: clamp(1rem, 1.8vw, 1.1875rem);
+    line-height: 1.55;
+    opacity: .88;
+  }
+  .mare-dobra__texto p { margin: 0 0 .75rem; }
+  .mare-dobra__texto p:last-child { margin-bottom: 0; }
+
+  .mare-dobra__cta { margin-top: .5rem; }
+
+  /* Onda do calçadão fantasma no rodapé da dobra — o mar aparecendo no
+     movimento, nunca em cor. É literalmente a tese do texto, desenhada. */
+  .mare-dobra__onda {
+    position: absolute;
+    inset: auto 0 -2px 0;
+    height: clamp(60px, 10vw, 130px);
+    z-index: 0;
+    pointer-events: none;
+    opacity: .14;
+    background-repeat: repeat-x;
+    background-size: auto 100%;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 60' preserveAspectRatio='none'%3E%3Cpath d='M0 42 C 30 12, 60 12, 90 42 S 150 72, 180 42 S 240 12, 240 42' fill='none' stroke='%233A0A24' stroke-width='9' stroke-linecap='round'/%3E%3Cpath d='M0 16 C 30 -14, 60 -14, 90 16 S 150 46, 180 16 S 240 -14, 240 16' fill='none' stroke='%233A0A24' stroke-width='9' stroke-linecap='round'/%3E%3C/svg%3E");
+  }
+
+  .mare-dobra__caixa { position: relative; z-index: 1; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Dobra de marca",
+  "tag": "section",
+  "settings": [
+    { "type": "paragraph", "content": "Para declarações de posicionamento — estética, origem, postura. Não use para efeito no corpo: tipografia grande dá peso de promessa, e promessa de efeito é alegação sob a RDC 243/2018." },
+    { "type": "text", "id": "selo", "label": "Selo", "default": "Maré sem azul" },
+    { "type": "textarea", "id": "titulo", "label": "Título", "default": "Fruta, sol\ne movimento.", "info": "A quebra de linha que você digitar é respeitada." },
+    { "type": "richtext", "id": "texto", "label": "Texto", "default": "<p>A MARÉ troca a obrigação por um ritual simples: mistura, gela e vai. O frescor vem da fruta, a personalidade vem da cor e o mar aparece no movimento — nunca no azul genérico da categoria.</p>" },
+    { "type": "header", "content": "Chamada" },
+    { "type": "url", "id": "link", "label": "Link do botão" },
+    { "type": "text", "id": "rotulo", "label": "Texto do botão" },
+    { "type": "header", "content": "Aparência" },
+    { "type": "paragraph", "content": "Sol com ameixa passa folgado em contraste AA. Se trocar por duas cores claras, o texto some — confira antes de publicar." },
+    {
+      "type": "select",
+      "id": "alinhamento",
+      "label": "Alinhamento",
+      "options": [
+        { "value": "esquerda", "label": "À esquerda" },
+        { "value": "centro", "label": "Centralizado" }
+      ],
+      "default": "esquerda"
+    },
+    { "type": "color", "id": "cor_fundo", "label": "Fundo", "default": "#FFC943" },
+    { "type": "color", "id": "cor_texto", "label": "Texto", "default": "#3A0A24" },
+    { "type": "color", "id": "cor_selo_fundo", "label": "Fundo do selo", "default": "#3A0A24" },
+    { "type": "color", "id": "cor_selo_texto", "label": "Texto do selo", "default": "#FFC943" },
+    { "type": "checkbox", "id": "mostrar_onda", "label": "Onda do calçadão no rodapé", "default": true }
+  ],
+  "presets": [{ "name": "Dobra de marca" }]
+}
+{% endschema %}
