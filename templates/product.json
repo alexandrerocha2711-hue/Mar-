@@ -10,200 +10,36 @@
 {
   "sections": {
     "main": {
-      "type": "product-information",
+      "type": "mare-produto",
+      "name": "Produto",
       "blocks": {
-        "media-gallery": {
-          "type": "_product-media-gallery",
-          "static": true,
-          "settings": {
-            "media_presentation": "grid",
-            "media_columns": "one",
-            "slideshow_mobile_controls_style": "dots",
-            "aspect_ratio": "1/1.25",
-            "constrain_to_viewport": true,
-            "media_fit": "contain",
-            "media_radius": 24,
-            "zoom": true,
-            "hide_variants": false
-          },
-          "blocks": {}
-        },
-        "product-details": {
-          "type": "_product-details",
-          "static": true,
-          "settings": {
-            "width": "fill",
-            "height": "fit",
-            "details_position": "top",
-            "gap": 12,
-            "sticky_details_desktop": true,
-            "padding-block-start": 16,
-            "padding-block-end": 24
-          },
-          "blocks": {
-            "olho": {
-              "type": "text",
-              "name": "Sobretítulo",
-              "settings": {
-                "text": "<p>Refresco funcional em pó · 3 sabores</p>",
-                "width": "100%",
-                "alignment": "left",
-                "type_preset": "h6",
-                "letter_spacing": "0.18em",
-                "case": "uppercase"
-              },
-              "blocks": {}
-            },
-            "titulo": {
-              "type": "text",
-              "name": "Nome do produto",
-              "settings": {
-                "text": "<h1>{{ closest.product.title }}</h1>",
-                "width": "100%",
-                "alignment": "left",
-                "type_preset": "h2",
-                "font": "var(--font-heading--family)",
-                "wrap": "balance"
-              },
-              "blocks": {}
-            },
-            "preco": {
-              "type": "price",
-              "settings": {
-                "show_sale_price_first": true,
-                "show_installments": true,
-                "type_preset": "h5",
-                "width": "100%",
-                "alignment": "left"
-              },
-              "blocks": {}
-            },
-            "caixa": {
-              "type": "mare-caixa",
-              "name": "Monte sua caixa",
-              "settings": {
-                "titulo": "Monte sua caixa",
-                "degraus": "3:10,5:15",
-                "rotulo_degraus": "Atalhos de quantidade",
-                "nota_inicial": "A partir de 3, o desconto entra sozinho.",
-                "rotulo_cta": "Adicionar à sacola",
-                "rotulo_esgotado": "esgotado",
-                "aviso": "Desconto aplicado automaticamente no carrinho.",
-                "max_por_sabor": 10,
-                "cores": "#FF5436,#FF9500,#E8156B,#FFC943"
-              },
-              "blocks": {}
-            },
-            "descricao": {
-              "type": "text",
-              "name": "Descrição",
-              "settings": {
-                "text": "{{ closest.product.description }}",
-                "width": "100%",
-                "alignment": "left",
-                "type_preset": "rte",
-                "wrap": "pretty"
-              },
-              "blocks": {}
-            },
-            "detalhes": {
-              "type": "accordion",
-              "name": "Detalhes",
-              "settings": {
-                "icon": "caret",
-                "dividers": true
-              },
-              "blocks": {
-                "d1": {
-                  "type": "_accordion-row",
-                  "settings": {
-                    "heading": "Modo de preparo"
-                  },
-                  "blocks": {}
-                },
-                "d2": {
-                  "type": "_accordion-row",
-                  "settings": {
-                    "heading": "Ingredientes e tabela nutricional"
-                  },
-                  "blocks": {}
-                },
-                "d3": {
-                  "type": "_accordion-row",
-                  "settings": {
-                    "heading": "Advertências"
-                  },
-                  "blocks": {}
-                },
-                "d4": {
-                  "type": "_accordion-row",
-                  "settings": {
-                    "heading": "Entrega e devolução"
-                  },
-                  "blocks": {}
-                }
-              },
-              "block_order": [
-                "d1",
-                "d2",
-                "d3",
-                "d4"
-              ]
-            }
-          },
-          "block_order": [
-            "olho",
-            "titulo",
-            "preco",
-            "caixa",
-            "descricao",
-            "detalhes"
-          ]
-        }
+        "d1": { "type": "detalhe", "settings": { "titulo": "Modo de preparo", "conteudo": "<p>1 sachê para 300 ml de água gelada. Mexe até dissolver, gela e bebe.</p>" } },
+        "d2": { "type": "detalhe", "settings": { "titulo": "Ingredientes e tabela nutricional", "conteudo": "<p>A lista completa e a tabela nutricional estão impressas no rótulo. Confira sempre a embalagem que você recebeu.</p>" } },
+        "d3": { "type": "detalhe", "settings": { "titulo": "Advertências", "conteudo": "<p>As advertências e o público a que o produto não se destina constam do rótulo. Em caso de dúvida, converse com um profissional de saúde.</p>" } },
+        "d4": { "type": "detalhe", "settings": { "titulo": "Entrega e devolução", "conteudo": "<p>O prazo aparece no carrinho depois do CEP. Você tem 7 dias a partir do recebimento para desistir da compra, sem custo.</p>" } }
       },
+      "block_order": ["d1", "d2", "d3", "d4"],
       "settings": {
-        "content_width": "page-width",
-        "desktop_media_position": "left",
-        "gap": 48,
-        "enable_sticky_add_to_cart": false,
-        "padding-block-start": 32,
-        "padding-block-end": 32
+        "olho": "Refresco funcional em pó · 3 sabores",
+        "rotulo_caixa": "Monte sua caixa",
+        "degraus": "3:10,5:15",
+        "nota_inicial": "A partir de 3, o desconto entra sozinho.",
+        "rotulo_cta": "Adicionar à sacola",
+        "aviso": "Desconto aplicado automaticamente no carrinho.",
+        "max_por_sabor": 10,
+        "cores": "#FF5436,#FF9500,#E8156B,#FFC943"
       }
     },
+
     "preparo": {
       "type": "mare-preparo",
-      "blocks": {
-        "p1": {
-          "type": "passo",
-          "settings": {
-            "verbo": "Mistura.",
-            "texto": "Um sachê em 300 ml de água. Mexe até sumir o pó.",
-            "cor": "#E8156B"
-          }
-        },
-        "p2": {
-          "type": "passo",
-          "settings": {
-            "verbo": "Gela.",
-            "texto": "Gelo direto no copo, ou dez minutos de geladeira.",
-            "cor": "#FF9500"
-          }
-        },
-        "p3": {
-          "type": "passo",
-          "settings": {
-            "verbo": "Vai.",
-            "texto": "Toma no copo americano e segue o dia.",
-            "cor": "#FF5436"
-          }
-        }
-      },
-      "block_order": [
-        "p1",
-        "p2",
-        "p3"
-      ],
       "name": "Modo de preparo",
+      "blocks": {
+        "p1": { "type": "passo", "settings": { "verbo": "Mistura.", "texto": "Um sachê em 300 ml de água. Mexe até sumir o pó.", "cor": "#E8156B" } },
+        "p2": { "type": "passo", "settings": { "verbo": "Gela.", "texto": "Gelo direto no copo, ou dez minutos de geladeira.", "cor": "#FF9500" } },
+        "p3": { "type": "passo", "settings": { "verbo": "Vai.", "texto": "Toma no copo americano e segue o dia.", "cor": "#FF5436" } }
+      },
+      "block_order": ["p1", "p2", "p3"],
       "settings": {
         "olho": "Como se faz",
         "titulo": "Leva dez segundos.",
@@ -211,49 +47,17 @@
         "aviso": "Consulte sempre o rótulo. Conservar em local seco e ao abrigo da luz."
       }
     },
+
     "comparativo": {
       "type": "mare-comparativo",
-      "blocks": {
-        "l1": {
-          "type": "linha",
-          "settings": {
-            "item": "Açúcar adicionado",
-            "nos": "não contém",
-            "eles": "contém"
-          }
-        },
-        "l2": {
-          "type": "linha",
-          "settings": {
-            "item": "Corante artificial",
-            "nos": "não contém",
-            "eles": "contém"
-          }
-        },
-        "l3": {
-          "type": "linha",
-          "settings": {
-            "item": "Fibra alimentar",
-            "nos": "contém",
-            "eles": "não contém"
-          }
-        },
-        "l4": {
-          "type": "linha",
-          "settings": {
-            "item": "Sabor",
-            "nos": "de fruta",
-            "eles": "aroma artificial"
-          }
-        }
-      },
-      "block_order": [
-        "l1",
-        "l2",
-        "l3",
-        "l4"
-      ],
       "name": "Compare o rótulo",
+      "blocks": {
+        "l1": { "type": "linha", "settings": { "item": "Açúcar adicionado", "nos": "não contém", "eles": "contém" } },
+        "l2": { "type": "linha", "settings": { "item": "Corante artificial", "nos": "não contém", "eles": "contém" } },
+        "l3": { "type": "linha", "settings": { "item": "Fibra alimentar", "nos": "contém", "eles": "não contém" } },
+        "l4": { "type": "linha", "settings": { "item": "Sabor", "nos": "de fruta", "eles": "aroma artificial" } }
+      },
+      "block_order": ["l1", "l2", "l3", "l4"],
       "settings": {
         "olho": "Lado a lado",
         "titulo": "O rótulo responde.",
@@ -262,71 +66,21 @@
         "nota": "Comparação por porção preparada. Confira sempre o rótulo."
       }
     },
+
     "duvidas": {
       "type": "mare-faq",
-      "blocks": {
-        "q1": {
-          "type": "pergunta",
-          "settings": {
-            "pergunta": "Qual a medida certa?",
-            "resposta": "<p>Um sachê para 300 ml. Menos água, sabor mais concentrado. A medida oficial está no rótulo.</p>"
-          }
-        },
-        "q2": {
-          "type": "pergunta",
-          "settings": {
-            "pergunta": "Precisa gelar?",
-            "resposta": "<p>Não precisa, mas muda tudo. Gelo direto no copo resolve.</p>"
-          }
-        },
-        "q3": {
-          "type": "pergunta",
-          "settings": {
-            "pergunta": "O desconto vale misturando sabores?",
-            "resposta": "<p>Vale. Conta unidades, não sabores. Três melancias ou uma de cada dá o mesmo preço.</p>"
-          }
-        },
-        "q4": {
-          "type": "pergunta",
-          "settings": {
-            "pergunta": "Quantas doses vem?",
-            "resposta": "<p>Está no rótulo e na descrição deste produto.</p>"
-          }
-        },
-        "q5": {
-          "type": "pergunta",
-          "settings": {
-            "pergunta": "Como guardo depois de aberto?",
-            "resposta": "<p>Local seco, ao abrigo da luz, bem fechado. Não precisa de geladeira.</p>"
-          }
-        },
-        "q6": {
-          "type": "pergunta",
-          "settings": {
-            "pergunta": "Quem não deve consumir?",
-            "resposta": "<p>As advertências e o público a que o produto não se destina estão no rótulo. Em caso de dúvida, converse com um profissional de saúde.</p>"
-          }
-        }
-      },
-      "block_order": [
-        "q1",
-        "q2",
-        "q3",
-        "q4",
-        "q5",
-        "q6"
-      ],
       "name": "Dúvidas",
-      "settings": {
-        "olho": "Antes de comprar",
-        "titulo": "O que perguntam."
-      }
+      "blocks": {
+        "q1": { "type": "pergunta", "settings": { "pergunta": "Qual a medida certa?", "resposta": "<p>Um sachê para 300 ml. Menos água, sabor mais concentrado. A medida oficial está no rótulo.</p>" } },
+        "q2": { "type": "pergunta", "settings": { "pergunta": "Precisa gelar?", "resposta": "<p>Não precisa, mas muda tudo. Gelo direto no copo resolve.</p>" } },
+        "q3": { "type": "pergunta", "settings": { "pergunta": "O desconto vale misturando sabores?", "resposta": "<p>Vale. Conta unidades, não sabores. Três melancias ou uma de cada dá o mesmo preço.</p>" } },
+        "q4": { "type": "pergunta", "settings": { "pergunta": "Quantas doses vem?", "resposta": "<p>Está no rótulo e na descrição deste produto.</p>" } },
+        "q5": { "type": "pergunta", "settings": { "pergunta": "Como guardo depois de aberto?", "resposta": "<p>Local seco, ao abrigo da luz, bem fechado. Não precisa de geladeira.</p>" } },
+        "q6": { "type": "pergunta", "settings": { "pergunta": "Quem não deve consumir?", "resposta": "<p>As advertências e o público a que o produto não se destina estão no rótulo. Em caso de dúvida, converse com um profissional de saúde.</p>" } }
+      },
+      "block_order": ["q1", "q2", "q3", "q4", "q5", "q6"],
+      "settings": { "olho": "Antes de comprar", "titulo": "O que perguntam." }
     }
   },
-  "order": [
-    "main",
-    "preparo",
-    "comparativo",
-    "duvidas"
-  ]
+  "order": ["main", "preparo", "comparativo", "duvidas"]
 }
