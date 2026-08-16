@@ -1,0 +1,407 @@
+{% comment %}
+  MARÉ — monte sua caixa (bloco da coluna de compra)
+  ---------------------------------------------------------------------------
+  Única forma de compra da PDP. Vive logo abaixo do preço.
+
+  POR QUE O PRODUTO É RESOLVIDO ASSIM
+  `closest.product` numa linha própria, sem o filtro `default` e sem `and`
+  encadeado. Liquid avalia `a and b` da DIREITA para a esquerda: se o produto
+  fosse nulo, `p.variants.size > 0` rodaria primeiro e a comparação de nil com
+  número derrubaria o bloco inteiro em silêncio. Verificar em dois passos
+  custa duas linhas e elimina a classe de bug.
+
+  O DESCONTO NÃO É CALCULADO AQUI. Vem do desconto automático da Shopify por
+  quantidade na coleção. A regra conta UNIDADES: 3 melancias ou 2+1 dão o
+  mesmo preço. Os degraus abaixo só exibem — mudou no admin, mude aqui, ou a
+  tela promete preço que o carrinho não cumpre (art. 30 do CDC).
+
+  FUNCIONA SEM JAVASCRIPT: inputs reais com nome `items[N][quantity]` dentro
+  de um <form> para /cart/add.
+{% endcomment %}
+
+{%- liquid
+  assign p = block.settings.produto
+  if closest.product
+    assign p = closest.product
+  endif
+
+  assign meta_frete = shop.metafields.mare.frete_gratis.value | default: 20000
+  assign degraus = block.settings.degraus | split: ','
+  assign cores = block.settings.cores | split: ','
+-%}
+
+{%- if p -%}
+  <div class="mare-caixa" {{ block.shopify_attributes }}>
+    <form
+      class="mare-caixa__form"
+      action="{{ routes.cart_add_url }}"
+      method="post"
+      enctype="multipart/form-data"
+      data-mare-kit
+      data-mare-frete="{{ meta_frete }}"
+      data-mare-degraus="{{ block.settings.degraus | escape }}"
+    >
+      <span class="mare-caixa__onda" aria-hidden="true"></span>
+
+      {%- if block.settings.titulo != blank -%}
+        <p class="mare-caixa__rotulo">{{ block.settings.titulo | escape }}</p>
+      {%- endif -%}
+
+      {%- if degraus.size > 0 -%}
+        <div class="mare-caixa__degraus" role="group" aria-label="{{ block.settings.rotulo_degraus | escape }}">
+          {%- for degrau in degraus -%}
+            {%- liquid
+              assign partes = degrau | strip | split: ':'
+              assign qtd = partes[0] | plus: 0
+              assign pct = partes[1] | plus: 0
+            -%}
+            <button type="button" class="mare-caixa__degrau" data-mare-degrau="{{ qtd }}">
+              <span class="mare-caixa__degrau-qtd">{{ qtd }} marés</span>
+              <span class="mare-caixa__degrau-pct">−{{ pct }}%</span>
+            </button>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+
+      <ul class="mare-caixa__sabores" role="list">
+        {%- for v in p.variants -%}
+          {%- liquid
+            assign i = forloop.index0
+            assign j = i | modulo: cores.size
+            assign cor = cores[j] | strip
+            if v.metafields.mare.cor.value
+              assign cor = v.metafields.mare.cor.value
+            endif
+            assign foto = p.featured_image
+            if v.image
+              assign foto = v.image
+            endif
+          -%}
+          <li class="mare-sabor" style="--mare-cor-sku: {{ cor }};">
+            <input type="hidden" name="items[{{ i }}][id]" value="{{ v.id }}">
+
+            <span class="mare-sabor__bolha" aria-hidden="true">
+              {%- if foto -%}
+                {{ foto | image_url: width: 200 | image_tag: loading: 'lazy', class: 'mare-sabor__img', alt: '' }}
+              {%- endif -%}
+            </span>
+
+            <span class="mare-sabor__texto">
+              <label class="mare-sabor__nome" for="mare-q-{{ block.id }}-{{ i }}">{{ v.title | escape }}</label>
+              {%- if v.metafields.mare.descritor.value -%}
+                <span class="mare-sabor__descritor">{{ v.metafields.mare.descritor.value | escape }}</span>
+              {%- endif -%}
+              {%- unless v.available -%}
+                <span class="mare-sabor__esgotado">{{ block.settings.rotulo_esgotado | escape }}</span>
+              {%- endunless -%}
+            </span>
+
+            <span class="mare-sabor__contador">
+              <button type="button" class="mare-sabor__passo" data-mare-menos aria-label="Tirar uma {{ v.title | escape }}">−</button>
+              <input
+                id="mare-q-{{ block.id }}-{{ i }}"
+                class="mare-sabor__qtd"
+                type="number"
+                name="items[{{ i }}][quantity]"
+                value="0" min="0" max="{{ block.settings.max_por_sabor }}" step="1"
+                inputmode="numeric"
+                data-mare-qtd
+                data-mare-preco="{{ v.price }}"
+                {% unless v.available %}disabled{% endunless %}
+              >
+              <button type="button" class="mare-sabor__passo" data-mare-mais aria-label="Somar uma {{ v.title | escape }}">+</button>
+            </span>
+          </li>
+        {%- endfor -%}
+      </ul>
+
+      <div class="mare-caixa__resumo" aria-live="polite">
+        <p class="mare-caixa__linha">
+          <span data-mare-contagem>0 marés</span>
+          <strong data-mare-total>—</strong>
+        </p>
+        <p class="mare-caixa__nota" data-mare-nota>{{ block.settings.nota_inicial | escape }}</p>
+      </div>
+
+      <button type="submit" class="mare-btn mare-btn--sku mare-caixa__cta" data-mare-enviar disabled>
+        {{ block.settings.rotulo_cta | escape }}
+      </button>
+
+      <p class="mare-caixa__aviso">{{ block.settings.aviso | escape }}</p>
+    </form>
+
+    <script>
+      (function () {
+        var raizEl = document.currentScript.parentNode;
+        var form = raizEl.querySelector('[data-mare-kit]');
+        if (!form || form.dataset.mareLigado) return;
+        form.dataset.mareLigado = '1';
+        form.classList.add('is-js');
+
+        var campos = [].slice.call(form.querySelectorAll('[data-mare-qtd]'));
+        var enviar = form.querySelector('[data-mare-enviar]');
+        var elContagem = form.querySelector('[data-mare-contagem]');
+        var elTotal = form.querySelector('[data-mare-total]');
+        var elNota = form.querySelector('[data-mare-nota]');
+        var metaFrete = parseInt(form.dataset.mareFrete, 10) || 0;
+
+        var degraus = (form.dataset.mareDegraus || '').split(',').map(function (d) {
+          var q = d.trim().split(':');
+          return { qtd: parseInt(q[0], 10), pct: parseFloat(q[1]) || 0 };
+        }).filter(function (d) { return d.qtd > 0; }).sort(function (a, b) { return a.qtd - b.qtd; });
+
+        var moeda = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+        function preco(c) { return moeda.format(c / 100); }
+
+        function degrauDe(total) {
+          var achado = null;
+          degraus.forEach(function (d) { if (total >= d.qtd) achado = d; });
+          return achado;
+        }
+
+        function recalcular() {
+          var unidades = 0, bruto = 0;
+          campos.forEach(function (campo) {
+            var q = parseInt(campo.value, 10);
+            if (isNaN(q) || q < 0) q = 0;
+            unidades += q;
+            bruto += q * (parseInt(campo.dataset.marePreco, 10) || 0);
+          });
+
+          var d = degrauDe(unidades);
+          var liquido = d ? Math.round(bruto * (1 - d.pct / 100)) : bruto;
+
+          elContagem.textContent = unidades === 1 ? '1 maré' : unidades + ' marés';
+          elTotal.textContent = unidades ? preco(liquido) : '—';
+          enviar.disabled = unidades === 0;
+
+          [].forEach.call(form.querySelectorAll('[data-mare-degrau]'), function (btn) {
+            btn.classList.toggle('is-ativo', !!d && parseInt(btn.dataset.mareDegrau, 10) === d.qtd);
+          });
+
+          if (!unidades) { elNota.textContent = elNota.dataset.inicial; return; }
+
+          var partes = [];
+          if (d) partes.push('−' + d.pct + '% · economia de ' + preco(bruto - liquido));
+          var proximo = degraus.filter(function (x) { return x.qtd > unidades; })[0];
+          if (proximo) {
+            var faltam = proximo.qtd - unidades;
+            partes.push('mais ' + faltam + ' e você leva −' + proximo.pct + '%');
+          }
+          if (metaFrete && liquido >= metaFrete) partes.push('frete grátis');
+          else if (metaFrete) partes.push(preco(metaFrete - liquido) + ' para o frete grátis');
+
+          elNota.textContent = partes.join(' · ');
+        }
+
+        elNota.dataset.inicial = elNota.textContent;
+
+        form.addEventListener('click', function (ev) {
+          var btn = ev.target.closest('[data-mare-mais], [data-mare-menos], [data-mare-degrau]');
+          if (!btn) return;
+          ev.preventDefault();
+
+          if (btn.hasAttribute('data-mare-degrau')) {
+            var alvo = parseInt(btn.dataset.mareDegrau, 10);
+            var livres = campos.filter(function (c) { return !c.disabled; });
+            if (!livres.length) return;
+            livres.forEach(function (c) { c.value = 0; });
+            for (var n = 0; n < alvo; n++) {
+              var c = livres[n % livres.length];
+              c.value = parseInt(c.value, 10) + 1;
+            }
+          } else {
+            var campo = btn.parentNode.querySelector('[data-mare-qtd]');
+            if (!campo || campo.disabled) return;
+            var max = parseInt(campo.max, 10) || 99;
+            var atual = parseInt(campo.value, 10) || 0;
+            campo.value = Math.min(max, Math.max(0, atual + (btn.hasAttribute('data-mare-mais') ? 1 : -1)));
+          }
+          recalcular();
+        });
+
+        form.addEventListener('input', function (ev) {
+          if (ev.target.hasAttribute('data-mare-qtd')) recalcular();
+        });
+
+        form.addEventListener('submit', function (ev) {
+          var itens = [];
+          campos.forEach(function (campo) {
+            var q = parseInt(campo.value, 10) || 0;
+            if (q <= 0) return;
+            var id = campo.closest('.mare-sabor').querySelector('input[type="hidden"]').value;
+            itens.push({ id: Number(id), quantity: q });
+          });
+          if (!itens.length) { ev.preventDefault(); return; }
+          if (!window.fetch) return;
+          ev.preventDefault();
+
+          var rotulo = enviar.textContent;
+          enviar.disabled = true;
+          enviar.textContent = 'Adicionando…';
+          var raiz = (window.Shopify && window.Shopify.routes && window.Shopify.routes.root) || '/';
+
+          fetch(raiz + 'cart/add.js', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({ items: itens, sections: 'mare-barra-frete', sections_url: window.location.pathname })
+          })
+            .then(function (r) { return r.json().then(function (d) { if (!r.ok) throw new Error(d.description || 'erro'); return d; }); })
+            .then(function (dados) {
+              enviar.textContent = 'Na sacola';
+              document.dispatchEvent(new CustomEvent('mare:carrinho:atualizado', { detail: dados }));
+              window.setTimeout(function () { enviar.textContent = rotulo; enviar.disabled = false; }, 1600);
+            })
+            .catch(function (erro) {
+              enviar.textContent = rotulo; enviar.disabled = false;
+              console.error('[MARÉ] caixa', erro);
+            });
+        });
+
+        recalcular();
+      })();
+    </script>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mare-caixa { display: block; }
+
+  .mare-caixa__form {
+    container-type: inline-size;
+    position: relative;
+    overflow: hidden;
+    display: grid; gap: .875rem;
+    background: var(--mare-branco);
+    border-radius: clamp(18px, 2.4vw, 24px);
+    padding: clamp(1rem, 2.4vw, 1.375rem);
+    box-shadow: 0 20px 50px -28px rgba(58, 10, 36, .45);
+    font-family: var(--mare-corpo);
+  }
+
+  /* A onda do calçadão no topo do painel: a assinatura da marca dentro da
+     caixa de compra, do jeito que o Cafellow põe o grafismo abaixo do preço. */
+  .mare-caixa__onda {
+    position: absolute; inset: 0 0 auto 0; height: 10px;
+    background-repeat: repeat-x; background-size: auto 100%;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 60' preserveAspectRatio='none'%3E%3Cpath d='M0 42 C 30 12, 60 12, 90 42 S 150 72, 180 42 S 240 12, 240 42' fill='none' stroke='%23FF5436' stroke-width='16' stroke-linecap='round'/%3E%3Cpath d='M0 16 C 30 -14, 60 -14, 90 16 S 150 46, 180 16 S 240 -14, 240 16' fill='none' stroke='%23FFC943' stroke-width='16' stroke-linecap='round'/%3E%3C/svg%3E");
+  }
+
+  .mare-caixa__rotulo {
+    margin: .25rem 0 0; font-size: var(--mare-t-micro);
+    letter-spacing: .16em; text-transform: uppercase; opacity: .55;
+  }
+
+  .mare-caixa__degraus { display: flex; flex-wrap: wrap; gap: .5rem; }
+  .mare-caixa__degrau {
+    display: inline-flex; align-items: baseline; gap: .375rem;
+    min-height: 44px; padding: .375rem 1rem;
+    border: 0; border-radius: 999px; cursor: pointer;
+    font-family: var(--mare-corpo); color: var(--mare-ameixa);
+    background: color-mix(in srgb, var(--mare-sol) 28%, transparent);
+    box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--mare-sol) 62%, transparent);
+    transition: transform .16s ease, background .16s ease;
+  }
+  .mare-caixa__degrau:hover { transform: translateY(-1px); }
+  .mare-caixa__degrau.is-ativo { background: var(--mare-ameixa); color: var(--mare-sol); box-shadow: none; }
+  .mare-caixa__degrau-qtd { font-weight: 600; font-size: .875rem; }
+  .mare-caixa__degrau-pct { font-size: .75rem; font-weight: 700; opacity: .8; }
+
+  .mare-caixa__sabores { list-style: none; margin: 0; padding: 0; display: grid; gap: .5rem; }
+
+  .mare-sabor {
+    display: grid; grid-template-columns: auto 1fr auto;
+    align-items: center; gap: .75rem; padding: .5rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--mare-cor-sku) 10%, transparent);
+  }
+
+  .mare-sabor__bolha {
+    width: 46px; height: 46px; border-radius: 50%; overflow: hidden;
+    display: grid; place-items: center;
+    background: color-mix(in srgb, var(--mare-cor-sku) 28%, var(--mare-areia));
+  }
+  .mare-sabor__img { width: 100%; height: 100%; object-fit: contain; display: block; }
+
+  .mare-sabor__texto { display: grid; gap: .0625rem; min-width: 0; }
+  .mare-sabor__nome { font-weight: 600; font-size: .9375rem; cursor: pointer; }
+  .mare-sabor__descritor { font-size: .75rem; opacity: .62; }
+  .mare-sabor__esgotado {
+    font-size: .6875rem; font-weight: 700; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--mare-pitaya);
+  }
+
+  .mare-sabor__contador {
+    display: inline-flex; align-items: center; gap: .125rem;
+    background: var(--mare-branco); border-radius: 999px; padding: .1875rem;
+    box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--mare-ameixa) 12%, transparent);
+  }
+  .mare-sabor__passo {
+    width: 36px; height: 36px; border: 0; border-radius: 50%;
+    background: transparent; cursor: pointer;
+    font-size: 1.125rem; line-height: 1; color: var(--mare-ameixa);
+  }
+  .mare-sabor__passo:hover { background: color-mix(in srgb, var(--mare-cor-sku) 20%, transparent); }
+  .mare-sabor__qtd {
+    width: 3ch; height: 36px; border: 0; background: transparent;
+    text-align: center; font: inherit; font-weight: 700;
+    color: var(--mare-ameixa); -moz-appearance: textfield;
+  }
+  .mare-sabor__qtd::-webkit-outer-spin-button,
+  .mare-sabor__qtd::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+  /* Consulta de CONTÊINER: o que manda é a largura da coluna de compra,
+     não a da tela. Numa coluna estreita o contador desce sozinho. */
+  @container (max-width: 380px) {
+    .mare-sabor { grid-template-columns: auto 1fr; row-gap: .5rem; border-radius: 18px; }
+    .mare-sabor__contador { grid-column: 1 / -1; justify-self: stretch; justify-content: space-between; }
+  }
+
+  .mare-caixa__form:not(.is-js) .mare-sabor__passo,
+  .mare-caixa__form:not(.is-js) .mare-caixa__degraus,
+  .mare-caixa__form:not(.is-js) .mare-caixa__resumo { display: none; }
+  .mare-caixa__form:not(.is-js) .mare-sabor__qtd {
+    width: 4.5ch; border-radius: 999px;
+    box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--mare-ameixa) 14%, transparent);
+  }
+
+  .mare-caixa__resumo {
+    display: grid; gap: .1875rem;
+    padding-top: .625rem;
+    border-top: 1px solid color-mix(in srgb, var(--mare-ameixa) 10%, transparent);
+  }
+  .mare-caixa__linha {
+    margin: 0; display: flex; justify-content: space-between; align-items: baseline; gap: 1rem;
+    font-family: var(--mare-display); font-size: 1.375rem; font-weight: 600;
+  }
+  .mare-caixa__nota { margin: 0; font-size: .75rem; color: var(--mare-pitaya); font-weight: 600; }
+
+  .mare-caixa__cta { width: 100%; }
+  .mare-caixa__aviso { margin: 0; font-size: .6875rem; opacity: .5; text-align: center; }
+
+  @media (prefers-reduced-motion: reduce) { .mare-caixa__degrau { transition: none; } }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Monte sua caixa",
+  "tag": null,
+  "settings": [
+    { "type": "product", "id": "produto", "label": "Produto", "info": "Só usado fora da página de produto." },
+    { "type": "text", "id": "titulo", "label": "Rótulo", "default": "Monte sua caixa" },
+    { "type": "header", "content": "Degraus" },
+    { "type": "paragraph", "content": "quantidade:porcentagem. SÓ EXIBE o preço — quem aplica é o desconto automático da Shopify. Mudou lá, mude aqui." },
+    { "type": "text", "id": "degraus", "label": "Degraus", "default": "3:10,5:15" },
+    { "type": "text", "id": "rotulo_degraus", "label": "Rótulo dos atalhos", "default": "Atalhos de quantidade" },
+    { "type": "header", "content": "Textos" },
+    { "type": "text", "id": "nota_inicial", "label": "Nota inicial", "default": "A partir de 3, o desconto entra sozinho." },
+    { "type": "text", "id": "rotulo_cta", "label": "Botão", "default": "Adicionar à sacola" },
+    { "type": "text", "id": "rotulo_esgotado", "label": "Esgotado", "default": "esgotado" },
+    { "type": "text", "id": "aviso", "label": "Aviso", "default": "Desconto aplicado automaticamente no carrinho." },
+    { "type": "header", "content": "Limites" },
+    { "type": "range", "id": "max_por_sabor", "label": "Máximo por sabor", "min": 1, "max": 20, "step": 1, "default": 10 },
+    { "type": "text", "id": "cores", "label": "Cores de reserva", "default": "#FF5436,#FF9500,#E8156B,#FFC943" }
+  ],
+  "presets": [{ "name": "Monte sua caixa" }]
+}
+{% endschema %}
