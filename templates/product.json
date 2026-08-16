@@ -35,79 +35,60 @@
             "width": "fill",
             "height": "fit",
             "details_position": "top",
-            "gap": 20,
+            "gap": 12,
             "sticky_details_desktop": true,
-            "padding-block-start": 24,
+            "padding-block-start": 16,
             "padding-block-end": 24
           },
           "blocks": {
-            "topo": {
-              "type": "group",
-              "name": "Nome e preço",
+            "olho": {
+              "type": "text",
+              "name": "Sobretítulo",
               "settings": {
-                "content_direction": "column",
-                "horizontal_alignment_flex_direction_column": "flex-start",
-                "gap": 6,
-                "width": "fill",
-                "height": "fit"
+                "text": "<p>Refresco funcional em pó · 3 sabores</p>",
+                "width": "100%",
+                "alignment": "left",
+                "type_preset": "h6",
+                "letter_spacing": "0.18em",
+                "case": "uppercase"
               },
-              "blocks": {
-                "olho": {
-                  "type": "text",
-                  "name": "Sobretítulo",
-                  "settings": {
-                    "text": "<p>Refresco funcional em pó</p>",
-                    "width": "100%",
-                    "alignment": "left",
-                    "type_preset": "h6",
-                    "letter_spacing": "0.18em",
-                    "case": "uppercase"
-                  },
-                  "blocks": {}
-                },
-                "titulo": {
-                  "type": "text",
-                  "name": "Nome do produto",
-                  "settings": {
-                    "text": "<h1>{{ closest.product.title }}</h1>",
-                    "width": "100%",
-                    "alignment": "left",
-                    "type_preset": "h2",
-                    "font": "var(--font-heading--family)",
-                    "wrap": "balance"
-                  },
-                  "blocks": {}
-                },
-                "preco": {
-                  "type": "price",
-                  "settings": {
-                    "show_sale_price_first": true,
-                    "show_installments": true,
-                    "type_preset": "h5",
-                    "width": "100%",
-                    "alignment": "left",
-                    "padding-block-start": 4
-                  },
-                  "blocks": {}
-                }
+              "blocks": {}
+            },
+            "titulo": {
+              "type": "text",
+              "name": "Nome do produto",
+              "settings": {
+                "text": "<h1>{{ closest.product.title }}</h1>",
+                "width": "100%",
+                "alignment": "left",
+                "type_preset": "h2",
+                "font": "var(--font-heading--family)",
+                "wrap": "balance"
               },
-              "block_order": [
-                "olho",
-                "titulo",
-                "preco"
-              ]
+              "blocks": {}
+            },
+            "preco": {
+              "type": "price",
+              "settings": {
+                "show_sale_price_first": true,
+                "show_installments": true,
+                "type_preset": "h5",
+                "width": "100%",
+                "alignment": "left"
+              },
+              "blocks": {}
             },
             "caixa": {
-              "type": "mare-kit",
+              "type": "mare-caixa",
               "name": "Monte sua caixa",
               "settings": {
                 "titulo": "Monte sua caixa",
                 "degraus": "3:10,5:15",
                 "rotulo_degraus": "Atalhos de quantidade",
-                "nota_inicial": "Escolha os sabores. A partir de 3, o desconto entra sozinho.",
+                "nota_inicial": "A partir de 3, o desconto entra sozinho.",
                 "rotulo_cta": "Adicionar à sacola",
                 "rotulo_esgotado": "esgotado",
-                "aviso": "O desconto é aplicado automaticamente no carrinho.",
+                "aviso": "Desconto aplicado automaticamente no carrinho.",
                 "max_por_sabor": 10,
                 "cores": "#FF5436,#FF9500,#E8156B,#FFC943"
               },
@@ -143,7 +124,7 @@
                 "d2": {
                   "type": "_accordion-row",
                   "settings": {
-                    "heading": "Ingredientes e informação nutricional"
+                    "heading": "Ingredientes e tabela nutricional"
                   },
                   "blocks": {}
                 },
@@ -157,7 +138,7 @@
                 "d4": {
                   "type": "_accordion-row",
                   "settings": {
-                    "heading": "Entrega, trocas e devoluções"
+                    "heading": "Entrega e devolução"
                   },
                   "blocks": {}
                 }
@@ -171,7 +152,9 @@
             }
           },
           "block_order": [
-            "topo",
+            "olho",
+            "titulo",
+            "preco",
             "caixa",
             "descricao",
             "detalhes"
@@ -222,10 +205,10 @@
       ],
       "name": "Modo de preparo",
       "settings": {
-        "olho": "Modo de preparo",
+        "olho": "Como se faz",
         "titulo": "Leva dez segundos.",
         "medida": "1 sachê para 300 ml de água gelada",
-        "aviso": "Consulte sempre o rótulo do produto. Conservar em local seco e ao abrigo da luz."
+        "aviso": "Consulte sempre o rótulo. Conservar em local seco e ao abrigo da luz."
       }
     },
     "comparativo": {
@@ -276,7 +259,7 @@
         "titulo": "O rótulo responde.",
         "coluna_nos": "MARÉ",
         "coluna_eles": "Refresco comum",
-        "nota": "Comparação por porção preparada. Confira sempre o rótulo do produto."
+        "nota": "Comparação por porção preparada. Confira sempre o rótulo."
       }
     },
     "duvidas": {
@@ -286,35 +269,35 @@
           "type": "pergunta",
           "settings": {
             "pergunta": "Qual a medida certa?",
-            "resposta": "<p>Um sachê para 300 ml de água. Menos água deixa o sabor mais concentrado; mais água, mais leve. A medida oficial está no rótulo.</p>"
+            "resposta": "<p>Um sachê para 300 ml. Menos água, sabor mais concentrado. A medida oficial está no rótulo.</p>"
           }
         },
         "q2": {
           "type": "pergunta",
           "settings": {
             "pergunta": "Precisa gelar?",
-            "resposta": "<p>Não precisa, mas muda tudo. O sabor foi desenhado para ser tomado gelado — gelo direto no copo resolve.</p>"
+            "resposta": "<p>Não precisa, mas muda tudo. Gelo direto no copo resolve.</p>"
           }
         },
         "q3": {
           "type": "pergunta",
           "settings": {
             "pergunta": "O desconto vale misturando sabores?",
-            "resposta": "<p>Vale. O desconto conta unidades, não sabores. Três melancias ou uma de cada dá exatamente no mesmo preço.</p>"
+            "resposta": "<p>Vale. Conta unidades, não sabores. Três melancias ou uma de cada dá o mesmo preço.</p>"
           }
         },
         "q4": {
           "type": "pergunta",
           "settings": {
             "pergunta": "Quantas doses vem?",
-            "resposta": "<p>A quantidade de doses por embalagem está no rótulo e na descrição deste produto.</p>"
+            "resposta": "<p>Está no rótulo e na descrição deste produto.</p>"
           }
         },
         "q5": {
           "type": "pergunta",
           "settings": {
             "pergunta": "Como guardo depois de aberto?",
-            "resposta": "<p>Em local seco e ao abrigo da luz, bem fechado. Não precisa de geladeira.</p>"
+            "resposta": "<p>Local seco, ao abrigo da luz, bem fechado. Não precisa de geladeira.</p>"
           }
         },
         "q6": {
@@ -333,10 +316,10 @@
         "q5",
         "q6"
       ],
-      "name": "Dúvidas do produto",
+      "name": "Dúvidas",
       "settings": {
         "olho": "Antes de comprar",
-        "titulo": "O que as pessoas perguntam sobre este."
+        "titulo": "O que perguntam."
       }
     }
   },
