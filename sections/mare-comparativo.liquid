@@ -1,52 +1,141 @@
 {% comment %}
-  MARÉ — comparativo de rótulo
-  Duas listas lado a lado, sem adjetivo e sem promessa. O leitor conclui sozinho.
+  MARÉ — por dentro da maré (comparativo)
+  ---------------------------------------------------------------------------
+  Redesenho completo. Saíram os círculos espalhados e a tabela de três colunas;
+  entraram uma ilustração de pouch + copo americano e um cartão de faixas
+  arredondadas.
 
-  Por que importa nesta categoria: é argumentação que NÃO depende de dizer o que
-  o produto faz no corpo. Afirmar ausência de ingrediente é fato verificável;
-  alegar efeito fisiológico não é permitido sob a RDC 243/2018.
-  Preencha só com o que o rótulo real sustenta.
+  POR QUE NÃO É MAIS UMA <table>
+  Cada valor carrega o próprio rótulo ("MARÉ", "Refresco convencional") em vez
+  de depender de um cabeçalho de coluna lá em cima. Isso resolve duas coisas de
+  uma vez: tira a cara de planilha corporativa, e faz cada faixa virar um card
+  autônomo no celular sem precisar repetir cabeçalho nenhum. É também o que
+  permite marcar isto como lista em vez de tabela — são quatro comparações
+  independentes, não uma matriz de dados.
+
+  A LINGUAGEM ARTESANAL É UM FILTRO SVG, NÃO UM ARQUIVO
+  `feTurbulence` gera ruído e `feDisplacementMap` empurra cada ponto do traço
+  por esse ruído. O resultado é contorno que treme de leve, como caneta sobre
+  papel — e nenhuma imagem para o navegador baixar. As divisórias entre faixas
+  são ondas, não réguas, pelo mesmo motivo.
+
+  RIGOR NO TEXTO COMPARATIVO
+  "pode conter", "geralmente não contém" e "varia conforme o produto" não são
+  hesitação: são precisão. Afirmar em absoluto o que TODO refresco concorrente
+  contém é publicidade comparativa sem lastro, e o CDC e o CONAR cobram isso.
+  A nota de rodapé fecha a breça. Não troque por absolutos.
+
+  E nada aqui descreve efeito no corpo — "frutada e refrescante" é sensorial,
+  não fisiológico, e portanto não é alegação sob a RDC 243/2018.
 {% endcomment %}
 
-<section class="mare-comp mare-section">
+{%- liquid
+  assign rab = 'mare-rabisco-' | append: section.id
+-%}
+
+<section
+  class="mare-comp mare-section"
+  style="--mare-menta: {{ section.settings.cor_menta }};"
+>
   <div class="mare-wrap">
-    {%- if section.settings.olho != blank -%}
-      <p class="mare-comp__olho">{{ section.settings.olho | escape }}</p>
-    {%- endif -%}
-    <h2 class="mare-h mare-comp__titulo">{{ section.settings.titulo | escape }}</h2>
+
+    <header class="mare-comp__head mare-revela">
+      {%- if section.settings.selo != blank -%}
+        <p class="mare-comp__selo">{{ section.settings.selo | escape }}</p>
+      {%- endif -%}
+      <h2 class="mare-h mare-comp__titulo">{{ section.settings.titulo | escape }}</h2>
+      {%- if section.settings.texto != blank -%}
+        <p class="mare-comp__linha-fina">{{ section.settings.texto | escape }}</p>
+      {%- endif -%}
+    </header>
 
     <div class="mare-comp__grid">
-      <div class="mare-comp__palco" aria-hidden="true">
-        <span class="mare-comp__copo">
-          <span class="mare-comp__liquido"></span>
-          <span class="mare-comp__gelo mare-comp__gelo--1"></span>
-          <span class="mare-comp__gelo mare-comp__gelo--2"></span>
-        </span>
 
-        {%- for block in section.blocks limit: 6 -%}
-          <span class="mare-comp__ponto mare-comp__ponto--{{ forloop.index }}">
-            <strong>{{ block.settings.item | escape }}</strong>
-            <em>{{ block.settings.nos | escape }}</em>
-          </span>
-        {%- endfor -%}
+      {%- comment -%} ---------- ILUSTRAÇÃO ---------- {%- endcomment -%}
+      <div class="mare-comp__palco mare-revela">
+        <svg class="mare-comp__arte" viewBox="0 0 520 480" role="img" aria-label="{{ section.settings.arte_alt | escape }}">
+          <defs>
+            <filter id="{{ rab }}">
+              <feTurbulence type="fractalNoise" baseFrequency="0.028" numOctaves="2" seed="9" result="r"/>
+              <feDisplacementMap in="SourceGraphic" in2="r" scale="3.2" xChannelSelector="R" yChannelSelector="G"/>
+            </filter>
+            <linearGradient id="{{ rab }}-bebida" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="var(--mare-tangerina)"/>
+              <stop offset="100%" stop-color="var(--mare-coral)"/>
+            </linearGradient>
+            <linearGradient id="{{ rab }}-pouch" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="var(--mare-pitaya)"/>
+              <stop offset="100%" stop-color="var(--mare-coral)"/>
+            </linearGradient>
+            <clipPath id="{{ rab }}-copo">
+              <path d="M300 150 L318 402 Q320 416 334 416 L406 416 Q420 416 422 402 L440 150 Z"/>
+            </clipPath>
+          </defs>
+
+          <g filter="url(#{{ rab }})">
+            <path class="mare-comp__onda-arte" d="M20 120c40-42 80-42 120 0s80 42 120 0 80-42 120 0 80 42 120 0"/>
+            <path class="mare-comp__onda-arte" d="M20 430c40-42 80-42 120 0s80 42 120 0 80-42 120 0 80 42 120 0"/>
+
+            <path class="mare-comp__pouch" d="M92 186q0-16 16-16h132q16 0 16 16v212q0 16-16 16H108q-16 0-16-16z" fill="url(#{{ rab }}-pouch)"/>
+            <path class="mare-comp__traco" d="M92 216h164"/>
+            <path class="mare-comp__traco" d="M108 170q28-22 66-22t66 22"/>
+            <path class="mare-comp__acento-arte" d="M144 268l60-20"/>
+            <circle class="mare-comp__pinta" cx="152" cy="330" r="13"/>
+            <circle class="mare-comp__pinta" cx="200" cy="362" r="9"/>
+
+            <g clip-path="url(#{{ rab }}-copo)">
+              <rect x="290" y="250" width="160" height="180" fill="url(#{{ rab }}-bebida)"/>
+            </g>
+            <path class="mare-comp__copo" d="M300 150 L318 402 Q320 416 334 416 L406 416 Q420 416 422 402 L440 150 Z"/>
+            <path class="mare-comp__faceta" d="M328 152 L340 414"/>
+            <path class="mare-comp__faceta" d="M356 152 L362 416"/>
+            <path class="mare-comp__faceta" d="M384 152 L382 416"/>
+            <path class="mare-comp__faceta" d="M412 152 L404 414"/>
+            <rect class="mare-comp__gelo" x="330" y="236" width="40" height="40" rx="9" transform="rotate(-13 350 256)"/>
+            <rect class="mare-comp__gelo" x="372" y="258" width="34" height="34" rx="8" transform="rotate(16 389 275)"/>
+
+            <path class="mare-comp__folha" d="M452 196q-38 0-38 38 38 0 38-38z"/>
+          </g>
+        </svg>
+        <span class="mare-comp__papel" aria-hidden="true"></span>
       </div>
 
-      <div class="mare-comp__conteudo">
-        <div class="mare-comp__tabela" role="table" aria-label="{{ section.settings.titulo | escape }}">
-          <div class="mare-comp__cab" role="row">
-            <span role="columnheader"></span>
-            <span role="columnheader" class="mare-comp__nos">{{ section.settings.coluna_nos | escape }}</span>
-            <span role="columnheader" class="mare-comp__eles">{{ section.settings.coluna_eles | escape }}</span>
-          </div>
+      {%- comment -%} ---------- CARTÃO COMPARATIVO ---------- {%- endcomment -%}
+      <div class="mare-comp__card mare-revela">
+        {%- if section.settings.titulo_card != blank -%}
+          <p class="mare-comp__card-titulo">{{ section.settings.titulo_card | escape }}</p>
+        {%- endif -%}
 
+        <ul class="mare-comp__faixas" role="list">
           {%- for block in section.blocks -%}
-            <div class="mare-comp__linha" role="row" {{ block.shopify_attributes }}>
-              <span role="cell" class="mare-comp__item">{{ block.settings.item | escape }}</span>
-              <span role="cell" class="mare-comp__nos">{{ block.settings.nos | escape }}</span>
-              <span role="cell" class="mare-comp__eles">{{ block.settings.eles | escape }}</span>
-            </div>
+            <li class="mare-comp__faixa" {{ block.shopify_attributes }}>
+              <span class="mare-comp__icone" aria-hidden="true">
+                {%- case block.settings.icone -%}
+                  {%- when 'onda' -%}
+                    <svg viewBox="0 0 24 24"><path d="M2 14c3-6 7-6 10 0s7 6 10 0"/></svg>
+                  {%- when 'folha' -%}
+                    <svg viewBox="0 0 24 24"><path d="M21 3C10 3 3 10 3 21c11 0 18-7 18-18z"/><path d="M3 21 14 10"/></svg>
+                  {%- when 'sol' -%}
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v3M12 20v3M1 12h3M20 12h3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M19.4 4.6l-2.1 2.1M6.7 17.3l-2.1 2.1"/></svg>
+                  {%- else -%}
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 12 12 3M12 12l7.8 4.5M12 12 4.2 16.5"/></svg>
+                {%- endcase -%}
+              </span>
+
+              <p class="mare-comp__item">{{ block.settings.item | escape }}</p>
+
+              <p class="mare-comp__valor mare-comp__valor--nos">
+                <span class="mare-comp__quem">{{ section.settings.rotulo_nos | escape }}</span>
+                <strong>{{ block.settings.nos | escape }}</strong>
+              </p>
+
+              <p class="mare-comp__valor mare-comp__valor--eles">
+                <span class="mare-comp__quem">{{ section.settings.rotulo_eles | escape }}</span>
+                <span>{{ block.settings.eles | escape }}</span>
+              </p>
+            </li>
           {%- endfor -%}
-        </div>
+        </ul>
 
         {%- if section.settings.nota != blank -%}
           <p class="mare-comp__nota">{{ section.settings.nota | escape }}</p>
@@ -57,124 +146,156 @@
 </section>
 
 {% stylesheet %}
-  .mare-comp { padding-block: var(--mare-grid); }
-  .mare-comp__olho { font-size: var(--mare-t-micro); letter-spacing: .18em; text-transform: uppercase; opacity: .6; margin: 0 0 .5rem; }
-  .mare-comp__titulo { font-size: var(--mare-t-titulo); margin-bottom: 2rem; max-width: 20ch; }
-
-  .mare-comp__grid {
-    display: grid;
-    gap: clamp(1.5rem, 4vw, 3.5rem);
-    align-items: center;
+  .mare-comp {
+    padding-block: var(--mare-grid);
+    --mare-comp-creme: color-mix(in srgb, var(--mare-areia) 74%, var(--mare-branco));
   }
+
+  /* ---------- Cabeçalho ---------- */
+  .mare-comp__head { max-width: 46ch; margin-bottom: clamp(1.5rem, 3vw, 2.5rem); display: grid; gap: .75rem; justify-items: start; }
+
+  .mare-comp__selo {
+    margin: 0;
+    background: var(--mare-ameixa);
+    color: var(--mare-sol);
+    font-size: .75rem; font-weight: 600;
+    letter-spacing: .18em; text-transform: uppercase;
+    padding: .4375rem 1rem; border-radius: 999px;
+  }
+  .mare-comp__titulo { font-size: var(--mare-t-titulo); margin: 0; }
+  .mare-comp__linha-fina { margin: 0; font-size: clamp(.9375rem, 1.7vw, 1.0625rem); opacity: .8; max-width: 52ch; }
+
+  /* ---------- Grade ---------- */
+  .mare-comp__grid { display: grid; gap: clamp(1.25rem, 3vw, 2.25rem); align-items: stretch; }
   @media (min-width: 900px) {
-    .mare-comp__grid { grid-template-columns: minmax(0, .95fr) minmax(420px, 1fr); }
+    .mare-comp__grid { grid-template-columns: minmax(0, .82fr) minmax(0, 1fr); }
   }
 
+  /* ---------- Ilustração ---------- */
   .mare-comp__palco {
     position: relative;
-    min-height: clamp(420px, 48vw, 620px);
-    border-radius: clamp(18px, 2.5vw, 30px);
+    isolation: isolate;
+    border-radius: clamp(20px, 3vw, 32px);
     overflow: hidden;
     background:
-      radial-gradient(56% 48% at 50% 55%, color-mix(in srgb, var(--mare-sol) 42%, transparent), transparent 72%),
-      radial-gradient(42% 38% at 78% 18%, color-mix(in srgb, var(--mare-pitaya) 16%, transparent), transparent 70%),
-      color-mix(in srgb, var(--mare-tangerina) 18%, var(--mare-areia));
-    box-shadow: var(--mare-sombra-2);
-  }
-  .mare-comp__palco::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    opacity: .18;
-    background-repeat: repeat;
-    background-size: 86px 54px;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='86' height='54' viewBox='0 0 86 54'%3E%3Cpath d='M4 33C17 11 31 11 44 33S72 55 84 33' fill='none' stroke='%23FF5436' stroke-width='7' stroke-linecap='round'/%3E%3C/svg%3E");
-  }
-  .mare-comp__copo {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: clamp(124px, 18vw, 190px);
-    height: clamp(172px, 25vw, 270px);
-    transform: translate(-50%, -42%) rotate(3deg);
-    border: 4px solid var(--mare-ameixa);
-    border-radius: 20px 20px 42px 42px;
-    background: color-mix(in srgb, var(--mare-branco) 58%, transparent);
-    box-shadow: 0 28px 44px -22px rgba(58, 10, 36, .35);
-  }
-  .mare-comp__liquido {
-    position: absolute;
-    inset: 43% 10px 10px;
-    border-radius: 10px 10px 32px 32px;
-    background: linear-gradient(180deg, var(--mare-sol), var(--mare-coral));
-  }
-  .mare-comp__gelo {
-    position: absolute;
-    width: 38px;
-    height: 38px;
-    border-radius: 8px;
-    border: 2px solid color-mix(in srgb, var(--mare-ameixa) 48%, transparent);
-    background: color-mix(in srgb, var(--mare-branco) 68%, transparent);
-  }
-  .mare-comp__gelo--1 { inset: 28% auto auto 28%; transform: rotate(13deg); }
-  .mare-comp__gelo--2 { inset: 34% 24% auto auto; transform: rotate(-15deg); }
-
-  .mare-comp__ponto {
-    position: absolute;
+      radial-gradient(58% 50% at 50% 42%, color-mix(in srgb, var(--mare-sol) 46%, transparent), transparent 74%),
+      color-mix(in srgb, var(--mare-tangerina) 14%, var(--mare-areia));
+    border: 3px solid var(--mare-ameixa);
     display: grid;
-    justify-items: center;
-    gap: .2rem;
-    max-width: 10.5rem;
-    text-align: center;
-    font-size: .8125rem;
-    line-height: 1.2;
+    place-items: center;
+    padding: clamp(.5rem, 2vw, 1.25rem);
+    min-height: clamp(300px, 34vw, 460px);
   }
-  .mare-comp__ponto::before {
+
+  .mare-comp__arte { width: 100%; height: auto; display: block; color: var(--mare-ameixa); }
+
+  /* Textura de papel: grão multiplicado sobre a ilustração inteira. */
+  .mare-comp__papel {
+    position: absolute; inset: 0; z-index: 2; pointer-events: none;
+    opacity: .26; mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23p)' opacity='.5'/%3E%3C/svg%3E");
+  }
+
+  .mare-comp__traco,
+  .mare-comp__copo,
+  .mare-comp__faceta,
+  .mare-comp__gelo,
+  .mare-comp__onda-arte,
+  .mare-comp__folha,
+  .mare-comp__pouch,
+  .mare-comp__acento-arte {
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .mare-comp__pouch { stroke-width: 5; }
+  .mare-comp__copo { fill: color-mix(in srgb, var(--mare-branco) 42%, transparent); stroke-width: 5; }
+  .mare-comp__faceta { fill: none; stroke-width: 2.5; opacity: .42; }
+  .mare-comp__traco { fill: none; stroke-width: 4; }
+  .mare-comp__gelo { fill: color-mix(in srgb, var(--mare-branco) 72%, transparent); stroke-width: 3; }
+  .mare-comp__onda-arte { fill: none; stroke: var(--mare-coral); stroke-width: 7; opacity: .28; }
+  .mare-comp__folha { fill: var(--mare-menta, #A9D9B8); stroke-width: 4; }
+  .mare-comp__acento-arte { stroke: var(--mare-sol); stroke-width: 9; }
+  .mare-comp__pinta { fill: color-mix(in srgb, var(--mare-sol) 80%, transparent); }
+
+  /* ---------- Cartão ---------- */
+  .mare-comp__card {
+    background: var(--mare-comp-creme);
+    border: 3px solid var(--mare-ameixa);
+    border-radius: clamp(20px, 3vw, 32px);
+    padding: clamp(1rem, 2.6vw, 1.75rem);
+    display: grid;
+    gap: .75rem;
+    align-content: start;
+  }
+
+  .mare-comp__card-titulo {
+    margin: 0 0 .25rem;
+    font-family: var(--mare-display);
+    font-weight: 600;
+    font-size: clamp(.9375rem, 1.8vw, 1.125rem);
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+
+  .mare-comp__faixas { list-style: none; margin: 0; padding: 0; display: grid; gap: .5rem; }
+
+  .mare-comp__faixa {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: .375rem .75rem;
+    align-items: center;
+    background: var(--mare-branco);
+    border-radius: 18px;
+    padding: .75rem .875rem;
+  }
+
+  /* Divisória desenhada à mão: onda, não régua. */
+  .mare-comp__faixa + .mare-comp__faixa::before {
     content: "";
-    width: clamp(48px, 8vw, 78px);
-    aspect-ratio: 1;
-    border-radius: 999px;
-    background:
-      radial-gradient(circle at 40% 36%, var(--mare-branco) 0 5px, transparent 6px),
-      var(--mare-pitaya);
-    box-shadow: var(--mare-sombra-1);
+    position: absolute;
+    inset: -.5rem .875rem auto .875rem;
+    height: 5px;
+    opacity: .3;
+    background-repeat: repeat-x;
+    background-size: 26px 5px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='5' viewBox='0 0 26 5'%3E%3Cpath d='M1 3c3-3 5.5-3 8.5 0s5.5 3 8.5 0 5.5-3 7 0' fill='none' stroke='%233A0A24' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");
   }
-  .mare-comp__ponto strong { font-weight: 700; }
-  .mare-comp__ponto em { font-style: normal; opacity: .68; }
-  .mare-comp__ponto--1 { inset: 12% auto auto 10%; }
-  .mare-comp__ponto--2 { inset: 9% 12% auto auto; }
-  .mare-comp__ponto--3 { inset: auto 8% 20% auto; }
-  .mare-comp__ponto--4 { inset: auto auto 14% 8%; }
-  .mare-comp__ponto--5 { inset: 48% auto auto 4%; }
-  .mare-comp__ponto--6 { inset: 50% 4% auto auto; }
 
-  .mare-comp__tabela { display: grid; gap: 0; background: var(--mare-branco); border-radius: var(--mare-raio); overflow: hidden; }
+  .mare-comp__icone { grid-row: 1 / 2; width: 26px; height: 26px; color: var(--mare-tangerina); }
+  .mare-comp__icone svg { width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 
-  .mare-comp__cab,
-  .mare-comp__linha { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: .5rem; padding: .875rem 1rem; align-items: center; }
-
-  .mare-comp__cab {
-    background: var(--mare-ameixa);
-    font-family: var(--mare-corpo); font-weight: 600;
-    font-size: var(--mare-t-micro); letter-spacing: .1em; text-transform: uppercase;
+  .mare-comp__item {
+    grid-column: 2; margin: 0;
+    font-weight: 700; font-size: .9375rem;
   }
-  .mare-comp__cab .mare-comp__nos  { color: var(--mare-sol); }
-  .mare-comp__cab .mare-comp__eles { color: var(--mare-areia); opacity: .6; }
 
-  .mare-comp__linha + .mare-comp__linha,
-  .mare-comp__cab + .mare-comp__linha { border-top: 1px solid color-mix(in srgb, var(--mare-ameixa) 10%, transparent); }
+  .mare-comp__valor { grid-column: 2; margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: .375rem; font-size: .875rem; }
+  .mare-comp__quem {
+    font-size: .625rem; font-weight: 700;
+    letter-spacing: .12em; text-transform: uppercase;
+    padding: .125rem .4375rem; border-radius: 999px;
+    white-space: nowrap;
+  }
 
-  .mare-comp__item { font-weight: 600; font-size: .9375rem; }
-  .mare-comp__linha .mare-comp__nos  { color: var(--mare-pitaya); font-weight: 600; font-size: .9375rem; }
-  .mare-comp__linha .mare-comp__eles { opacity: .55; font-size: .9375rem; }
+  .mare-comp__valor--nos .mare-comp__quem { background: var(--mare-pitaya); color: var(--mare-branco); }
+  .mare-comp__valor--nos strong { color: var(--mare-coral); font-weight: 700; }
 
-  .mare-comp__nota { margin: 1rem 0 0; font-size: var(--mare-t-micro); opacity: .6; }
+  .mare-comp__valor--eles .mare-comp__quem { background: color-mix(in srgb, var(--mare-ameixa) 12%, transparent); color: var(--mare-ameixa); opacity: .8; }
+  .mare-comp__valor--eles span:last-child { opacity: .6; }
 
-  @media (max-width: 600px) {
-    .mare-comp__palco { min-height: 440px; }
-    .mare-comp__ponto { max-width: 8rem; font-size: .75rem; }
-    .mare-comp__cab, .mare-comp__linha { grid-template-columns: 1fr .8fr .8fr; gap: .375rem; }
-    .mare-comp__item, .mare-comp__linha span { font-size: .8125rem; }
+  /* Desktop: rótulo à esquerda, os dois valores lado a lado. */
+  @media (min-width: 640px) {
+    .mare-comp__faixa { grid-template-columns: auto minmax(0, 1.1fr) minmax(0, 1fr) minmax(0, 1fr); }
+    .mare-comp__item  { grid-column: 2; }
+    .mare-comp__valor { grid-column: auto; flex-direction: column; align-items: flex-start; gap: .1875rem; }
+  }
+
+  .mare-comp__nota { margin: .375rem 0 0; font-size: .6875rem; line-height: 1.45; opacity: .62; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mare-comp__arte { filter: none; }
   }
 {% endstylesheet %}
 
@@ -182,22 +303,41 @@
 {
   "name": "Comparativo",
   "tag": "section",
-  "max_blocks": 10,
+  "max_blocks": 6,
   "settings": [
-    { "type": "text", "id": "olho", "label": "Sobretítulo", "default": "O que tem dentro" },
-    { "type": "text", "id": "titulo", "label": "Título", "default": "Compare o rótulo." },
-    { "type": "text", "id": "coluna_nos", "label": "Nome da nossa coluna", "default": "MARÉ" },
-    { "type": "text", "id": "coluna_eles", "label": "Nome da outra coluna", "default": "Refresco comum" },
-    { "type": "text", "id": "nota", "label": "Nota de rodapé", "default": "Comparação por porção preparada. Confira sempre o rótulo do produto." }
+    { "type": "text", "id": "selo", "label": "Selo", "default": "Por dentro da MARÉ" },
+    { "type": "text", "id": "titulo", "label": "Título", "default": "Mais fruta. Menos artifício." },
+    { "type": "text", "id": "texto", "label": "Texto", "default": "Uma mistura simples, refrescante e com escolhas que fazem sentido para o seu dia." },
+    { "type": "header", "content": "Cartão comparativo" },
+    { "type": "text", "id": "titulo_card", "label": "Título do cartão", "default": "MARÉ x refresco convencional" },
+    { "type": "text", "id": "rotulo_nos", "label": "Rótulo da nossa coluna", "default": "MARÉ" },
+    { "type": "text", "id": "rotulo_eles", "label": "Rótulo da outra coluna", "default": "Refresco convencional" },
+    { "type": "paragraph", "content": "Use \"pode conter\" e \"geralmente n\u00e3o cont\u00e9m\" em vez de absolutos. Afirmar o que TODO concorrente cont\u00e9m \u00e9 publicidade comparativa sem lastro. A nota de rodap\u00e9 abaixo \u00e9 obrigat\u00f3ria \u2014 n\u00e3o apague." },
+    { "type": "text", "id": "nota", "label": "Nota de rodapé", "default": "*A composição varia entre marcas. Compare sempre as informações nutricionais e a lista de ingredientes dos produtos." },
+    { "type": "header", "content": "Ilustração" },
+    { "type": "text", "id": "arte_alt", "label": "Descrição da ilustração", "default": "Pouch da MARÉ ao lado de um copo americano com bebida coral e gelo" },
+    { "type": "color", "id": "cor_menta", "label": "Verde-menta (acento)", "default": "#A9D9B8", "info": "Cor fora da prancha 25 do brandbook. Use areia para remover o verde da ilustração." }
   ],
   "blocks": [
     {
       "type": "linha",
-      "name": "Linha",
+      "name": "Comparação",
       "settings": [
-        { "type": "text", "id": "item", "label": "Item", "default": "Açúcar adicionado" },
+        { "type": "text", "id": "item", "label": "Item", "default": "Açúcares adicionados" },
         { "type": "text", "id": "nos", "label": "MARÉ", "default": "não contém" },
-        { "type": "text", "id": "eles", "label": "Outro", "default": "contém" }
+        { "type": "text", "id": "eles", "label": "Outro", "default": "pode conter" },
+        {
+          "type": "select",
+          "id": "icone",
+          "label": "Ícone",
+          "options": [
+            { "value": "fruta", "label": "Fruta" },
+            { "value": "onda", "label": "Onda" },
+            { "value": "folha", "label": "Folha" },
+            { "value": "sol", "label": "Sol" }
+          ],
+          "default": "fruta"
+        }
       ]
     }
   ],
@@ -205,10 +345,10 @@
     {
       "name": "Comparativo",
       "blocks": [
-        { "type": "linha", "settings": { "item": "Açúcar adicionado", "nos": "não contém", "eles": "contém" } },
-        { "type": "linha", "settings": { "item": "Corante artificial", "nos": "não contém", "eles": "contém" } },
-        { "type": "linha", "settings": { "item": "Fibra alimentar", "nos": "contém", "eles": "não contém" } },
-        { "type": "linha", "settings": { "item": "Sabor de fruta", "nos": "de fruta", "eles": "aroma artificial" } }
+        { "type": "linha", "settings": { "item": "Açúcares adicionados", "nos": "não contém", "eles": "pode conter", "icone": "fruta" } },
+        { "type": "linha", "settings": { "item": "Corantes artificiais", "nos": "não contém", "eles": "pode conter", "icone": "sol" } },
+        { "type": "linha", "settings": { "item": "Fibra alimentar", "nos": "contém", "eles": "geralmente não contém", "icone": "folha" } },
+        { "type": "linha", "settings": { "item": "Experiência", "nos": "frutada e refrescante", "eles": "varia conforme o produto", "icone": "onda" } }
       ]
     }
   ]
