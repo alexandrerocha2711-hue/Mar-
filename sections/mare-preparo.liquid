@@ -1,34 +1,48 @@
 {% comment %}
   MARÉ — modo de preparo
   ---------------------------------------------------------------------------
-  TRÊS IMAGENS, NÃO UMA.
-  A versão anterior tinha um quadro grande dominando e números soltos ao lado.
-  O problema não era estético: uma imagem só mostra UM instante, e preparo é
-  sequência. Cada passo agora carrega a própria foto, e a leitura vira
-  "abre → mistura → gela" mesmo para quem só bate o olho.
+  TRÊS IMAGENS, NÃO UMA. Preparo é sequência: uma imagem só mostra um instante.
+  Cada passo carrega a própria foto, e a leitura vira "abre → mistura → gela"
+  mesmo para quem só bate o olho.
 
-  POR QUE ISTO IMPORTA COMERCIALMENTE
-  "Como se usa" é a última dúvida antes do carrinho num produto em pó. Quem
-  não enxerga a medida imagina trabalho, e desiste.
+  NO CELULAR VIRA CARROSSEL
+  Empilhadas, as três fotos quadradas ocupavam quase três telas de altura e
+  empurravam tudo que vem depois para longe. Em carrossel, a dobra passa a
+  caber numa tela só.
 
-  POR QUE IMPORTA JURIDICAMENTE
-  Modo de preparo e porção são informação obrigatória de rótulo. É a única
-  categoria de texto desta página que pode ser específica sem virar alegação —
-  é fato conferivel, não promessa de efeito.
+  O ESPIA DA PRÓXIMA CARTA É O QUE FAZ FUNCIONAR.
+  Cada passo ocupa 82% da largura, não 100%. Aquela fatia da carta seguinte
+  aparecendo na borda é o único sinal de que ali se arrasta — carrossel com
+  carta de largura cheia parece imagem estática, e ninguém desliza. É também
+  o motivo de as cartas sangrarem até a borda da tela: margem negativa
+  cancelando o respiro do `.mare-wrap`, e `padding` devolvendo o recuo só na
+  primeira e na última.
 
-  SEM FOTO NADA QUEBRA: o quadro cai num leito na cor do passo com o número
-  grande. Feio? Não. Vazio? Também não.
+  Rola por scroll-snap NATIVO — nenhum JavaScript. Os números 1, 2 e 3 nas
+  pastilhas já dizem onde a pessoa está, então não há pontinhos a manter.
 
-  O GRAFISMO É CSS, NÃO ARQUIVO. A moldura orgânica, os anéis concentricos e o
-  grão de serigrafia são border-radius, gradiente e um SVG inline de ~300
-  bytes. Custo de rede zero — a foto que você subir já chega vestida.
+  A revelação no scroll é desligada dentro do carrossel: `animation-timeline:
+  view()` mede contra a rolagem vertical da página e se comporta de forma
+  imprevisível dentro de um contêiner que rola na horizontal.
+
+  POR QUE ESTA SEÇÃO IMPORTA
+  Comercialmente: "como se usa" é a última dúvida antes do carrinho num
+  produto em pó. Quem não enxerga a medida imagina trabalho, e desiste.
+  Juridicamente: modo de preparo e porção são informação obrigatória de
+  rótulo — é a única categoria de texto da página que pode ser específica sem
+  virar alegação, porque é fato conferivel e não promessa de efeito.
+
+  SEM FOTO NADA QUEBRA: o quadro cai num leito na cor do passo com o número.
 {% endcomment %}
 
 {%- liquid
   assign medida = product.metafields.mare.preparo.value | default: section.settings.medida
 -%}
 
-<section class="mare-preparo mare-section" aria-labelledby="mare-preparo-{{ section.id }}">
+<section
+  class="mare-preparo mare-section mare-preparo--{{ section.settings.mobile }}"
+  aria-labelledby="mare-preparo-{{ section.id }}"
+>
   <div class="mare-wrap">
 
     <header class="mare-preparo__head mare-revela">
@@ -59,7 +73,7 @@
                  | image_url: width: 900
                  | image_tag:
                      loading: 'lazy',
-                     sizes: '(min-width: 990px) 30vw, (min-width: 750px) 44vw, 86vw',
+                     sizes: '(min-width: 990px) 30vw, (min-width: 750px) 44vw, 82vw',
                      class: 'mare-passo2__img',
                      alt: block.settings.alt | default: block.settings.verbo }}
             {%- else -%}
@@ -108,7 +122,7 @@
 
   .mare-passo2 { display: grid; gap: 1rem; }
 
-  /* ---- Moldura orgânica: a bolha desenhada à mão, feita de border-radius ---
+  /* ---- Moldura orgânica: bolha desenhada à mão, feita de border-radius ----
      Quatro raios diferentes por eixo dão a assimetria de recorte manual. O
      anel branco vem de box-shadow, não de border, para não comer largura. --- */
   .mare-passo2__midia {
@@ -135,10 +149,7 @@
     border-radius: 46% 54% 55% 45% / 48% 53% 47% 52%;
   }
 
-  .mare-passo2__img {
-    width: 100%; height: 100%;
-    object-fit: cover; display: block;
-  }
+  .mare-passo2__img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
   .mare-passo2__num {
     font-family: var(--mare-display); font-weight: 600;
@@ -147,8 +158,6 @@
     opacity: .55;
   }
 
-  /* Grão de serigrafia por cima da foto: a textura de impressão que une
-     fotos de origens diferentes num visual só. ~300 bytes de SVG inline. */
   .mare-passo2__grao {
     position: absolute; inset: 0; z-index: 2;
     pointer-events: none;
@@ -157,7 +166,6 @@
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23s)' opacity='.5'/%3E%3C/svg%3E");
   }
 
-  /* Anéis concentricos por trás da foto — o eco retô da marola. */
   .mare-passo2__aneis {
     position: absolute; inset: -14%;
     z-index: -1; pointer-events: none;
@@ -167,7 +175,6 @@
       color-mix(in srgb, var(--mare-cor-sku) 26%, transparent) 16px 20px);
   }
 
-  /* Pastilha do número, encaixada na borda da bolha. */
   .mare-passo2__selo {
     position: absolute; z-index: 3;
     inset: auto auto 6% 4%;
@@ -190,9 +197,47 @@
     margin: 2rem 0 0; font-size: var(--mare-t-micro); opacity: .6; max-width: 62ch;
   }
 
+  /* ---------- CARROSSEL NO CELULAR ----------
+     A margem negativa cancela o respiro do .mare-wrap para as cartas
+     sangrarem até a borda da tela; o padding devolve o recuo na primeira e na
+     última. `scroll-padding-inline` faz o snap parar alinhado a esse recuo. */
+  @media (max-width: 749px) {
+    .mare-preparo--carrossel .mare-preparo__passos {
+      display: flex;
+      grid-template-columns: none;
+      gap: .875rem;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      margin-inline: calc(clamp(1rem, 4vw, 2.5rem) * -1);
+      padding-inline: clamp(1rem, 4vw, 2.5rem);
+      scroll-padding-inline: clamp(1rem, 4vw, 2.5rem);
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+    .mare-preparo--carrossel .mare-preparo__passos::-webkit-scrollbar { display: none; }
+
+    .mare-preparo--carrossel .mare-passo2 {
+      flex: 0 0 82%;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+    }
+
+    /* `animation-timeline: view()` mede contra a rolagem VERTICAL da página.
+       Dentro de um contêiner que rola na horizontal, o resultado é
+       imprevisível — as cartas podem nascer invisíveis. Desligado aqui. */
+    .mare-preparo--carrossel .mare-passo2 {
+      animation: none;
+      opacity: 1;
+      translate: none;
+      scale: none;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .mare-passo2__midia { transition: none; }
     .mare-passo2:hover .mare-passo2__midia { transform: none; }
+    .mare-preparo--carrossel .mare-preparo__passos { scroll-behavior: auto; }
   }
 {% endstylesheet %}
 
@@ -205,7 +250,19 @@
     { "type": "text", "id": "olho", "label": "Sobretítulo", "default": "Modo de preparo" },
     { "type": "text", "id": "titulo", "label": "Título", "default": "Não tem segredo." },
     { "type": "text", "id": "medida", "label": "Medida", "default": "1 sachê para 300 ml de água gelada" },
-    { "type": "text", "id": "aviso", "label": "Aviso", "default": "Consulte sempre o rótulo. Conservar em local seco e ao abrigo da luz." }
+    { "type": "text", "id": "aviso", "label": "Aviso", "default": "Consulte sempre o rótulo. Conservar em local seco e ao abrigo da luz." },
+    { "type": "header", "content": "Celular" },
+    {
+      "type": "select",
+      "id": "mobile",
+      "label": "Como exibir no celular",
+      "info": "O carrossel arrasta com o dedo e deixa a dobra numa tela só. Empilhado mostra os três passos um abaixo do outro.",
+      "options": [
+        { "value": "carrossel", "label": "Carrossel (arrasta)" },
+        { "value": "empilhado", "label": "Empilhado" }
+      ],
+      "default": "carrossel"
+    }
   ],
   "blocks": [
     {
