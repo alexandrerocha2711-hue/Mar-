@@ -67,20 +67,24 @@
 
     "comparativo": {
       "type": "mare-comparativo",
-      "name": "Compare o rótulo",
+      "name": "Por dentro da MARÉ",
       "blocks": {
-        "l1": { "type": "linha", "settings": { "item": "Açúcar adicionado", "nos": "não contém", "eles": "contém" } },
-        "l2": { "type": "linha", "settings": { "item": "Corante artificial", "nos": "não contém", "eles": "contém" } },
-        "l3": { "type": "linha", "settings": { "item": "Fibra alimentar", "nos": "contém", "eles": "não contém" } },
-        "l4": { "type": "linha", "settings": { "item": "Sabor", "nos": "de fruta", "eles": "aroma artificial" } }
+        "l1": { "type": "linha", "settings": { "item": "Açúcares adicionados", "nos": "não contém", "eles": "pode conter", "icone": "fruta" } },
+        "l2": { "type": "linha", "settings": { "item": "Corantes artificiais", "nos": "não contém", "eles": "pode conter", "icone": "sol" } },
+        "l3": { "type": "linha", "settings": { "item": "Fibra alimentar", "nos": "contém", "eles": "geralmente não contém", "icone": "folha" } },
+        "l4": { "type": "linha", "settings": { "item": "Experiência", "nos": "frutada e refrescante", "eles": "varia conforme o produto", "icone": "onda" } }
       },
       "block_order": ["l1", "l2", "l3", "l4"],
       "settings": {
-        "olho": "Lado a lado",
-        "titulo": "O rótulo responde.",
-        "coluna_nos": "MARÉ",
-        "coluna_eles": "Refresco comum",
-        "nota": "Comparação por porção preparada. Confira sempre o rótulo."
+        "selo": "Por dentro da MARÉ",
+        "titulo": "Mais fruta. Menos artifício.",
+        "texto": "Uma mistura simples, refrescante e com escolhas que fazem sentido para o seu dia.",
+        "titulo_card": "MARÉ x refresco convencional",
+        "rotulo_nos": "MARÉ",
+        "rotulo_eles": "Refresco convencional",
+        "nota": "*A composição varia entre marcas. Compare sempre as informações nutricionais e a lista de ingredientes dos produtos.",
+        "arte_alt": "Pouch da MARÉ ao lado de um copo americano com bebida coral e gelo",
+        "cor_menta": "#A9D9B8"
       }
     },
 
