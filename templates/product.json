@@ -36,33 +36,9 @@
       "type": "mare-preparo",
       "name": "Modo de preparo",
       "blocks": {
-        "p1": {
-          "type": "passo",
-          "settings": {
-            "verbo": "Abre e despeja.",
-            "texto": "Abra o sachê e coloque em 300 ml de água.",
-            "alt": "Sachê da MARÉ sendo aberto e despejado num copo americano com água",
-            "cor": "#E8156B"
-          }
-        },
-        "p2": {
-          "type": "passo",
-          "settings": {
-            "verbo": "Mistura.",
-            "texto": "Mexa bem até o pó desaparecer.",
-            "alt": "Bebida sendo misturada no copo, a cor vibrante se formando",
-            "cor": "#FF9500"
-          }
-        },
-        "p3": {
-          "type": "passo",
-          "settings": {
-            "verbo": "Gelinho e vai.",
-            "texto": "Coloque gelo, tome e siga o seu dia.",
-            "alt": "Copo americano com a bebida pronta e cubos de gelo",
-            "cor": "#FF5436"
-          }
-        }
+        "p1": { "type": "passo", "settings": { "verbo": "Abre e despeja.", "texto": "Abra o sachê e coloque em 300 ml de água.", "alt": "Sachê da MARÉ sendo aberto e despejado num copo americano com água", "cor": "#E8156B" } },
+        "p2": { "type": "passo", "settings": { "verbo": "Mistura.", "texto": "Mexa bem até o pó desaparecer.", "alt": "Bebida sendo misturada no copo, a cor vibrante se formando", "cor": "#FF9500" } },
+        "p3": { "type": "passo", "settings": { "verbo": "Gelinho e vai.", "texto": "Coloque gelo, tome e siga o seu dia.", "alt": "Copo americano com a bebida pronta e cubos de gelo", "cor": "#FF5436" } }
       },
       "block_order": ["p1", "p2", "p3"],
       "settings": {
@@ -70,6 +46,22 @@
         "titulo": "Não tem segredo.",
         "medida": "1 sachê para 300 ml de água gelada",
         "aviso": "Consulte sempre o rótulo. Conservar em local seco e ao abrigo da luz."
+      }
+    },
+
+    "historia": {
+      "type": "mare-historia",
+      "name": "Dobra de história",
+      "settings": {
+        "olho_forte": "Fruta e sol.",
+        "olho": "O verão brasileiro dentro de um copo, em dez segundos",
+        "foto_alt": "Frutas frescas em close, luz de sol quente",
+        "titulo": "O verão que o Brasil tem o ano inteiro",
+        "texto": "<p>Aqui o verão não é uma estação de três meses. É melancia no calor de outubro, morango no fim de tarde de abril, pitaya na cor que só a fruta daqui tem.</p><p>A MARÉ pega esse frescor e coloca num pó que cabe na bolsa. Mistura na água, gela, e o verão volta em dez segundos.</p><p>Não é uma promessa sobre o seu corpo. É uma promessa sobre o seu copo.</p>",
+        "lado": "esquerda",
+        "cor_fundo": "#FFEBD6",
+        "cor_card": "#FFC943",
+        "cor_texto": "#3A0A24"
       }
     },
 
@@ -107,5 +99,5 @@
       "settings": { "olho": "Antes de comprar", "titulo": "O que perguntam." }
     }
   },
-  "order": ["main", "preparo", "comparativo", "duvidas"]
+  "order": ["main", "preparo", "historia", "comparativo", "duvidas"]
 }
