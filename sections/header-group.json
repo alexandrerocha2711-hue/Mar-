@@ -14,16 +14,22 @@
     "mare_topbar": {
       "type": "mare-topbar",
       "name": "Barra do topo",
+      "blocks": {
+        "a1": { "type": "aviso", "settings": { "texto": "Entrega para todo o Brasil" } },
+        "a2": { "type": "aviso", "settings": { "texto": "Sem açúcar adicionado" } },
+        "a3": { "type": "aviso", "settings": { "texto": "Pague em até 12x" } },
+        "a4": { "type": "aviso", "settings": { "texto": "Pronto em 10 segundos" } }
+      },
+      "block_order": ["a1", "a2", "a3", "a4"],
       "settings": {
         "rotulo_cupom": "Primeira compra",
         "cupom": "PRIMEIRAMARE",
         "texto_copiado": "Copiado",
         "texto_frete": "Frete grátis acima de [valor]",
         "frete_centavos": 20000,
-        "rotulo_link": "",
-        "cor_fundo": "#3A0A24",
-        "cor_texto": "#FFC943",
-        "mostrar_onda": false,
+        "velocidade": 45,
+        "cor_fundo": "#FFC943",
+        "cor_texto": "#3A0A24",
         "rotulo_acessivel": "Avisos da loja"
       }
     },
@@ -33,9 +39,7 @@
         "header-logo": {
           "type": "_header-logo",
           "static": true,
-          "settings": {
-            "hide_logo_on_home_page": false
-          },
+          "settings": { "hide_logo_on_home_page": false },
           "blocks": {}
         },
         "header-menu": {
@@ -43,11 +47,11 @@
           "static": true,
           "settings": {
             "menu": "main-menu",
-            "type_font_primary_size": "0.75rem",
+            "menu_style": "text",
             "menu_font_style": "regular",
             "type_font_primary_link": "body",
+            "type_font_primary_size": "0.75rem",
             "type_case_primary_link": "uppercase",
-            "menu_style": "text",
             "navigation_bar": false,
             "drawer_dividers": false
           },
@@ -74,8 +78,5 @@
       }
     }
   },
-  "order": [
-    "mare_topbar",
-    "header_section"
-  ]
+  "order": ["mare_topbar", "header_section"]
 }
