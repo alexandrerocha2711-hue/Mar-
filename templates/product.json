@@ -11,16 +11,50 @@
   "sections": {
     "main": {
       "type": "mare-produto",
-      "name": "Produto",
       "blocks": {
-        "d1": { "type": "detalhe", "settings": { "titulo": "Modo de preparo", "conteudo": "<p>1 sachê para 300 ml de água gelada. Mexe até dissolver, gela e bebe.</p>" } },
-        "d2": { "type": "detalhe", "settings": { "titulo": "Ingredientes e tabela nutricional", "conteudo": "<p>A lista completa e a tabela nutricional estão impressas no rótulo. Confira sempre a embalagem que você recebeu.</p>" } },
-        "d3": { "type": "detalhe", "settings": { "titulo": "Advertências", "conteudo": "<p>As advertências e o público a que o produto não se destina constam do rótulo. Em caso de dúvida, converse com um profissional de saúde.</p>" } },
-        "d4": { "type": "detalhe", "settings": { "titulo": "Entrega e devolução", "conteudo": "<p>O prazo aparece no carrinho depois do CEP. Você tem 7 dias a partir do recebimento para desistir da compra, sem custo.</p>" } }
+        "d1": {
+          "type": "detalhe",
+          "settings": {
+            "titulo": "Modo de preparo",
+            "conteudo": "<p>1 sachê para 300 ml de água gelada. Mexe até dissolver, gela e bebe.</p>"
+          }
+        },
+        "d2": {
+          "type": "detalhe",
+          "settings": {
+            "titulo": "Ingredientes e tabela nutricional",
+            "conteudo": "<p>A lista completa e a tabela nutricional estão impressas no rótulo. Confira sempre a embalagem que você recebeu.</p>"
+          }
+        },
+        "d3": {
+          "type": "detalhe",
+          "settings": {
+            "titulo": "Advertências",
+            "conteudo": "<p>As advertências e o público a que o produto não se destina constam do rótulo. Em caso de dúvida, converse com um profissional de saúde.</p>"
+          }
+        },
+        "d4": {
+          "type": "detalhe",
+          "settings": {
+            "titulo": "Entrega e devolução",
+            "conteudo": "<p>O prazo aparece no carrinho depois do CEP. Você tem 7 dias a partir do recebimento para desistir da compra, sem custo.</p>"
+          }
+        }
       },
-      "block_order": ["d1", "d2", "d3", "d4"],
+      "block_order": [
+        "d1",
+        "d2",
+        "d3",
+        "d4"
+      ],
+      "name": "Produto",
       "settings": {
         "olho": "Refresco funcional em pó · 3 sabores",
+        "linha_fina": "Escolha os sabores, monte sua caixa e deixe o carrinho cuidar do desconto.",
+        "beneficio_1": "Mistura em segundos",
+        "beneficio_2": "3 sabores para combinar",
+        "beneficio_3": "Desconto por quantidade",
+        "beneficio_4": "7 dias para devolver",
         "mostrar_descricao": false,
         "rotulo_caixa": "Monte sua caixa",
         "degraus": "3:10,5:15",
@@ -31,16 +65,46 @@
         "cores": "#FF5436,#FF9500,#E8156B,#FFC943"
       }
     },
-
     "preparo": {
       "type": "mare-preparo",
-      "name": "Modo de preparo",
       "blocks": {
-        "p1": { "type": "passo", "settings": { "verbo": "Abre e despeja.", "texto": "Abra o sachê e coloque em 300 ml de água.", "alt": "Sachê da MARÉ sendo aberto e despejado num copo americano com água", "cor": "#E8156B" } },
-        "p2": { "type": "passo", "settings": { "verbo": "Mistura.", "texto": "Mexa bem até o pó desaparecer.", "alt": "Bebida sendo misturada no copo, a cor vibrante se formando", "cor": "#FF9500" } },
-        "p3": { "type": "passo", "settings": { "verbo": "Gelinho e vai.", "texto": "Coloque gelo, tome e siga o seu dia.", "alt": "Copo americano com a bebida pronta e cubos de gelo", "cor": "#FF5436" } }
+        "p1": {
+          "type": "passo",
+          "settings": {
+            "foto": "shopify://shop_images/ChatGPT_Image_16_de_ago._de_2026_15_25_08_1.png",
+            "alt": "Sachê da MARÉ sendo aberto e despejado num copo americano com água",
+            "verbo": "Abre e despeja.",
+            "texto": "Abra o sachê e coloque em 300 ml de água.",
+            "cor": "#e8156b"
+          }
+        },
+        "p2": {
+          "type": "passo",
+          "settings": {
+            "foto": "shopify://shop_images/ChatGPT_Image_16_de_ago._de_2026_15_25_08_2.png",
+            "alt": "Bebida sendo misturada no copo, a cor vibrante se formando",
+            "verbo": "Mistura.",
+            "texto": "Mexa bem até o pó desaparecer.",
+            "cor": "#ff9500"
+          }
+        },
+        "p3": {
+          "type": "passo",
+          "settings": {
+            "foto": "shopify://shop_images/ChatGPT_Image_16_de_ago._de_2026_15_26_55.png",
+            "alt": "Copo americano com a bebida pronta e cubos de gelo",
+            "verbo": "Gelinho e vai.",
+            "texto": "Coloque gelo, tome e siga o seu dia.",
+            "cor": "#ff5436"
+          }
+        }
       },
-      "block_order": ["p1", "p2", "p3"],
+      "block_order": [
+        "p1",
+        "p2",
+        "p3"
+      ],
+      "name": "Modo de preparo",
       "settings": {
         "olho": "Modo de preparo",
         "titulo": "Não tem segredo.",
@@ -48,60 +112,155 @@
         "aviso": "Consulte sempre o rótulo. Conservar em local seco e ao abrigo da luz."
       }
     },
-
     "historia": {
       "type": "mare-historia",
       "name": "Dobra de história",
       "settings": {
         "olho_forte": "Fruta e sol.",
         "olho": "O verão brasileiro dentro de um copo, em dez segundos",
+        "foto": "shopify://shop_images/ChatGPT_Image_16_de_ago._de_2026_15_05_01_a287f70e-bb17-4b52-8c06-8afaa80961ba.png",
         "foto_alt": "Frutas frescas em close, luz de sol quente",
         "titulo": "O verão que o Brasil tem o ano inteiro",
         "texto": "<p>Aqui o verão não é uma estação de três meses. É melancia no calor de outubro, morango no fim de tarde de abril, pitaya na cor que só a fruta daqui tem.</p><p>A MARÉ pega esse frescor e coloca num pó que cabe na bolsa. Mistura na água, gela, e o verão volta em dez segundos.</p><p>Não é uma promessa sobre o seu corpo. É uma promessa sobre o seu copo.</p>",
+        "link": "",
+        "rotulo": "",
         "lado": "esquerda",
-        "cor_fundo": "#FFEBD6",
-        "cor_card": "#FFC943",
-        "cor_texto": "#3A0A24"
+        "cor_fundo": "#ffebd6",
+        "cor_card": "#ffc943",
+        "cor_texto": "#3a0a24"
       }
     },
-
     "comparativo": {
       "type": "mare-comparativo",
-      "name": "Por dentro da MARÉ",
       "blocks": {
-        "l1": { "type": "linha", "settings": { "item": "Açúcares adicionados", "nos": "não contém", "eles": "pode conter", "icone": "fruta" } },
-        "l2": { "type": "linha", "settings": { "item": "Corantes artificiais", "nos": "não contém", "eles": "pode conter", "icone": "sol" } },
-        "l3": { "type": "linha", "settings": { "item": "Fibra alimentar", "nos": "contém", "eles": "geralmente não contém", "icone": "folha" } },
-        "l4": { "type": "linha", "settings": { "item": "Experiência", "nos": "frutada e refrescante", "eles": "varia conforme o produto", "icone": "onda" } }
+        "l1": {
+          "type": "linha",
+          "settings": {
+            "item": "Açúcares adicionados",
+            "nos": "não contém",
+            "eles": "pode conter",
+            "icone_foto": "shopify://shop_images/ChatGPT_Image_16_de_ago._de_2026_16_06_41_2.png",
+            "icone": "fruta"
+          }
+        },
+        "l2": {
+          "type": "linha",
+          "settings": {
+            "item": "Corantes artificiais",
+            "nos": "não contém",
+            "eles": "pode conter",
+            "icone_foto": "shopify://shop_images/ChatGPT_Image_16_de_ago._de_2026_16_06_41_4.png",
+            "icone": "sol"
+          }
+        },
+        "l3": {
+          "type": "linha",
+          "settings": {
+            "item": "Fibra alimentar",
+            "nos": "contém",
+            "eles": "geralmente não contém",
+            "icone_foto": "shopify://shop_images/ChatGPT_Image_16_de_ago._de_2026_16_06_41_3.png",
+            "icone": "folha"
+          }
+        },
+        "l4": {
+          "type": "linha",
+          "settings": {
+            "item": "Experiência",
+            "nos": "frutada e refrescante",
+            "eles": "varia conforme o produto",
+            "icone_foto": "shopify://shop_images/ChatGPT_Image_16_de_ago._de_2026_16_06_41_5.png",
+            "icone": "onda"
+          }
+        }
       },
-      "block_order": ["l1", "l2", "l3", "l4"],
+      "block_order": [
+        "l1",
+        "l2",
+        "l3",
+        "l4"
+      ],
+      "name": "Por dentro da MARÉ",
       "settings": {
         "selo": "Por dentro da MARÉ",
         "titulo": "Mais fruta. Menos artifício.",
         "texto": "Uma mistura simples, refrescante e com escolhas que fazem sentido para o seu dia.",
+        "ilustracao": "shopify://shop_images/WhatsApp_Image_2026-08-13_at_10.09.45.jpg",
+        "ajuste": "preenche",
+        "arte_alt": "Pouch da MARÉ ao lado de um copo americano com bebida coral e gelo",
+        "cor_menta": "#a9d9b8",
         "titulo_card": "MARÉ x refresco convencional",
         "rotulo_nos": "MARÉ",
         "rotulo_eles": "Refresco convencional",
-        "nota": "*A composição varia entre marcas. Compare sempre as informações nutricionais e a lista de ingredientes dos produtos.",
-        "arte_alt": "Pouch da MARÉ ao lado de um copo americano com bebida coral e gelo",
-        "cor_menta": "#A9D9B8"
+        "nota": "*A composição varia entre marcas. Compare sempre as informações nutricionais e a lista de ingredientes dos produtos."
       }
     },
-
     "duvidas": {
       "type": "mare-faq",
-      "name": "Dúvidas",
       "blocks": {
-        "q1": { "type": "pergunta", "settings": { "pergunta": "Qual a medida certa?", "resposta": "<p>Um sachê para 300 ml. Menos água, sabor mais concentrado. A medida oficial está no rótulo.</p>" } },
-        "q2": { "type": "pergunta", "settings": { "pergunta": "Precisa gelar?", "resposta": "<p>Não precisa, mas muda tudo. Gelo direto no copo resolve.</p>" } },
-        "q3": { "type": "pergunta", "settings": { "pergunta": "O desconto vale misturando sabores?", "resposta": "<p>Vale. Conta unidades, não sabores. Três melancias ou uma de cada dá o mesmo preço.</p>" } },
-        "q4": { "type": "pergunta", "settings": { "pergunta": "Quantas doses vem?", "resposta": "<p>Está no rótulo e na descrição deste produto.</p>" } },
-        "q5": { "type": "pergunta", "settings": { "pergunta": "Como guardo depois de aberto?", "resposta": "<p>Local seco, ao abrigo da luz, bem fechado. Não precisa de geladeira.</p>" } },
-        "q6": { "type": "pergunta", "settings": { "pergunta": "Quem não deve consumir?", "resposta": "<p>As advertências e o público a que o produto não se destina estão no rótulo. Em caso de dúvida, converse com um profissional de saúde.</p>" } }
+        "q1": {
+          "type": "pergunta",
+          "settings": {
+            "pergunta": "Qual a medida certa?",
+            "resposta": "<p>Um sachê para 300 ml. Menos água, sabor mais concentrado. A medida oficial está no rótulo.</p>"
+          }
+        },
+        "q2": {
+          "type": "pergunta",
+          "settings": {
+            "pergunta": "Precisa gelar?",
+            "resposta": "<p>Não precisa, mas muda tudo. Gelo direto no copo resolve.</p>"
+          }
+        },
+        "q3": {
+          "type": "pergunta",
+          "settings": {
+            "pergunta": "O desconto vale misturando sabores?",
+            "resposta": "<p>Vale. Conta unidades, não sabores. Três melancias ou uma de cada dá o mesmo preço.</p>"
+          }
+        },
+        "q4": {
+          "type": "pergunta",
+          "settings": {
+            "pergunta": "Quantas doses vem?",
+            "resposta": "<p>Está no rótulo e na descrição deste produto.</p>"
+          }
+        },
+        "q5": {
+          "type": "pergunta",
+          "settings": {
+            "pergunta": "Como guardo depois de aberto?",
+            "resposta": "<p>Local seco, ao abrigo da luz, bem fechado. Não precisa de geladeira.</p>"
+          }
+        },
+        "q6": {
+          "type": "pergunta",
+          "settings": {
+            "pergunta": "Quem não deve consumir?",
+            "resposta": "<p>As advertências e o público a que o produto não se destina estão no rótulo. Em caso de dúvida, converse com um profissional de saúde.</p>"
+          }
+        }
       },
-      "block_order": ["q1", "q2", "q3", "q4", "q5", "q6"],
-      "settings": { "olho": "Antes de comprar", "titulo": "O que perguntam." }
+      "block_order": [
+        "q1",
+        "q2",
+        "q3",
+        "q4",
+        "q5",
+        "q6"
+      ],
+      "name": "Dúvidas",
+      "settings": {
+        "olho": "Antes de comprar",
+        "titulo": "O que perguntam."
+      }
     }
   },
-  "order": ["main", "preparo", "historia", "comparativo", "duvidas"]
+  "order": [
+    "main",
+    "preparo",
+    "historia",
+    "comparativo",
+    "duvidas"
+  ]
 }
