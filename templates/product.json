@@ -16,17 +16,15 @@
           "type": "_product-media-gallery",
           "static": true,
           "settings": {
-            "media_presentation": "carousel",
-            "slideshow_controls_style": "counter",
+            "media_presentation": "grid",
+            "media_columns": "one",
             "slideshow_mobile_controls_style": "dots",
-            "thumbnail_position": "below",
-            "thumbnail_width": 64,
-            "thumbnail_radius": 16,
-            "aspect_ratio": "square",
+            "aspect_ratio": "1/1.25",
+            "constrain_to_viewport": true,
             "media_fit": "contain",
-            "media_radius": 16,
+            "media_radius": 24,
             "zoom": true,
-            "hide_variants": true
+            "hide_variants": false
           },
           "blocks": {}
         },
@@ -36,8 +34,8 @@
           "settings": {
             "width": "fill",
             "height": "fit",
-            "details_position": "center",
-            "gap": 24,
+            "details_position": "top",
+            "gap": 20,
             "sticky_details_desktop": true,
             "padding-block-start": 24,
             "padding-block-end": 24
@@ -49,7 +47,7 @@
               "settings": {
                 "content_direction": "column",
                 "horizontal_alignment_flex_direction_column": "flex-start",
-                "gap": 8,
+                "gap": 6,
                 "width": "fill",
                 "height": "fit"
               },
@@ -85,7 +83,7 @@
                   "settings": {
                     "show_sale_price_first": true,
                     "show_installments": true,
-                    "type_preset": "h4",
+                    "type_preset": "h5",
                     "width": "100%",
                     "alignment": "left",
                     "padding-block-start": 4
@@ -99,58 +97,21 @@
                 "preco"
               ]
             },
-            "sabores": {
-              "type": "mare-sabores",
-              "name": "Seletor de sabor",
+            "caixa": {
+              "type": "mare-kit",
+              "name": "Monte sua caixa",
               "settings": {
-                "colecao": "sabores",
-                "rotulo": "Sabor",
+                "titulo": "Monte sua caixa",
+                "degraus": "3:10,5:15",
+                "rotulo_degraus": "Atalhos de quantidade",
+                "nota_inicial": "Escolha os sabores. A partir de 3, o desconto entra sozinho.",
+                "rotulo_cta": "Adicionar à sacola",
                 "rotulo_esgotado": "esgotado",
-                "cores": "#E8156B,#FF9500,#FF5436,#FFC943"
+                "aviso": "O desconto é aplicado automaticamente no carrinho.",
+                "max_por_sabor": 10,
+                "cores": "#FF5436,#FF9500,#E8156B,#FFC943"
               },
               "blocks": {}
-            },
-            "variantes": {
-              "type": "variant-picker",
-              "settings": {
-                "variant_style": "buttons",
-                "show_swatches": false,
-                "alignment": "left"
-              },
-              "blocks": {}
-            },
-            "comprar": {
-              "type": "buy-buttons",
-              "settings": {
-                "stacking": true,
-                "show_pickup_availability": true,
-                "border_radius": 50
-              },
-              "blocks": {
-                "quantity": {
-                  "type": "quantity",
-                  "static": true,
-                  "settings": {
-                    "border_radius": 50
-                  },
-                  "blocks": {}
-                },
-                "add-to-cart": {
-                  "type": "add-to-cart",
-                  "static": true,
-                  "settings": {
-                    "style_class": "button"
-                  },
-                  "blocks": {}
-                },
-                "accelerated-checkout": {
-                  "type": "accelerated-checkout",
-                  "static": true,
-                  "settings": {},
-                  "blocks": {}
-                }
-              },
-              "block_order": []
             },
             "descricao": {
               "type": "text",
@@ -211,9 +172,7 @@
           },
           "block_order": [
             "topo",
-            "sabores",
-            "variantes",
-            "comprar",
+            "caixa",
             "descricao",
             "detalhes"
           ]
@@ -223,27 +182,9 @@
         "content_width": "page-width",
         "desktop_media_position": "left",
         "gap": 48,
-        "enable_sticky_add_to_cart": true,
-        "padding-block-start": 24,
-        "padding-block-end": 24
-      }
-    },
-    "caixa": {
-      "type": "mare-kit",
-      "name": "Monte sua caixa",
-      "settings": {
-        "produto": "mare",
-        "olho": "Monte sua caixa",
-        "titulo": "Leve mais de uma maré.",
-        "linha_fina": "Escolha quantas e quais. Pode ser uma de cada, ou três iguais — o desconto é por quantidade, não por sabor.",
-        "degraus": "3:10,5:15",
-        "rotulo_degraus": "Atalhos de quantidade",
-        "nota_inicial": "Some 3 marés e o desconto entra sozinho.",
-        "rotulo_cta": "Adicionar à sacola",
-        "rotulo_esgotado": "esgotado",
-        "aviso": "O desconto aparece no carrinho, aplicado automaticamente.",
-        "max_por_sabor": 10,
-        "cores": "#FF5436,#FF9500,#E8156B,#FFC943"
+        "enable_sticky_add_to_cart": false,
+        "padding-block-start": 32,
+        "padding-block-end": 32
       }
     },
     "preparo": {
@@ -401,7 +342,6 @@
   },
   "order": [
     "main",
-    "caixa",
     "preparo",
     "comparativo",
     "duvidas"
