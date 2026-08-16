@@ -1,0 +1,215 @@
+{% comment %}
+  MARÉ — dobra de história
+  ---------------------------------------------------------------------------
+  Foto grande com um cartão de cor cavalgando por cima. É o padrão do Cafellow
+  na PDP do Fellow Vibrante — a dobra onde a marca conta de ONDE a coisa vem,
+  depois que a compra já está resolvida lá em cima.
+
+  O QUE FAZ ESSE PADRÃO FUNCIONAR
+  Não é a foto nem o cartão: é a SOBREPOSIÇÃO. Foto e texto lado a lado viram
+  dois blocos indiferentes. Cavalgando um sobre o outro, viram uma peça só, e
+  a página para de parecer um empilhamento de seções.
+
+  A RETICULA DE SERIGRAFIA sobre a foto é o que amarra imagens de origens
+  diferentes num visual só — pontinhos em `radial-gradient` de 4px com
+  `mix-blend-mode: multiply`. Zero KB de rede.
+
+  ATENÇÃO AO TEXTO QUE ENTRA AQUI
+  Tipografia grande dá peso de promessa a qualquer frase. Esta dobra é sobre
+  fruta, sol, lugar e gesto. Não é lugar para efeito no corpo — isso é
+  alegação sob a RDC 243/2018, e aqui ela soaria ainda mais afirmativa.
+
+  SEM FOTO NÃO QUEBRA: o quadro vira um leito de cor com a onda do calçadão.
+{% endcomment %}
+
+<section
+  class="mare-historia mare-section mare-historia--{{ section.settings.lado }}"
+  style="--mare-hist-fundo: {{ section.settings.cor_fundo }}; --mare-hist-card: {{ section.settings.cor_card }}; --mare-hist-texto: {{ section.settings.cor_texto }};"
+>
+  <div class="mare-wrap">
+
+    {%- if section.settings.olho != blank -%}
+      <p class="mare-historia__olho mare-revela">
+        {%- if section.settings.olho_forte != blank -%}
+          <strong>{{ section.settings.olho_forte | escape }}</strong>
+        {%- endif -%}
+        {{ section.settings.olho | escape }}
+      </p>
+    {%- endif -%}
+
+    <div class="mare-historia__grade">
+      <div class="mare-historia__midia mare-revela">
+        {%- if section.settings.foto -%}
+          {{ section.settings.foto
+             | image_url: width: 2000
+             | image_tag:
+                 loading: 'lazy',
+                 sizes: '(min-width: 900px) 72vw, 100vw',
+                 class: 'mare-historia__img',
+                 alt: section.settings.foto_alt }}
+        {%- else -%}
+          <span class="mare-historia__vazio" aria-hidden="true"></span>
+        {%- endif -%}
+        <span class="mare-historia__retic" aria-hidden="true"></span>
+      </div>
+
+      <div class="mare-historia__card mare-revela">
+        {%- if section.settings.titulo != blank -%}
+          <h2 class="mare-h mare-historia__titulo">{{ section.settings.titulo | escape }}</h2>
+        {%- endif -%}
+
+        {%- if section.settings.texto != blank -%}
+          <div class="mare-historia__texto rte">{{ section.settings.texto }}</div>
+        {%- endif -%}
+
+        {%- if section.settings.link != blank and section.settings.rotulo != blank -%}
+          <a class="mare-btn mare-historia__cta" href="{{ section.settings.link }}">{{ section.settings.rotulo | escape }}</a>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mare-historia {
+    background: var(--mare-hist-fundo, #FFEBD6);
+    color: var(--mare-hist-texto, #3A0A24);
+    padding-block: var(--mare-grid);
+    overflow: hidden;
+  }
+
+  .mare-historia__olho {
+    margin: 0 auto clamp(1.5rem, 4vw, 3rem);
+    max-width: 62ch;
+    text-align: center;
+    font-size: clamp(1rem, 1.9vw, 1.1875rem);
+    line-height: 1.5;
+  }
+  .mare-historia__olho strong { font-weight: 700; }
+
+  .mare-historia__grade { display: grid; }
+
+  /* ---- A foto ---- */
+  .mare-historia__midia {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    border-radius: 6px;
+    /* Leve inclinação: o recorte torto de colagem impressa, não de software. */
+    rotate: -.8deg;
+    box-shadow: 0 30px 70px -40px rgba(58, 10, 36, .6);
+  }
+
+  .mare-historia__img,
+  .mare-historia__vazio {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+  }
+
+  .mare-historia__vazio {
+    background:
+      radial-gradient(70% 60% at 30% 30%, color-mix(in srgb, var(--mare-sol) 60%, transparent), transparent 70%),
+      linear-gradient(120deg, var(--mare-coral), var(--mare-pitaya));
+  }
+
+  /* Retícula de serigrafia: pontinhos de 4px multiplicados sobre a foto. */
+  .mare-historia__retic {
+    position: absolute; inset: 0; z-index: 2;
+    pointer-events: none;
+    opacity: .42;
+    mix-blend-mode: multiply;
+    background-image: radial-gradient(circle, rgba(58, 10, 36, .62) 1px, transparent 1.5px);
+    background-size: 4px 4px;
+  }
+
+  /* ---- O cartão ---- */
+  .mare-historia__card {
+    position: relative;
+    z-index: 3;
+    background: var(--mare-hist-card, #FFC943);
+    border: 3px solid var(--mare-ameixa);
+    border-radius: clamp(16px, 2vw, 24px);
+    padding: clamp(1.25rem, 3vw, 2.25rem);
+    box-shadow: 0 24px 54px -30px rgba(58, 10, 36, .55);
+    display: grid;
+    gap: .875rem;
+    align-content: start;
+  }
+
+  .mare-historia__titulo {
+    margin: 0;
+    font-size: clamp(1.625rem, 3.4vw, 2.5rem);
+    line-height: 1.02;
+    text-transform: uppercase;
+    letter-spacing: -.02em;
+  }
+
+  .mare-historia__texto { font-size: clamp(.9375rem, 1.5vw, 1.0625rem); line-height: 1.6; }
+  .mare-historia__texto p { margin: 0 0 .75rem; }
+  .mare-historia__texto p:last-child { margin-bottom: 0; }
+
+  .mare-historia__cta { justify-self: start; margin-top: .25rem; }
+
+  /* ---- Empilhado no celular: o cartão sobe por cima da foto ---- */
+  @media (max-width: 899px) {
+    .mare-historia__card {
+      margin-inline: clamp(.5rem, 3vw, 1.5rem);
+      margin-block-start: -2.5rem;
+    }
+  }
+
+  /* ---- Cavalgada no desktop ---- */
+  @media (min-width: 900px) {
+    .mare-historia__grade {
+      grid-template-columns: repeat(12, 1fr);
+      align-items: center;
+    }
+    .mare-historia--esquerda .mare-historia__midia { grid-area: 1 / 3 / 2 / 13; }
+    .mare-historia--esquerda .mare-historia__card  { grid-area: 1 / 1 / 2 / 7; }
+
+    .mare-historia--direita .mare-historia__midia { grid-area: 1 / 1 / 2 / 11; }
+    .mare-historia--direita .mare-historia__card  { grid-area: 1 / 7 / 2 / 13; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mare-historia__midia { rotate: none; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Dobra de história",
+  "tag": "section",
+  "settings": [
+    { "type": "paragraph", "content": "Conte de onde a coisa vem: fruta, sol, lugar, gesto. Tipografia grande dá peso de promessa — não escreva efeito no corpo aqui." },
+    { "type": "header", "content": "Linha de abertura" },
+    { "type": "text", "id": "olho_forte", "label": "Início em negrito", "default": "Fruta e sol." },
+    { "type": "text", "id": "olho", "label": "Continuação", "default": "O verão brasileiro dentro de um copo, em dez segundos" },
+    { "type": "header", "content": "Foto" },
+    { "type": "image_picker", "id": "foto", "label": "Foto", "info": "Horizontal, 2000x1250 px. A retícula de serigrafia é aplicada pelo tema." },
+    { "type": "text", "id": "foto_alt", "label": "Descrição da foto", "default": "Frutas frescas em close" },
+    { "type": "header", "content": "Cartão" },
+    { "type": "text", "id": "titulo", "label": "Título", "default": "O verão que o Brasil tem o ano inteiro" },
+    { "type": "richtext", "id": "texto", "label": "Texto", "default": "<p>Aqui o verão não é uma estação de três meses. É melancia no calor de outubro, morango no fim de tarde de abril, pitaya na cor que só a fruta daqui tem.</p><p>A MARÉ pega esse frescor e coloca num pó que cabe na bolsa. Mistura na água, gela, e o verão volta em dez segundos.</p><p>Não é uma promessa sobre o seu corpo. É uma promessa sobre o seu copo.</p>" },
+    { "type": "url", "id": "link", "label": "Link do botão" },
+    { "type": "text", "id": "rotulo", "label": "Texto do botão" },
+    { "type": "header", "content": "Aparência" },
+    {
+      "type": "select",
+      "id": "lado",
+      "label": "Lado do cartão",
+      "options": [
+        { "value": "esquerda", "label": "Cartão à esquerda" },
+        { "value": "direita", "label": "Cartão à direita" }
+      ],
+      "default": "esquerda"
+    },
+    { "type": "color", "id": "cor_fundo", "label": "Fundo da dobra", "default": "#FFEBD6" },
+    { "type": "color", "id": "cor_card", "label": "Fundo do cartão", "default": "#FFC943" },
+    { "type": "color", "id": "cor_texto", "label": "Texto", "default": "#3A0A24" }
+  ],
+  "presets": [{ "name": "Dobra de história" }]
+}
+{% endschema %}
