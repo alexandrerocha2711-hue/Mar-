@@ -8,12 +8,11 @@
   blocos customizados, neste tema, não. Esta seção assume a página inteira:
   galeria, título, preço, compra e detalhes num arquivo só.
 
-  GALERIA ESTILO MARKETPLACE (o padrão do Cafellow)
-  Palco quadrado com canto redondo + tira de miniaturas embaixo. O palco é um
-  carrossel scroll-snap NATIVO: arrasta com o dedo sem JavaScript. As
-  miniaturas são âncoras de verdade (`href="#id"`) — clicar rola o contêiner
-  até a foto mesmo com o JS desligado, porque o navegador rola o ancestral
-  rolável mais próximo. O JS só marca qual miniatura está ativa.
+  GALERIA CONECTADA
+  O palco, a faixa superior e as miniaturas vivem no mesmo cartão. A inspiração
+  é a lógica de PDPs editoriais: controles integrados e foto inteira, sem thumb
+  cortada na lateral. O carrossel continua scroll-snap nativo; o JS só marca
+  qual miniatura está ativa.
 
   A DESCRIÇÃO NASCE DESLIGADA
   Ela repetia o que a caixa de compra já diz (os três sabores e seus
@@ -50,6 +49,11 @@
 
     {%- comment -%} ---------- GALERIA ---------- {%- endcomment -%}
     <div class="mare-pdp__galeria">
+      <div class="mare-pdp__galeria-cab" aria-hidden="true">
+        <span>{{ section.settings.rotulo_galeria | escape }}</span>
+        <span class="mare-pdp__galeria-marca">MARÉ</span>
+      </div>
+
       <div class="mare-pdp__palco" data-mare-palco tabindex="0">
         {%- for media in p.media -%}
           {%- if media.media_type == 'image' -%}
@@ -386,14 +390,61 @@
     .mare-pdp__lado { position: sticky; top: calc(var(--header-height, 60px) + 1.25rem); }
   }
 
-  /* ---------- GALERIA MARKETPLACE ---------- */
-  .mare-pdp__galeria { display: grid; gap: .625rem; }
+  /* ---------- GALERIA CONECTADA ---------- */
+  .mare-pdp__galeria {
+    position: relative;
+    display: grid;
+    container-type: inline-size;
+    overflow: hidden;
+    border: 2px solid color-mix(in srgb, var(--mare-ameixa) 84%, transparent);
+    border-radius: clamp(20px, 3vw, 34px);
+    background:
+      radial-gradient(44rem 30rem at 90% -8%, color-mix(in srgb, var(--mare-sol) 52%, transparent), transparent 62%),
+      radial-gradient(34rem 24rem at 6% 92%, color-mix(in srgb, var(--mare-pitaya) 18%, transparent), transparent 68%),
+      color-mix(in srgb, var(--mare-coral) 9%, var(--mare-areia));
+    box-shadow: var(--mare-sombra-2);
+  }
+  .mare-pdp__galeria::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: .18;
+    background-repeat: repeat-x;
+    background-size: auto 100%;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 60' preserveAspectRatio='none'%3E%3Cpath d='M0 42 C 30 12, 60 12, 90 42 S 150 72, 180 42 S 240 12, 240 42' fill='none' stroke='%23FF5436' stroke-width='13' stroke-linecap='round'/%3E%3Cpath d='M0 16 C 30 -14, 60 -14, 90 16 S 150 46, 180 16 S 240 -14, 240 16' fill='none' stroke='%23FFC943' stroke-width='13' stroke-linecap='round'/%3E%3C/svg%3E");
+  }
+
+  .mare-pdp__galeria-cab {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 48px;
+    padding: .625rem clamp(.875rem, 2vw, 1.25rem);
+    border-bottom: 2px solid color-mix(in srgb, var(--mare-ameixa) 84%, transparent);
+    background: color-mix(in srgb, var(--mare-branco) 78%, transparent);
+    font-family: var(--mare-corpo);
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+  }
+  .mare-pdp__galeria-marca {
+    font-family: var(--mare-display);
+    font-size: 1.125rem;
+    letter-spacing: 0;
+    color: var(--mare-coral);
+  }
 
   .mare-pdp__palco {
+    position: relative;
+    z-index: 1;
     display: flex; overflow-x: auto;
     scroll-snap-type: x mandatory; scroll-behavior: smooth;
     scrollbar-width: none;
-    border-radius: clamp(18px, 2.4vw, 28px);
   }
   .mare-pdp__palco::-webkit-scrollbar { display: none; }
 
@@ -402,39 +453,67 @@
     scroll-snap-align: center; scroll-snap-stop: always;
     margin: 0; aspect-ratio: 1;
     display: grid; place-items: center;
-    padding: clamp(12px, 3cqw, 40px);
-    border-radius: clamp(18px, 2.4vw, 28px);
+    padding: clamp(20px, 5cqw, 56px);
     background:
-      radial-gradient(62% 52% at 50% 32%, color-mix(in srgb, var(--mare-sol) 42%, transparent) 0%, transparent 72%),
-      linear-gradient(180deg,
-        color-mix(in srgb, var(--mare-areia) 52%, var(--mare-branco)) 0%,
-        color-mix(in srgb, var(--mare-coral) 12%, var(--mare-areia)) 100%);
+      radial-gradient(68% 58% at 50% 34%, color-mix(in srgb, var(--mare-sol) 40%, transparent) 0%, transparent 72%),
+      radial-gradient(44% 44% at 18% 76%, color-mix(in srgb, var(--mare-pitaya) 12%, transparent) 0%, transparent 70%),
+      transparent;
   }
 
   .mare-pdp__foto {
-    width: 100%; height: 100%;
-    object-fit: contain; display: block;
-    filter: drop-shadow(0 22px 30px rgba(58, 10, 36, .22));
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    display: block;
+    border-radius: clamp(12px, 1.8vw, 22px);
+    filter: drop-shadow(0 24px 32px rgba(58, 10, 36, .2));
   }
 
   .mare-pdp__tiras {
-    display: flex; gap: .5rem;
-    overflow-x: auto; scrollbar-width: none; padding-bottom: 2px;
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(66px, 1fr));
+    gap: 0;
+    overflow: visible;
+    border-top: 2px solid color-mix(in srgb, var(--mare-ameixa) 84%, transparent);
+    background: color-mix(in srgb, var(--mare-branco) 58%, transparent);
   }
   .mare-pdp__tiras::-webkit-scrollbar { display: none; }
 
   .mare-pdp__tira {
-    flex: 0 0 auto;
-    width: clamp(60px, 9vw, 84px);
+    min-width: 0;
     aspect-ratio: 1;
-    border-radius: 14px; overflow: hidden;
-    background: color-mix(in srgb, var(--mare-areia) 70%, var(--mare-branco));
-    box-shadow: inset 0 0 0 2px transparent;
-    transition: box-shadow .16s ease, transform .16s ease;
+    overflow: hidden;
+    background: transparent;
+    box-shadow: none;
+    transition: background .16s ease, transform .16s ease;
   }
-  .mare-pdp__tira:hover { transform: translateY(-2px); }
-  .mare-pdp__tira.is-ativa { box-shadow: inset 0 0 0 2px var(--mare-ameixa); }
-  .mare-pdp__tira-img { width: 100%; height: 100%; object-fit: contain; display: block; padding: 6px; }
+  .mare-pdp__tira + .mare-pdp__tira { border-left: 1px solid color-mix(in srgb, var(--mare-ameixa) 24%, transparent); }
+  .mare-pdp__tira:hover { background: color-mix(in srgb, var(--mare-sol) 22%, transparent); }
+  .mare-pdp__tira.is-ativa {
+    background: var(--mare-branco);
+    box-shadow: inset 0 0 0 4px var(--mare-pitaya);
+  }
+  .mare-pdp__tira-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    padding: clamp(6px, 1.3vw, 10px);
+  }
+
+  @media (max-width: 749px) {
+    .mare-pdp__galeria { border-radius: 24px; }
+    .mare-pdp__galeria-cab { min-height: 42px; }
+    .mare-pdp__quadro {
+      aspect-ratio: 4 / 5;
+      padding: clamp(18px, 8vw, 36px);
+    }
+    .mare-pdp__tiras { grid-template-columns: repeat(auto-fit, minmax(58px, 1fr)); }
+  }
 
   /* ---------- LADO DA COMPRA ---------- */
   .mare-pdp__lado { display: grid; gap: .75rem; container-type: inline-size; }
@@ -636,6 +715,7 @@
   "max_blocks": 6,
   "settings": [
     { "type": "text", "id": "olho", "label": "Sobretítulo", "default": "Refresco funcional em pó · 3 sabores" },
+    { "type": "text", "id": "rotulo_galeria", "label": "Rótulo da galeria", "default": "Verão o ano inteiro" },
     { "type": "text", "id": "linha_fina", "label": "Linha fina", "default": "Escolha os sabores, monte sua caixa e deixe o carrinho cuidar do desconto." },
     { "type": "header", "content": "Resumo de conversão" },
     { "type": "text", "id": "beneficio_1", "label": "Resumo 1", "default": "Mistura em segundos" },
