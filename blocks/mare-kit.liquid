@@ -1,365 +1,385 @@
 {% comment %}
-  MARÉ — montador de kit (quantidade + sabores na mesma tela)
+  MARÉ — monte sua caixa (bloco da página de produto)
   ---------------------------------------------------------------------------
-  O ELEMENTO MAIS CONVERSIVO DAS DUAS REFERÊNCIAS, COM A MELHOR METADE DE CADA.
+  Mesma lógica da seção `mare-kit`, mas como BLOCO, para viver na coluna de
+  compra ao lado da foto. É a única forma de compra da PDP: substitui o
+  seletor de variantes e o botão de comprar do tema.
 
-  Do Juí vem a MECÂNICA: degrau de quantidade e distribuição entre sabores na
-  MESMA tela, com subtotal ao vivo e um único botão. A Blessy quebra isso em
-  dois passos ("1. selecione a quantidade" → "2. selecionar sabores", que leva
-  para outra página) e paga por isso com um abandono inteiro entre as etapas.
+  O QUE SE PERDE AO TIRAR O BOTÃO NATIVO — e vale saber:
+  somem os botões de checkout acelerado (Shop Pay, Apple Pay, Google Pay) e a
+  barra fixa de "adicionar ao carrinho". Em troca, ninguém mais compra uma
+  unidade sem ver a escada de desconto. É uma troca de conversão por ticket.
 
-  Da Blessy vem a LINGUAGEM: "as clientes relatam", "contribui para", nota de
-  rodapé dizendo que não é medicamento. O Juí escreve "Reduz o inchaço",
-  "Alívio da constipação", "O segredo do desinchaço tá aqui" — vocabulário que
-  não se sustenta sob a RDC 243/2018. A MARÉ copia a máquina do Juí e a boca
-  da Blessy.
+  O DESCONTO NÃO É CALCULADO AQUI. Ele é desconto automático da Shopify por
+  quantidade na coleção. Como a regra conta UNIDADES, qualquer mistura de
+  sabores já vale: 3 melancias e 2+1 dão no mesmo preço. Os "degraus" abaixo
+  só exibem o valor antes do carrinho — se mudar o desconto no admin, mude
+  aqui também, ou a tela promete preço que o carrinho não cumpre (art. 30 do
+  CDC).
 
-  DUAS REGRAS DE INTEGRIDADE QUE ESTE ARQUIVO SEGUE
-
-  1. O DEGRAU ATIVO É DERIVADO, NUNCA GUARDADO.
-     Não existe "degrau selecionado" em memória. O degrau ativo é lido da soma
-     das quantidades. Clicar num degrau só preenche as quantidades. Por isso o
-     selo nunca mente: se você mexer nos +/- depois, o degrau se corrige
-     sozinho. Estado duplicado é a origem de toda barra de progresso quebrada.
-
-  2. NENHUM DESCONTO É CALCULADO AQUI.
-     O subtotal exibido é a soma pura dos preços. Desconto e frete grátis são
-     aplicados pelo carrinho e pelo checkout — que são a única fonte de
-     verdade. Mostrar um preço com desconto no front e outro no checkout não é
-     bug de layout: é o art. 30 do CDC. Os selos dos degraus dizem o que a
-     pessoa desbloqueia; o carrinho entrega.
-
-     Consequência prática: o desconto de cada degrau precisa existir como
-     DESCONTO AUTOMÁTICO no admin. Se o selo promete 10% e não há desconto
-     cadastrado, a página está mentindo.
-
-  SEM JAVASCRIPT AINDA FUNCIONA: o formulário é um POST real para /cart/add
-  com `items[]`. O JS só liga os +/-, o subtotal ao vivo e o carrinho lateral.
+  FUNCIONA SEM JAVASCRIPT: os campos são inputs reais com nome
+  `items[N][quantity]` dentro de um <form> para /cart/add.
 {% endcomment %}
 
 {%- liquid
-  assign col = block.settings.colecao
-  assign meta_frete = shop.metafields.mare.frete_gratis.value | default: block.settings.frete_centavos
-  assign reservas = block.settings.cores | split: ','
-  assign selos = block.settings.selos | split: '|'
-  assign frete_inicial = block.settings.texto_frete_falta | escape | replace: '[valor]', meta_frete | money
+  assign p = closest.product | default: block.settings.produto
+  assign meta_frete = shop.metafields.mare.frete_gratis.value | default: 20000
+  assign degraus = block.settings.degraus | split: ','
+  assign cores = block.settings.cores | split: ','
 -%}
 
-{%- if col.products.size > 0 -%}
-  <form
-    class="mare-kit"
-    method="post"
-    action="{{ routes.cart_add_url }}"
-    data-mare-kit
-    data-mare-frete="{{ meta_frete }}"
-    data-mare-moeda="{{ cart.currency.iso_code }}"
-    data-mare-carrinho="{{ routes.cart_url }}"
-    {{ block.shopify_attributes }}
-  >
-    <input type="hidden" name="return_to" value="{{ routes.cart_url }}">
+{%- if p != blank and p.variants.size > 0 -%}
+  <div class="mare-kit__wrap" {{ block.shopify_attributes }}>
+    <form
+      class="mare-kit__form"
+      action="{{ routes.cart_add_url }}"
+      method="post"
+      enctype="multipart/form-data"
+      data-mare-kit
+      data-mare-frete="{{ meta_frete }}"
+      data-mare-degraus="{{ block.settings.degraus | escape }}"
+      data-mare-moeda="{{ shop.currency }}"
+    >
+      {%- if block.settings.titulo != blank -%}
+        <p class="mare-kit__rotulo">{{ block.settings.titulo | escape }}</p>
+      {%- endif -%}
 
-    {%- comment -%} ---------- 1. degraus de quantidade ---------- {%- endcomment -%}
-    <fieldset class="mare-kit__degraus">
-      <legend class="mare-kit__legenda">{{ block.settings.titulo_degraus | escape }}</legend>
-      <ul class="mare-kit__lista-degraus" role="list">
-        {%- assign niveis = block.settings.degraus | split: '|' -%}
-        {%- for nivel in niveis -%}
-          {%- liquid
-            assign partes = nivel | split: ';'
-            assign qtd = partes[0] | strip | times: 1
-            assign nome = partes[1] | strip
-            assign beneficio = partes[2] | strip
-            assign selo = partes[3] | strip
-          -%}
-          <li>
-            <button type="button" class="mare-degrau" data-mare-degrau="{{ qtd }}" aria-pressed="false">
-              {%- if selo != blank -%}
-                <span class="mare-degrau__selo">{{ selo | escape }}</span>
-              {%- endif -%}
-              <span class="mare-degrau__nome">{{ nome | escape }}</span>
-              {%- if beneficio != blank -%}
-                <span class="mare-degrau__ben">{{ beneficio | escape }}</span>
-              {%- endif -%}
+      {%- if degraus.size > 0 -%}
+        <div class="mare-kit__degraus" role="group" aria-label="{{ block.settings.rotulo_degraus | escape }}">
+          {%- for degrau in degraus -%}
+            {%- liquid
+              assign partes = degrau | strip | split: ':'
+              assign qtd = partes[0] | plus: 0
+              assign pct = partes[1] | plus: 0
+            -%}
+            <button type="button" class="mare-kit__degrau" data-mare-degrau="{{ qtd }}">
+              <span class="mare-kit__degrau-qtd">{{ qtd }} marés</span>
+              <span class="mare-kit__degrau-pct">−{{ pct }}%</span>
             </button>
-          </li>
-        {%- endfor -%}
-      </ul>
-    </fieldset>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
 
-    {%- comment -%} ---------- 2. sabores com contador ---------- {%- endcomment -%}
-    <fieldset class="mare-kit__sabores">
-      <legend class="mare-kit__legenda">{{ block.settings.titulo_sabores | escape }}</legend>
-
-      <ul class="mare-kit__lista-sabores" role="list">
-        {%- for p in col.products limit: 8 -%}
+      <ul class="mare-kit__sabores" role="list">
+        {%- for v in p.variants -%}
           {%- liquid
-            assign i = forloop.index0 | modulo: reservas.size
-            assign cor = p.metafields.mare.cor.value | default: reservas[i] | strip
-            assign v = p.selected_or_first_available_variant
-            assign j = forloop.index0 | modulo: selos.size
-            assign selo = selos[j] | strip
-            assign descritor = p.metafields.mare.descritor.value
+            assign i = forloop.index0
+            assign j = i | modulo: cores.size
+            assign cor = v.metafields.mare.cor.value | default: cores[j] | strip
+            assign descritor = v.metafields.mare.descritor.value
+            assign foto = v.image | default: p.featured_image
           -%}
-          <li
-            class="mare-sabor{% unless v.available %} is-esgotado{% endunless %}"
-            style="--mare-cor-sku: {{ cor }};"
-            data-mare-sabor
-            data-mare-id="{{ v.id }}"
-            data-mare-preco="{{ v.price }}"
-          >
-            <span class="mare-sabor__foto">
-              {%- if p.featured_image -%}
-                {{ p.featured_image | image_url: width: 180 | image_tag: loading: 'lazy', class: 'mare-sabor__img', alt: p.title }}
+          <li class="mare-sabor" style="--mare-cor-sku: {{ cor }};">
+            <input type="hidden" name="items[{{ i }}][id]" value="{{ v.id }}">
+
+            <span class="mare-sabor__bolha" aria-hidden="true">
+              {%- if foto -%}
+                {{ foto | image_url: width: 200 | image_tag: loading: 'lazy', class: 'mare-sabor__img', alt: '' }}
               {%- endif -%}
             </span>
 
             <span class="mare-sabor__texto">
-              <span class="mare-sabor__nome">
-                {{ p.title | escape }}
-                {%- if selo != blank and v.available -%}
-                  <em class="mare-sabor__selo">{{ selo | escape }}</em>
-                {%- endif -%}
-              </span>
-              {%- if descritor -%}
-                <span class="mare-sabor__descritor">{{ descritor | join: ' · ' }}</span>
+              <label class="mare-sabor__nome" for="mare-q-{{ block.id }}-{{ i }}">{{ v.title | escape }}</label>
+              {%- if descritor != blank -%}
+                <span class="mare-sabor__descritor">{{ descritor | escape }}</span>
               {%- endif -%}
-              <span class="mare-sabor__preco">{{ v.price | money }}</span>
+              {%- unless v.available -%}
+                <span class="mare-sabor__esgotado">{{ block.settings.rotulo_esgotado | escape }}</span>
+              {%- endunless -%}
             </span>
 
-            {%- if v.available -%}
-              <span class="mare-passos">
-                <button type="button" class="mare-passos__btn" data-mare-menos aria-label="Tirar um {{ p.title | escape }}">&minus;</button>
-                <input
-                  class="mare-passos__campo"
-                  type="number"
-                  name="items[{{ forloop.index0 }}][quantity]"
-                  value="0"
-                  min="0"
-                  max="20"
-                  inputmode="numeric"
-                  aria-label="Quantidade de {{ p.title | escape }}"
-                  data-mare-qtd
-                >
-                <input type="hidden" name="items[{{ forloop.index0 }}][id]" value="{{ v.id }}">
-                <button type="button" class="mare-passos__btn" data-mare-mais aria-label="Adicionar um {{ p.title | escape }}">+</button>
-              </span>
-            {%- else -%}
-              <span class="mare-sabor__fora">{{ block.settings.rotulo_esgotado | escape }}</span>
-            {%- endif -%}
+            <span class="mare-sabor__contador">
+              <button type="button" class="mare-sabor__passo" data-mare-menos aria-label="Tirar uma {{ v.title | escape }}">−</button>
+              <input
+                id="mare-q-{{ block.id }}-{{ i }}"
+                class="mare-sabor__qtd"
+                type="number"
+                name="items[{{ i }}][quantity]"
+                value="0" min="0" max="{{ block.settings.max_por_sabor }}" step="1"
+                inputmode="numeric"
+                data-mare-qtd
+                data-mare-preco="{{ v.price }}"
+                {% unless v.available %}disabled{% endunless %}
+              >
+              <button type="button" class="mare-sabor__passo" data-mare-mais aria-label="Somar uma {{ v.title | escape }}">+</button>
+            </span>
           </li>
         {%- endfor -%}
       </ul>
-    </fieldset>
 
-    {%- comment -%} ---------- 3. progresso, subtotal e compra ---------- {%- endcomment -%}
-    <div class="mare-kit__rodape">
-      {%- if meta_frete > 0 -%}
-        <p
-          class="mare-kit__frete"
-          data-mare-frete-texto
-          data-falta="{{ block.settings.texto_frete_falta | escape }}"
-          data-ok="{{ block.settings.texto_frete_ok | escape }}"
-          role="status"
-          aria-live="polite"
-        >{{ frete_inicial }}</p>
-        <span class="mare-kit__trilho" aria-hidden="true">
-          <span class="mare-kit__fill" data-mare-fill></span>
-        </span>
-      {%- endif -%}
-
-      <div class="mare-kit__conta">
-        <span class="mare-kit__total">
-          <span class="mare-kit__total-rotulo">{{ block.settings.rotulo_subtotal | escape }}</span>
-          <b data-mare-subtotal>{{ 0 | money }}</b>
-          <span class="mare-kit__unidade" data-mare-unidade></span>
-        </span>
-
-        <button
-          type="submit"
-          class="mare-btn mare-kit__cta"
-          data-mare-enviar
-          data-vazio="{{ block.settings.rotulo_vazio | escape }}"
-          disabled
-        >{{ block.settings.rotulo_cta | escape }}</button>
+      <div class="mare-kit__resumo" aria-live="polite">
+        <p class="mare-kit__linha">
+          <span data-mare-contagem>0 marés</span>
+          <strong data-mare-total>—</strong>
+        </p>
+        <p class="mare-kit__nota" data-mare-nota>{{ block.settings.nota_inicial | escape }}</p>
       </div>
 
-      {%- if block.settings.nota != blank -%}
-        <p class="mare-kit__nota">{{ block.settings.nota | escape }}</p>
-      {%- endif -%}
-    </div>
+      <button type="submit" class="mare-btn mare-btn--sku mare-kit__cta" data-mare-enviar disabled>
+        {{ block.settings.rotulo_cta | escape }}
+      </button>
 
-    {%- if block.settings.garantia_titulo != blank -%}
-      <aside class="mare-kit__garantia">
-        <b>{{ block.settings.garantia_titulo | escape }}</b>
-        <span>{{ block.settings.garantia_texto | escape }}</span>
-      </aside>
-    {%- endif -%}
-  </form>
+      <p class="mare-kit__aviso">{{ block.settings.aviso | escape }}</p>
+    </form>
 
-  <script src="{{ 'mare-kit.js' | asset_url }}" defer></script>
+    <script>
+      (function () {
+        var form = document.currentScript.parentNode.querySelector('[data-mare-kit]');
+        if (!form || form.dataset.mareLigado) return;
+        form.dataset.mareLigado = '1';
+        form.classList.add('is-js');
+
+        var campos = [].slice.call(form.querySelectorAll('[data-mare-qtd]'));
+        var enviar = form.querySelector('[data-mare-enviar]');
+        var elContagem = form.querySelector('[data-mare-contagem]');
+        var elTotal = form.querySelector('[data-mare-total]');
+        var elNota = form.querySelector('[data-mare-nota]');
+        var metaFrete = parseInt(form.dataset.mareFrete, 10) || 0;
+
+        var degraus = (form.dataset.mareDegraus || '').split(',').map(function (d) {
+          var p = d.trim().split(':');
+          return { qtd: parseInt(p[0], 10), pct: parseFloat(p[1]) || 0 };
+        }).filter(function (d) { return d.qtd > 0; }).sort(function (a, b) { return a.qtd - b.qtd; });
+
+        var moeda = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: form.dataset.mareMoeda || 'BRL' });
+        function preco(c) { return moeda.format(c / 100); }
+
+        function degrauDe(total) {
+          var achado = null;
+          degraus.forEach(function (d) { if (total >= d.qtd) achado = d; });
+          return achado;
+        }
+
+        function recalcular() {
+          var unidades = 0, bruto = 0;
+          campos.forEach(function (campo) {
+            var q = parseInt(campo.value, 10);
+            if (isNaN(q) || q < 0) q = 0;
+            unidades += q;
+            bruto += q * (parseInt(campo.dataset.marePreco, 10) || 0);
+          });
+
+          var d = degrauDe(unidades);
+          var liquido = d ? Math.round(bruto * (1 - d.pct / 100)) : bruto;
+
+          elContagem.textContent = unidades === 1 ? '1 maré' : unidades + ' marés';
+          elTotal.textContent = unidades ? preco(liquido) : '—';
+          enviar.disabled = unidades === 0;
+
+          form.querySelectorAll('[data-mare-degrau]').forEach(function (btn) {
+            btn.classList.toggle('is-ativo', !!d && parseInt(btn.dataset.mareDegrau, 10) === d.qtd);
+          });
+
+          if (!unidades) { elNota.textContent = elNota.dataset.inicial; return; }
+
+          var partes = [];
+          if (d) partes.push('−' + d.pct + '% aplicado (' + preco(bruto - liquido) + ' de economia)');
+          var proximo = degraus.filter(function (x) { return x.qtd > unidades; })[0];
+          if (proximo) {
+            var faltam = proximo.qtd - unidades;
+            partes.push('faltam ' + faltam + (faltam === 1 ? ' unidade' : ' unidades') + ' para −' + proximo.pct + '%');
+          }
+          if (metaFrete && liquido >= metaFrete) partes.push('frete grátis');
+          else if (metaFrete) partes.push('faltam ' + preco(metaFrete - liquido) + ' para o frete grátis');
+
+          elNota.textContent = partes.join(' · ');
+        }
+
+        elNota.dataset.inicial = elNota.textContent;
+
+        form.addEventListener('click', function (ev) {
+          var btn = ev.target.closest('[data-mare-mais], [data-mare-menos], [data-mare-degrau]');
+          if (!btn) return;
+          ev.preventDefault();
+
+          if (btn.hasAttribute('data-mare-degrau')) {
+            var alvo = parseInt(btn.dataset.mareDegrau, 10);
+            var livres = campos.filter(function (c) { return !c.disabled; });
+            if (!livres.length) return;
+            livres.forEach(function (c) { c.value = 0; });
+            for (var n = 0; n < alvo; n++) {
+              var c = livres[n % livres.length];
+              c.value = parseInt(c.value, 10) + 1;
+            }
+          } else {
+            var campo = btn.parentNode.querySelector('[data-mare-qtd]');
+            if (!campo || campo.disabled) return;
+            var max = parseInt(campo.max, 10) || 99;
+            var atual = parseInt(campo.value, 10) || 0;
+            campo.value = Math.min(max, Math.max(0, atual + (btn.hasAttribute('data-mare-mais') ? 1 : -1)));
+          }
+          recalcular();
+        });
+
+        form.addEventListener('input', function (ev) {
+          if (ev.target.hasAttribute('data-mare-qtd')) recalcular();
+        });
+
+        form.addEventListener('submit', function (ev) {
+          var itens = [];
+          campos.forEach(function (campo) {
+            var q = parseInt(campo.value, 10) || 0;
+            if (q <= 0) return;
+            var id = campo.closest('.mare-sabor').querySelector('input[type="hidden"]').value;
+            itens.push({ id: Number(id), quantity: q });
+          });
+          if (!itens.length) { ev.preventDefault(); return; }
+          if (!window.fetch) return;
+          ev.preventDefault();
+
+          var rotulo = enviar.textContent;
+          enviar.disabled = true;
+          enviar.textContent = 'Adicionando…';
+          var raiz = (window.Shopify && window.Shopify.routes && window.Shopify.routes.root) || '/';
+
+          fetch(raiz + 'cart/add.js', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({ items: itens, sections: 'mare-barra-frete', sections_url: window.location.pathname })
+          })
+            .then(function (r) { return r.json().then(function (d) { if (!r.ok) throw new Error(d.description || 'erro'); return d; }); })
+            .then(function (dados) {
+              enviar.textContent = 'Na sacola';
+              document.dispatchEvent(new CustomEvent('mare:carrinho:atualizado', { detail: dados }));
+              window.setTimeout(function () { enviar.textContent = rotulo; enviar.disabled = false; }, 1600);
+            })
+            .catch(function (erro) {
+              enviar.textContent = rotulo; enviar.disabled = false;
+              console.error('[MARÉ] kit', erro);
+            });
+        });
+
+        recalcular();
+      })();
+    </script>
+  </div>
 {%- endif -%}
 
 {% stylesheet %}
-  .mare-kit { display: grid; gap: 1.25rem; font-family: var(--mare-corpo); }
-  .mare-kit fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: .625rem; }
+  .mare-kit__wrap { display: block; }
 
-  .mare-kit__legenda {
-    padding: 0; font-size: var(--mare-t-micro);
-    letter-spacing: .14em; text-transform: uppercase; opacity: .6;
+  .mare-kit__form {
+    container-type: inline-size;
+    display: grid; gap: 1rem;
+    background: var(--mare-branco);
+    border-radius: var(--mare-raio);
+    padding: clamp(1rem, 2.4vw, 1.5rem);
+    box-shadow: var(--mare-sombra-2);
+    font-family: var(--mare-corpo);
   }
 
-  .mare-kit__lista-degraus {
-    list-style: none; margin: 0; padding: 0;
-    display: grid; gap: .5rem;
-    grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+  .mare-kit__rotulo {
+    margin: 0; font-size: var(--mare-t-micro);
+    letter-spacing: .16em; text-transform: uppercase; opacity: .6;
   }
-  .mare-degrau {
-    width: 100%; min-height: 76px;
-    display: grid; align-content: center; gap: .125rem;
-    padding: .625rem .5rem; cursor: pointer;
-    border: 0; border-radius: 14px;
-    background: color-mix(in srgb, var(--mare-ameixa) 5%, transparent);
-    box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--mare-ameixa) 12%, transparent);
-    color: inherit; font-family: inherit; text-align: center;
-    transition: box-shadow .16s ease, background .16s ease;
-  }
-  .mare-degrau:hover { box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--mare-coral) 45%, transparent); }
-  .mare-degrau.is-ativo {
-    background: color-mix(in srgb, var(--mare-coral) 12%, transparent);
-    box-shadow: inset 0 0 0 2px var(--mare-coral);
-  }
-  .mare-degrau__selo {
-    font-size: .625rem; font-weight: 700; letter-spacing: .1em;
-    text-transform: uppercase; color: var(--mare-pitaya);
-  }
-  .mare-degrau__nome { font-family: var(--mare-display); font-weight: 600; font-size: 1.0625rem; }
-  .mare-degrau__ben { font-size: .6875rem; opacity: .7; line-height: 1.25; }
 
-  .mare-kit__lista-sabores { list-style: none; margin: 0; padding: 0; display: grid; gap: .5rem; }
+  .mare-kit__degraus { display: flex; flex-wrap: wrap; gap: .5rem; }
+  .mare-kit__degrau {
+    display: inline-grid; gap: .0625rem; justify-items: start;
+    min-height: 48px; padding: .375rem 1rem;
+    border: 0; border-radius: 999px; cursor: pointer;
+    font-family: var(--mare-corpo); text-align: left;
+    background: color-mix(in srgb, var(--mare-sol) 26%, transparent);
+    color: var(--mare-ameixa);
+    box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--mare-sol) 60%, transparent);
+    transition: transform .16s ease, background .16s ease;
+  }
+  .mare-kit__degrau:hover { transform: translateY(-1px); }
+  .mare-kit__degrau.is-ativo { background: var(--mare-ameixa); color: var(--mare-sol); box-shadow: none; }
+  .mare-kit__degrau-qtd { font-weight: 600; font-size: .9375rem; }
+  .mare-kit__degrau-pct { font-size: var(--mare-t-micro); opacity: .75; }
+
+  .mare-kit__sabores { list-style: none; margin: 0; padding: 0; display: grid; gap: .5rem; }
 
   .mare-sabor {
-    display: grid;
-    grid-template-columns: 56px 1fr auto;
-    align-items: center; gap: .75rem;
-    padding: .5rem .75rem .5rem .5rem;
-    border-radius: 14px;
-    background: var(--mare-branco);
-    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--mare-ameixa) 10%, transparent);
-    transition: box-shadow .16s ease;
+    display: grid; grid-template-columns: auto 1fr auto;
+    align-items: center; gap: .75rem; padding: .5rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--mare-cor-sku) 9%, transparent);
   }
-  .mare-sabor.tem-qtd { box-shadow: inset 0 0 0 2px var(--mare-cor-sku); }
-  .mare-sabor.is-esgotado { opacity: .55; }
 
-  .mare-sabor__foto {
-    width: 56px; height: 56px; border-radius: 10px; overflow: hidden;
+  .mare-sabor__bolha {
+    width: 48px; height: 48px; border-radius: 50%; overflow: hidden;
     display: grid; place-items: center;
-    background: color-mix(in srgb, var(--mare-cor-sku) 18%, var(--mare-areia));
+    background: color-mix(in srgb, var(--mare-cor-sku) 26%, var(--mare-areia));
   }
   .mare-sabor__img { width: 100%; height: 100%; object-fit: contain; display: block; }
 
   .mare-sabor__texto { display: grid; gap: .0625rem; min-width: 0; }
-  .mare-sabor__nome { font-weight: 600; font-size: .9375rem; display: flex; flex-wrap: wrap; align-items: center; gap: .375rem; }
-  .mare-sabor__selo {
-    font-style: normal; font-size: .5625rem; font-weight: 700;
-    letter-spacing: .1em; text-transform: uppercase;
-    background: var(--mare-cor-sku); color: var(--mare-branco);
-    padding: .125rem .375rem; border-radius: 999px;
+  .mare-sabor__nome { font-weight: 600; font-size: .9375rem; cursor: pointer; }
+  .mare-sabor__descritor { font-size: var(--mare-t-micro); opacity: .66; }
+  .mare-sabor__esgotado {
+    font-size: .6875rem; font-weight: 700; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--mare-pitaya);
   }
-  .mare-sabor__descritor { font-size: .75rem; opacity: .6; }
-  .mare-sabor__preco { font-size: .8125rem; opacity: .8; }
-  .mare-sabor__fora { font-size: .6875rem; font-weight: 700; text-transform: uppercase; opacity: .6; }
 
-  .mare-passos {
+  .mare-sabor__contador {
     display: inline-flex; align-items: center; gap: .125rem;
-    border-radius: 999px; padding: .1875rem;
-    background: color-mix(in srgb, var(--mare-ameixa) 6%, transparent);
+    background: var(--mare-branco); border-radius: 999px; padding: .1875rem;
+    box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--mare-ameixa) 12%, transparent);
   }
-  .mare-passos__btn {
-    width: 34px; height: 34px; border: 0; border-radius: 50%;
-    background: var(--mare-branco); color: var(--mare-ameixa);
-    font-size: 1.125rem; line-height: 1; cursor: pointer;
-    box-shadow: var(--mare-sombra-1);
+  .mare-sabor__passo {
+    width: 38px; height: 38px; border: 0; border-radius: 50%;
+    background: transparent; cursor: pointer;
+    font-size: 1.25rem; line-height: 1; color: var(--mare-ameixa);
   }
-  .mare-passos__btn:hover { background: var(--mare-cor-sku); color: var(--mare-branco); }
-  .mare-passos__campo {
-    width: 32px; border: 0; background: transparent;
+  .mare-sabor__passo:hover { background: color-mix(in srgb, var(--mare-cor-sku) 18%, transparent); }
+  .mare-sabor__qtd {
+    width: 3ch; height: 38px; border: 0; background: transparent;
     text-align: center; font: inherit; font-weight: 700;
-    -moz-appearance: textfield;
+    color: var(--mare-ameixa); -moz-appearance: textfield;
   }
-  .mare-passos__campo::-webkit-outer-spin-button,
-  .mare-passos__campo::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .mare-sabor__qtd::-webkit-outer-spin-button,
+  .mare-sabor__qtd::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 
-  .mare-kit__rodape { display: grid; gap: .625rem; }
-
-  .mare-kit__frete { margin: 0; font-size: var(--mare-t-micro); opacity: .78; }
-  .mare-kit__trilho {
-    display: block; height: 5px; border-radius: 999px; overflow: hidden;
-    background: color-mix(in srgb, var(--mare-ameixa) 10%, transparent);
-  }
-  .mare-kit__fill {
-    display: block; height: 100%; width: 0%;
-    border-radius: 999px;
-    background: linear-gradient(90deg, var(--mare-coral), var(--mare-sol));
-    transition: width .3s ease;
+  /* A coluna de compra é estreita. Consulta de CONTÊINER, não de viewport:
+     o que importa é a largura da caixa, não a da tela. */
+  @container (max-width: 400px) {
+    .mare-sabor { grid-template-columns: auto 1fr; row-gap: .5rem; border-radius: var(--mare-raio); }
+    .mare-sabor__contador { grid-column: 1 / -1; justify-self: stretch; justify-content: space-between; }
   }
 
-  .mare-kit__conta { display: grid; gap: .75rem; }
-  .mare-kit__total { display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem; }
-  .mare-kit__total-rotulo { font-size: var(--mare-t-micro); text-transform: uppercase; letter-spacing: .1em; opacity: .6; }
-  .mare-kit__total b { font-family: var(--mare-display); font-size: 1.75rem; line-height: 1; }
-  .mare-kit__unidade { font-size: var(--mare-t-micro); opacity: .65; }
+  .mare-kit__form:not(.is-js) .mare-sabor__passo,
+  .mare-kit__form:not(.is-js) .mare-kit__degraus,
+  .mare-kit__form:not(.is-js) .mare-kit__resumo { display: none; }
+  .mare-kit__form:not(.is-js) .mare-sabor__qtd {
+    width: 4.5ch; border-radius: 999px;
+    box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--mare-ameixa) 14%, transparent);
+  }
+
+  .mare-kit__resumo { display: grid; gap: .25rem; padding-top: .375rem; }
+  .mare-kit__linha {
+    margin: 0; display: flex; justify-content: space-between; align-items: baseline; gap: 1rem;
+    font-family: var(--mare-display); font-size: 1.375rem; font-weight: 600;
+  }
+  .mare-kit__nota { margin: 0; font-size: var(--mare-t-micro); color: var(--mare-pitaya); font-weight: 600; }
 
   .mare-kit__cta { width: 100%; }
-  .mare-kit__nota { margin: 0; font-size: .6875rem; opacity: .55; line-height: 1.4; }
+  .mare-kit__aviso { margin: 0; font-size: var(--mare-t-micro); opacity: .55; text-align: center; }
 
-  .mare-kit__garantia {
-    display: grid; gap: .1875rem;
-    padding: .875rem 1rem; border-radius: 14px;
-    background: color-mix(in srgb, var(--mare-sol) 20%, transparent);
-    font-size: var(--mare-t-micro);
-  }
-  .mare-kit__garantia b { font-family: var(--mare-display); font-size: .9375rem; }
-
-  @media (prefers-reduced-motion: reduce) {
-    .mare-degrau, .mare-sabor, .mare-kit__fill { transition: none; }
-  }
+  @media (prefers-reduced-motion: reduce) { .mare-kit__degrau { transition: none; } }
 {% endstylesheet %}
 
 {% schema %}
 {
-  "name": "Montar kit",
+  "name": "Monte sua caixa",
   "tag": null,
   "settings": [
-    { "type": "collection", "id": "colecao", "label": "Coleção dos sabores" },
-    { "type": "header", "content": "Degraus de quantidade" },
-    {
-      "type": "paragraph",
-      "content": "Formato: quantidade;nome;benefício;selo — separados por | . O desconto de cada degrau PRECISA existir como desconto automático no admin, senão a página promete o que o checkout não entrega."
-    },
-    {
-      "type": "textarea",
-      "id": "degraus",
-      "label": "Degraus",
-      "default": "1;1 pouch;experimente;|2;2 pouches;frete grátis;mais escolhido|3;3 pouches;frete grátis + 10% off;melhor valor"
-    },
-    { "type": "text", "id": "titulo_degraus", "label": "Título dos degraus", "default": "1. Quantos pouches" },
-    { "type": "header", "content": "Sabores" },
-    { "type": "text", "id": "titulo_sabores", "label": "Título dos sabores", "default": "2. Escolha os sabores" },
-    { "type": "text", "id": "selos", "label": "Selos dos sabores", "info": "Separados por | , na ordem da coleção.", "default": "mais vendido|novidade|" },
-    { "type": "text", "id": "cores", "label": "Cores de reserva", "default": "#E8156B,#FF9500,#FF5436,#FFC943" },
+    { "type": "product", "id": "produto", "label": "Produto", "info": "Só usado fora da página de produto. Na PDP usa o produto da página." },
+    { "type": "text", "id": "titulo", "label": "Rótulo do bloco", "default": "Monte sua caixa" },
+    { "type": "header", "content": "Degraus de desconto" },
+    { "type": "paragraph", "content": "Formato quantidade:porcentagem. ESTES VALORES SÓ EXIBEM O PREÇO — quem aplica é o desconto automático da Shopify. Mudou lá, mude aqui." },
+    { "type": "text", "id": "degraus", "label": "Degraus", "default": "3:10,5:15" },
+    { "type": "text", "id": "rotulo_degraus", "label": "Rótulo dos atalhos", "default": "Atalhos de quantidade" },
+    { "type": "header", "content": "Textos" },
+    { "type": "text", "id": "nota_inicial", "label": "Nota inicial", "default": "Some 3 marés e o desconto entra sozinho." },
+    { "type": "text", "id": "rotulo_cta", "label": "Texto do botão", "default": "Adicionar à sacola" },
     { "type": "text", "id": "rotulo_esgotado", "label": "Texto quando esgotado", "default": "esgotado" },
-    { "type": "header", "content": "Frete e compra" },
-    { "type": "number", "id": "frete_centavos", "label": "Meta de frete em centavos (reserva)", "default": 20000 },
-    { "type": "text", "id": "texto_frete_falta", "label": "Texto do frete", "default": "Faltam [valor] para o frete grátis" },
-    { "type": "text", "id": "texto_frete_ok", "label": "Texto quando liberado", "default": "Frete grátis liberado." },
-    { "type": "text", "id": "rotulo_subtotal", "label": "Rótulo do subtotal", "default": "Subtotal" },
-    { "type": "text", "id": "rotulo_cta", "label": "Texto do botão", "default": "Adicionar ao carrinho" },
-    { "type": "text", "id": "rotulo_vazio", "label": "Botão sem seleção", "default": "Escolha ao menos um sabor" },
-    { "type": "text", "id": "nota", "label": "Nota", "default": "Descontos e frete grátis são calculados e aplicados no carrinho." },
-    { "type": "header", "content": "Garantia" },
-    { "type": "text", "id": "garantia_titulo", "label": "Título da garantia", "default": "7 dias para desistir" },
-    { "type": "text", "id": "garantia_texto", "label": "Texto da garantia", "default": "Direito de arrependimento previsto no CDC: recebeu, não quis, devolve sem custo." }
+    { "type": "text", "id": "aviso", "label": "Aviso", "default": "O desconto aparece no carrinho, aplicado automaticamente." },
+    { "type": "header", "content": "Limites" },
+    { "type": "range", "id": "max_por_sabor", "label": "Máximo por sabor", "min": 1, "max": 20, "step": 1, "default": 10 },
+    { "type": "text", "id": "cores", "label": "Cores de reserva", "default": "#FF5436,#FF9500,#E8156B,#FFC943" }
   ],
-  "presets": [{ "name": "Montar kit" }]
+  "presets": [{ "name": "Monte sua caixa" }]
 }
 {% endschema %}
