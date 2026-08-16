@@ -21,11 +21,7 @@
       "block_order": ["d1", "d2", "d3", "d4"],
       "settings": {
         "olho": "Refresco funcional em pó · 3 sabores",
-        "linha_fina": "Escolha os sabores, monte sua caixa e deixe o carrinho cuidar do desconto.",
-        "beneficio_1": "Mistura em segundos",
-        "beneficio_2": "3 sabores para combinar",
-        "beneficio_3": "Desconto por quantidade",
-        "beneficio_4": "7 dias para devolver",
+        "mostrar_descricao": false,
         "rotulo_caixa": "Monte sua caixa",
         "degraus": "3:10,5:15",
         "nota_inicial": "A partir de 3, o desconto entra sozinho.",
@@ -36,33 +32,42 @@
       }
     },
 
-    "historia": {
-      "type": "mare-historia-sabor",
-      "name": "História do sabor",
-      "settings": {
-        "cor": "#E8156B",
-        "olho": "Território de sabor",
-        "titulo": "O sabor que muda o clima.",
-        "selo": "MARÉ sem azul",
-        "chamada": "Fruta, sol e movimento.",
-        "texto": "<p>A MARÉ troca a obrigação por um ritual simples: mistura, gela e vai. O frescor vem da fruta, a personalidade vem da cor e o mar aparece no movimento — nunca no azul genérico da categoria.</p>"
-      }
-    },
-
     "preparo": {
       "type": "mare-preparo",
       "name": "Modo de preparo",
       "blocks": {
-        "p1": { "type": "passo", "settings": { "verbo": "Mistura.", "texto": "Um sachê em 300 ml de água. Mexe até sumir o pó.", "cor": "#E8156B" } },
-        "p2": { "type": "passo", "settings": { "verbo": "Gela.", "texto": "Gelo direto no copo, ou dez minutos de geladeira.", "cor": "#FF9500" } },
-        "p3": { "type": "passo", "settings": { "verbo": "Vai.", "texto": "Toma no copo americano e segue o dia.", "cor": "#FF5436" } }
+        "p1": {
+          "type": "passo",
+          "settings": {
+            "verbo": "Abre e despeja.",
+            "texto": "Abra o sachê e coloque em 300 ml de água.",
+            "alt": "Sachê da MARÉ sendo aberto e despejado num copo americano com água",
+            "cor": "#E8156B"
+          }
+        },
+        "p2": {
+          "type": "passo",
+          "settings": {
+            "verbo": "Mistura.",
+            "texto": "Mexa bem até o pó desaparecer.",
+            "alt": "Bebida sendo misturada no copo, a cor vibrante se formando",
+            "cor": "#FF9500"
+          }
+        },
+        "p3": {
+          "type": "passo",
+          "settings": {
+            "verbo": "Gelinho e vai.",
+            "texto": "Coloque gelo, tome e siga o seu dia.",
+            "alt": "Copo americano com a bebida pronta e cubos de gelo",
+            "cor": "#FF5436"
+          }
+        }
       },
       "block_order": ["p1", "p2", "p3"],
       "settings": {
-        "olho": "Como se faz",
-        "titulo": "Leva dez segundos.",
-        "frase_foto": "Não tem segredo",
-        "tempo": "Feito em segundos",
+        "olho": "Modo de preparo",
+        "titulo": "Não tem segredo.",
         "medida": "1 sachê para 300 ml de água gelada",
         "aviso": "Consulte sempre o rótulo. Conservar em local seco e ao abrigo da luz."
       }
@@ -102,5 +107,5 @@
       "settings": { "olho": "Antes de comprar", "titulo": "O que perguntam." }
     }
   },
-  "order": ["main", "historia", "preparo", "comparativo", "duvidas"]
+  "order": ["main", "preparo", "comparativo", "duvidas"]
 }
